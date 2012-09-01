@@ -1,3 +1,32 @@
 .invalidMessage {
 	visibility: hidden;
 } 
+
+table tr {
+	vertical-align: top;
+}
+
+tbody, .node {
+	border: 0px;
+}
+
+#layout-children td {
+	padding-right: 20px;
+}
+
+input {
+	width: 400px;
+}
+
+.childpos, .childneg {
+	visibility: hidden;
+	display: none;
+}
+
+.childname {
+	width: 70%;
+}
+
+.childage {
+	width: 30%;
+}
