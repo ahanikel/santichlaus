@@ -1,4 +1,4 @@
-package ch.comebackgloebb.website;
+package ch.comebackgloebb.website.santichlaus;
 
 import java.util.Properties;
 import javax.mail.Message;
