@@ -1,0 +1,8 @@
+<node>
+    <primaryNodeType>cbg:page</primaryNodeType>
+    <property>
+        <name>title</name>
+        <type>String</type>
+        <value>Santichlaus-Anmeldung</value>
+    </property>
+</node>
