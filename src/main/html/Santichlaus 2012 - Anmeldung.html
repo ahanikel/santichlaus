@@ -84,7 +84,7 @@
                 <div class="clear-block">
                   <div id="node-393" class="node">
                     <div class="content clear-block">
-                      <form action="">
+                      <!--<form action="">-->
                         <fieldset>
                           <legend>Adresse</legend>
                           <table>
@@ -146,8 +146,8 @@
                           <table id="layout-children">
                             <tr>
                               <td>
-                                <img id="add-child" src="./Santichlaus%202012%20-%20Anmeldung_files/images/list-add.png" alt="Kind hinzufügen"/>
-                                <img id="remove-child" src="./Santichlaus%202012%20-%20Anmeldung_files/images/list-remove.png" alt="Kind löschen"/>
+                                <img id="add" src="./Santichlaus%202012%20-%20Anmeldung_files/images/list-add.png" alt="Kind hinzufügen"/>
+                                <img id="del" src="./Santichlaus%202012%20-%20Anmeldung_files/images/list-remove.png" alt="Kind löschen"/>
                               </td>
                               <td>
                                 <button class="helpbutton" value="help">Hilfe zur Anmeldung</button>
@@ -170,7 +170,11 @@
                                 </table>
                               </td>
                               <td>
-                                <table id="details-children">
+                                <table id="details-children" class="editable">
+				  <tr>
+				    <td><button id="ok" class="okbutton">OK</button></td>
+				    <td><button id="cancel" class="cancelbutton">Abbrechen</button></td>
+				  </tr>
                                   <tr>
                                     <td><label for="kindname">Name des Kindes</label></td>
                                     <td><input id="kindname" name="kindname"/></td>
@@ -199,7 +203,7 @@
                             </tr>
                           </table>
                         </fieldset>
-                      </form>
+                      <!--</form>-->
                     </div>
                     <div class="clear-block">
                       <div class="meta"></div>
@@ -214,5 +218,99 @@
       </div> <!-- /container -->
     </div>
     <!-- /layout -->
+    <script type="text/javascript">
+      //<!--
+      $(document).ready(function() {
+	function tableContentsToJson() {
+	  function makePair(key, value) {
+	    return ['"', key, '": "', value, '"'].join();
+	  }
+	  var ret = [];
+	  var columnIds = [];
+	  $('.editable td > input [id], .editable td > textarea [id]').each(function(el) {
+	    columnIds.push(el.attr('id').text());
+	  });
+	  $('#list-children tbody tr').not('.editable').each(function(row) {
+	    var tmp = {};
+	    var contents = row('td input, td textarea');
+	    for (var i = 0; i < columnIds.length; ++i) {
+	      tmp[columnIds[i]] = contents[i].text();
+	    }
+	    ret.push(tmp);
+	  });
+	  return ret;
+	}
+	$("#add").click(function(e) {
+	  $('.editable').css('visibility', 'visible');
+	});
+	$('#del').click(function(e) {
+	  var sel = $('tbody tr.selected');
+	  if (sel.length > 0)
+	    sel.remove();
+	  else
+	    $('tbody tr:last !.editable').remove();
+	});
+	$('#ok').click(function(e) {
+	  $('#list-children tbody:last-child').after([
+	    '<tr class="lastInserted"><td class="field">',
+	    $('#name').val(),
+	    '</td><td class="field">',
+	    $('#alter').val(),
+	    '</td><td class="area" style="white-space: pre;">',
+	    $('#loben').val(),
+	    '</td><td class="area" style="white-space: pre;">',
+	    $('#tadeln').val(),
+	    '</td><td></td></tr>'
+	  ].join(''));
+	  $('.lastInserted')
+	  .click(function(e) {
+	    if ($(this).hasClass('selected')) {
+	      $('#list-children tr.selected').removeClass('selected');
+	    } else {
+	      $('#list-children tr.selected').removeClass('selected');
+	      $(this).addClass('selected');
+	    }
+	  })
+	  .removeClass('lastInserted');
+	  $('.editable').css('visibility', 'hidden');
+	  $('.editable input, .editable textarea').val('');
+	});
+	$('#cancel').click(function(e) {
+	  $('.editable').css('visibility', 'hidden');
+	  $('.editable input, .editable textarea').val('');
+	});
+	$('#send').click(function(e) {
+	  alert($.param(tableContentsToJson()));
+	})
+	function insertTestContent(name, alter, loben, tadeln) {
+	  $('#list-children tbody:last-child').after([
+	    '<tr class="lastInserted"><td class="childname">',
+	    name,
+	    '</td><td class="childage">',
+	    alter,
+	    '</td><td class="childpos">',
+	    loben,
+	    '</td><td class="childneg">',
+	    tadeln,
+	    '</td><td></td></tr>'
+	  ].join(''));
+	  $('.lastInserted')
+	  .click(function(e) {
+	    if ($(this).hasClass('selected')) {
+	      $('#list-children tr.selected').removeClass('selected');
+	    } else {
+	      $('#list-children tr.selected').removeClass('selected');
+	      $(this).addClass('selected');
+	    }
+	  })
+	  .removeClass('lastInserted');
+	  $('.editable').css('visibility', 'hidden');
+	  $('.editable input, .editable textarea').val('');
+	}
+	insertTestContent("Fritz", 7, "bla", "bla");
+	insertTestContent("Franz", 6, "bla", "bla");
+      });
+      // -->
+    </script>
   </body>
 </html>

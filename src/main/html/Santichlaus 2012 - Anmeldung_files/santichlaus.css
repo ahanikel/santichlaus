@@ -30,3 +30,17 @@ input {
 .childage {
 	width: 30%;
 }
+
+.editable {
+	visibility: hidden;
+}
+
+#list-children tbody tr:hover {
+	background-color: yellow;
+	cursor: pointer;
+}
+
+#list-children tbody tr.selected, #list-children tbody tr.selected:hover {
+	background-color: blue;
+	cursor: pointer;
+}
