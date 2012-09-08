@@ -90,43 +90,45 @@
                           <table>
                             <tr>
                               <td><label for="name">Name</label></td>
-                              <td><input id="name" name="name" type="text"/></td>
+                              <td><input id="name" class="validateSomething" name="name" type="text"/></td>
                               <td class="invalidMessage">Bitte geben Sie Ihren Familiennamen an</td>
                             </tr>
                             <tr>
                               <td><label for="vorname">Vorname</label></td>
-                              <td><input id="vorname" name="vorname" type="text"/></td>
+                              <td><input id="vorname" class="validateSomething" name="vorname" type="text"/></td>
                               <td class="invalidMessage">Bitte geben Sie Ihren Vornamen an</td>
                             </tr>
                             <tr>
                               <td><label for="strasse">Strasse Nr</label></td>
-                              <td><input id="strasse" name="strasse" type="text"/></td>
+                              <td><input id="strasse" class="validateSomething" name="strasse" type="text"/></td>
                               <td class="invalidMessage">Bitte geben Sie Ihre Adresse an</td>
                             </tr>
                             <tr>
                               <td><label for="ort">Plz Ort</label></td>
-                              <td><input id="ort" name="ort" type="text"/></td>
+                              <td><input id="ort" class="validateSomething" name="ort" type="text"/></td>
                               <td class="invalidMessage">Bitte geben Sie Ihren Wohnort an</td>
                             </tr>
                             <tr>
                               <td><label for="telefon">Telefon</label></td>
-                              <td><input id="telefon" name="telefon" type="text"/></td>
+                              <td><input id="telefon" class="validateSomething" name="telefon" type="text"/></td>
                               <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre Telefonnummer an</td>
                             </tr>
                             <tr>
                               <td><label for="email">E-Mail</label></td>
-                              <td><input id="email" name="email" type="text"/></td>
+                              <td><input id="email" class="validateEmail" name="email" type="text"/></td>
                               <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre E-Mail-Adresse an</td>
                             </tr>
                           </table>
                         </fieldset>
                         <fieldset>
                           <legend>Gewünschte Uhrzeit</legend>
+                          <p>Ich wünsche den Besuch des Santichlauses am 6. Dezember 2012 um:</p>
                           <table>
                             <tr>
                               <td><label>Uhrzeit</label></td>
                               <td>
-                                <select>
+                                <select class="validateTime">
+				  <option></option>
                                   <option>16:30</option>
                                   <option>17:00</option>
                                   <option>17:30</option>
@@ -240,6 +242,26 @@
 	  });
 	  return ret;
 	}
+	function validate(regexp, element) {
+		if ($(element).val().match(regexp)) {
+			$(element).parent().parent().find(".invalidMessage").css("visibility", "hidden");
+		}
+		else {
+			$(element).parent().parent().find(".invalidMessage").css("visibility", "visible");
+		}
+	}
+	function validateSomething(event) {
+		validate(/^.../, event.target);
+	}
+	function validateEmail(event) {
+		validate(/^.+@..+\...+/, event.target);
+	}
+	function validateTime(event) {
+	  return validate(/1[0-9]:[03]0/, event.target);
+	}
+	$(".validateSomething").blur(validateSomething);
+	$(".validateEmail").blur(validateEmail);
+	$(".validateTime").change(validateTime);
 	$("#add").click(function(e) {
 	  $('.editable').css('visibility', 'visible');
 	});
@@ -250,17 +272,17 @@
 	  else
 	    $('tbody tr:last !.editable').remove();
 	});
-	$('#ok').click(function(e) {
-	  $('#list-children tbody:last-child').after([
-	    '<tr class="lastInserted"><td class="field">',
-	    $('#name').val(),
-	    '</td><td class="field">',
-	    $('#alter').val(),
-	    '</td><td class="area" style="white-space: pre;">',
-	    $('#loben').val(),
-	    '</td><td class="area" style="white-space: pre;">',
-	    $('#tadeln').val(),
-	    '</td><td></td></tr>'
+	$('.okbutton').click(function(e) {
+	  $('#list-children tbody').append([
+	    '<tr class="lastInserted"><td class="childname">',
+	    $('#kindname').val(),
+	    '</td><td class="childage">',
+	    $('#kindalter').val(),
+	    '</td><td class="childpos">',
+	    $('#zuloben').val(),
+	    '</td><td class="childneg">',
+	    $('#zutadeln').val(),
+	    '</td></tr>'
 	  ].join(''));
 	  $('.lastInserted')
 	  .click(function(e) {
@@ -275,42 +297,16 @@
 	  $('.editable').css('visibility', 'hidden');
 	  $('.editable input, .editable textarea').val('');
 	});
-	$('#cancel').click(function(e) {
+	$('.cancelbutton').click(function(e) {
 	  $('.editable').css('visibility', 'hidden');
 	  $('.editable input, .editable textarea').val('');
 	});
 	$('#send').click(function(e) {
 	  alert($.param(tableContentsToJson()));
 	})
-	function insertTestContent(name, alter, loben, tadeln) {
-	  $('#list-children tbody:last-child').after([
-	    '<tr class="lastInserted"><td class="childname">',
-	    name,
-	    '</td><td class="childage">',
-	    alter,
-	    '</td><td class="childpos">',
-	    loben,
-	    '</td><td class="childneg">',
-	    tadeln,
-	    '</td><td></td></tr>'
-	  ].join(''));
-	  $('.lastInserted')
-	  .click(function(e) {
-	    if ($(this).hasClass('selected')) {
-	      $('#list-children tr.selected').removeClass('selected');
-	    } else {
-	      $('#list-children tr.selected').removeClass('selected');
-	      $(this).addClass('selected');
-	    }
-	  })
-	  .removeClass('lastInserted');
-	  $('.editable').css('visibility', 'hidden');
-	  $('.editable input, .editable textarea').val('');
-	}
-	insertTestContent("Fritz", 7, "bla", "bla");
-	insertTestContent("Franz", 6, "bla", "bla");
       });
       // -->
     </script>
   </body>
 </html>
+<!-- vim:sw=2: -->
