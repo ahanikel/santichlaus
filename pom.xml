@@ -53,9 +53,9 @@
                                     <goal>install</goal>
                                 </goals>
                                 <configuration>
-                                    <slingUrl>http://localhost:8080/system/console</slingUrl>
+                                    <slingUrl>http://opensolaris:9090/system/console</slingUrl>
                                     <user>admin</user>
-                                    <password>admin</password>
+                                    <password>${slingpwd}</password>
                                 </configuration>
                             </execution>
                         </executions>

@@ -1,13 +1,6 @@
 <%@page import="java.util.Date" %><%
-%><%@page import="ch.comebackgloebb.website.Utils"%><%
 %><%@page contentType="text/html" pageEncoding="UTF-8" session="true"%><%
-%><%
-    if (request.getMethod().equals("POST")) {
-        Utils.sendRegistrationMail("Hello Axel!");
-%><jsp:forward page="<%= request.getPathInfo()%>"/><%
-} else {
-%>
-<!DOCTYPE HTML>
+%><!DOCTYPE HTML>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -291,4 +284,3 @@
         </div>
     </body>
 </html>
-<% }%>
