@@ -1,0 +1,67 @@
+html {
+    margin: 0;
+    padding: 0;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 11pt;
+    text-align: justify;
+}
+
+#buttons {
+    height: 50px;
+    vertical-align: middle;
+}
+
+#buttons > button:last-child {
+    float: right;
+}
+
+#intro h1 {
+    padding-bottom: 3ex;
+}
+
+.invalidMessage {
+	color: red;
+} 
+
+table tr {
+	vertical-align: top;
+}
+
+tbody, .node {
+	border: 0px;
+}
+
+#layout-children td {
+	padding-right: 20px;
+}
+
+input {
+	width: 400px;
+}
+
+.childpos, .childneg {
+	visibility: hidden;
+	display: none;
+}
+
+.childname {
+	width: 70%;
+}
+
+.childage {
+	width: 30%;
+}
+
+.editable {
+	visibility: hidden;
+}
+
+#list-children tbody tr:hover {
+	background-color: yellow;
+	cursor: pointer;
+}
+
+#list-children tbody tr.selected, #list-children tbody tr.selected:hover {
+	background-color: blue;
+	cursor: pointer;
+}

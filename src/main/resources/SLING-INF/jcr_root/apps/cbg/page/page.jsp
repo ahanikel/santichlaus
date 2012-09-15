@@ -6,8 +6,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Santichlaus-Anmeldung <%= new Date().getYear() + 1900%></title>
         <link href="http://comebackgloebb.ch/content/modules/system/defaults.css" media="all" rel="stylesheet" type="text/css">
-        <link type="text/css" rel="stylesheet" media="all" href="cbg/garland.css">
-        <link rel="stylesheet" type="text/css" href="cbg/santi.css">
+        <link type="text/css" rel="stylesheet" media="all" href="santichlaus/garland.css">
+        <link rel="stylesheet" type="text/css" href="santichlaus/santi.css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
     </head>
@@ -140,26 +140,65 @@
                                             </div>
                                             <form method="post">
                                                 <div id="form" class="page">
-                                                    <address>
-                                                        <label for="name">Name</label><input type="text" id="name" name="name">
-                                                        <label for="vorname">Vorname</label><input type="text" id="vorname" name="vorname">
-                                                        <label for="adresse">Strasse Nr</label><input type="text" id="adresse" name="adresse">
-                                                        <label for="ort">PLZ Ort</label><input type="text" id="ort" name="ort">
-                                                        <label for="telefon">Telefon</label><input type="tel" id="telefon" name="telefon">
-                                                        <label for="email">E-Mail</label><input type="email" id="email" name="email">
-                                                        <label for="zeit">Zeit</label>
-                                                        <select id="zeit" name="zeit">
-                                                            <option>17:00</option>
-                                                            <option>17:30</option>
-                                                            <option>18:00</option>
-                                                            <option>18:30</option>
-                                                            <option>19:00</option>
-                                                            <option>19:30</option>
-                                                            <option>20:00</option>
-                                                            <option>20:30</option>
-                                                        </select>
-                                                    </address>
-                                                    <script>
+                        <fieldset>
+                          <legend>Adresse</legend>
+                          <table>
+                            <tr>
+                              <td><label for="name">Name</label></td>
+                              <td><input id="name" class="validateSomething" name="name" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihren Familiennamen an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="vorname">Vorname</label></td>
+                              <td><input id="vorname" class="validateSomething" name="vorname" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihren Vornamen an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="strasse">Strasse Nr</label></td>
+                              <td><input id="strasse" class="validateSomething" name="strasse" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihre Adresse an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="ort">Plz Ort</label></td>
+                              <td><input id="ort" class="validateSomething" name="ort" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihren Wohnort an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="telefon">Telefon</label></td>
+                              <td><input id="telefon" class="validateSomething" name="telefon" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre Telefonnummer an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="email">E-Mail</label></td>
+                              <td><input id="email" class="validateEmail" name="email" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre E-Mail-Adresse an</td>
+                            </tr>
+                          </table>
+                        </fieldset>
+                        <fieldset>
+                          <legend>Gewünschte Uhrzeit</legend>
+                          <p>Ich wünsche den Besuch des Santichlauses am 6. Dezember 2012 um:</p>
+                          <table>
+                            <tr>
+                              <td><label>Uhrzeit</label></td>
+                              <td>
+                                <select class="validateTime">
+				  <option></option>
+                                  <option>16:30</option>
+                                  <option>17:00</option>
+                                  <option>17:30</option>
+                                  <option>18:00</option>
+                                  <option>18:30</option>
+                                  <option>19:00</option>
+                                  <option>19:30</option>
+                                  <option>20:00</option>
+                                </select>
+                              </td>
+                              <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
+                            </tr>
+                          </table>
+                        </fieldset>
+                                                   <script>
                                                         var address = {
                                                             name : {
                                                                 required: true,
@@ -236,36 +275,70 @@
                                                     <div id="tableframe">
                                                         <div id="tabledata"></div>
                                                         <div id="details">
-                                                            <table>
-                                                                <tr><td><label for="kindname">Name des Kindes</label></td><td><input type="text" id="kindname" name="kindname"></td></tr>
-                                                                <tr><td><label for="alter">Alter</label></td><td><input type="text" id="alter" name="alter"></li></td></tr>
-                                                                <tr><td><label for="loben">Zu loben</label></td><td><textarea id="loben" name="loben"></textarea></li></td></tr>
-                                                                <tr><td><label for="tadeln">Zu tadeln</label></td><td><textarea id="tadeln" name="tadeln"></textarea></li></td></tr>
-                                                            </table>
+                        <fieldset>
+                          <legend>Angaben zum Kind / zu den Kindern</legend>
+                          <table id="layout-children">
+                            <tr>
+                              <td>
+                                <img id="add" src="./Santichlaus%202012%20-%20Anmeldung_files/images/list-add.png" alt="Kind hinzufügen"/>
+                                <img id="del" src="./Santichlaus%202012%20-%20Anmeldung_files/images/list-remove.png" alt="Kind löschen"/>
+                              </td>
+                              <td>
+                                <button class="helpbutton" value="help">Hilfe zur Anmeldung</button>
+                                <button class="submitbutton" value="submit">Anmeldung abschicken</button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <table id="list-children">
+                                  <thead>
+                                    <tr>
+                                      <td class="childname">Name</td>
+                                      <td class="childage">Alter</td>
+                                      <td class="childpos">Zu loben</td>
+                                      <td class="childneg">Zu tadeln</td>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                  </tbody>
+                                </table>
+                              </td>
+                              <td>
+                                <table id="details-children" class="editable">
+				  <tr>
+				    <td><button id="ok" class="okbutton">OK</button></td>
+				    <td><button id="cancel" class="cancelbutton">Abbrechen</button></td>
+				  </tr>
+                                  <tr>
+                                    <td><label for="kindname">Name des Kindes</label></td>
+                                    <td><input id="kindname" name="kindname"/></td>
+                                  </tr>
+                                  <tr>
+                                    <td><label for="kindalter">Alter des Kindes</label></td>
+                                    <td><input id="kindalter" name="kindalter"/></td>
+                                  </tr>
+                                  <tr>
+                                    <td><label for="zuloben">Zu loben</label></td>
+                                    <td></td>
+                                  </tr>
+                                  <tr>
+                                    <td colspan="2"><textarea id="zuloben" cols="120" rows="20"></textarea></td>
+                                  </tr>
+                                  <tr>
+                                    <td><label for="zutadeln">Zu tadeln</label></td>
+                                    <td></td>
+                                  </tr>
+                                  <tr>
+                                    <td colspan="2"><textarea id="zutadeln" cols="120" rows="20"></textarea></td>
+                                    <td></td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        </fieldset>
                                                         </div>
                                                     </div>
-                                                    <script>
-                                                        // Create a new YUI instance and populate it with the required modules.
-                                                        YUI().use('datatable', function (Y) {
-                                                            // DataTable is available and ready for use. Add implementation
-                                                            // code here.
-                                                            // Creates a Columnset with 3 Columns. "cost" is not rendered.
-                                                            var cols = ["id","name","price"];
-
-                                                            // Columns must match data parameter names
-                                                            var data = [
-                                                                {id:"ga-3475", name:"gadget", price:"$6.99", cost:"$5.99"},
-                                                                {id:"sp-9980", name:"sprocket", price:"$3.75", cost:"$3.25"},
-                                                                {id:"wi-0650", name:"widget", price:"$4.25", cost:"$3.75"}
-                                                            ];
-
-                                                            // Creates a DataTable with 3 columns and 3 rows
-                                                            var table = new Y.DataTable.Base({
-                                                                columnset: cols,
-                                                                recordset: data
-                                                            }).render("#tabledata");
-                                                        });
-                                                    </script>
                                                 </div>
                                             </form>
                                         </div>
