@@ -1,18 +1,8 @@
-<%@page import="ch.comebackgloebb.website.santichlaus.Utils"%><%
-%><%@page import="org.apache.sling.api.resource.*"%><%
+<%@page import="ch.comebackgloebb.website.santichlaus.MailService"%><%
 %><%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling/1.0"%><%
-%><%@page contentType="text/html" pageEncoding="UTF-8" session="true"%><%
+%><%@page contentType="text/html" pageEncoding="UTF-8" session="false"%><%
 %><sling:defineObjects/><%
-
-    String pw = "";
-    Resource res = resourceResolver.getResource("/etc/mailconfig");
-
-    if (res != null) {
-        ValueMap props = res.adaptTo(ValueMap.class);
-        pw = props.get("password", "");
-    }
-
-    Utils.sendRegistrationMail("Hello Axel!", pw);
-
-    response.sendRedirect(request.getPathInfo());
+  MailService mailService = sling.getService(MailService.class);
+  mailService.sendRegistrationMail("Hello Axel!");
+  response.sendRedirect(request.getPathInfo());
 %>
