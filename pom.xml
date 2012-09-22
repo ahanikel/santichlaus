@@ -21,6 +21,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.scr.annotations</artifactId>
       <version>1.6.0</version>
@@ -107,7 +113,7 @@
                   <goal>install</goal>
                 </goals>
                 <configuration>
-                  <slingUrl>http://opensolaris:9090/system/console</slingUrl>
+                  <slingUrl>http://opensolaris:443/system/console</slingUrl>
                   <user>admin</user>
                   <password>${slingpwd}</password>
                 </configuration>
