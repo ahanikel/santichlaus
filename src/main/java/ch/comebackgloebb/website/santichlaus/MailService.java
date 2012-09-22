@@ -31,7 +31,7 @@ public class MailService {
   public static final String SMTPHOST = "mail.comebackgloebb.ch";
 
   @Reference
-  public ResourceResolverFactory resFactory;
+  private ResourceResolverFactory resFactory;
 
   public void sendRegistrationMail(String message) throws Exception {
     postMail(RECIPIENTS, SUBJECT, message, FROM);

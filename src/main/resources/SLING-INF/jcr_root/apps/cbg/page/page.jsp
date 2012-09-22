@@ -39,8 +39,8 @@
                   <div id="node-393" class="node">
                     <div class="content clear-block">
                       <div id="buttons" class="twobuttons">
-                        <button id="prev"> &lt;--- </button>
-                        <button id="next"> ---&gt; </button>
+                        <button type="button" id="prev"> &lt;--- </button>
+                        <button type="button" id="next"> ---&gt; </button>
                       </div>
                       <div id="intro" class="page">
                         <h1>
@@ -132,7 +132,7 @@
                             <tr>
                               <td><label>Uhrzeit</label></td>
                               <td>
-                                <select class="validateTime">
+                                <select id="zeit" class="validateTime">
                                   <option></option>
                                   <option>16:30</option>
                                   <option>17:00</option>
@@ -151,8 +151,8 @@
                       </div>
                       <div id="table" class="page">
                         <div class="twobuttons">
-                          <button id="help" class="helpbutton">Hilfe zur Anmeldung</button>
-                          <button id="send" class="submitbutton">Anmeldung abschicken</button>
+                          <button type="button" id="help" class="helpbutton">Hilfe zur Anmeldung</button>
+                          <button type="button" id="send" class="submitbutton">Anmeldung abschicken</button>
                         </div>
                         <div id="tableframe">
                           <div id="tabledata"></div>
@@ -162,8 +162,8 @@
                               <table id="layout-children">
                                 <tr>
                                   <td>
-                                    <button id="add"><img src="santichlaus/list-add.png" alt="Kind hinzufügen"/></button>
-                                    <button id="del"><img src="santichlaus/list-remove.png" alt="Kind löschen"/></button>
+                                    <button type="button" id="add"><img src="santichlaus/list-add.png" alt="Kind hinzufügen"/></button>
+                                    <button type="button" id="del"><img src="santichlaus/list-remove.png" alt="Kind löschen"/></button>
                                   </td>
                                   <td>
                                   </td>
@@ -186,8 +186,8 @@
                                   <td>
                                     <table id="details-children" class="editable">
                                       <tr>
-                                        <td><button id="ok" class="okbutton">OK</button></td>
-                                        <td><button id="cancel" class="cancelbutton">Abbrechen</button></td>
+                                        <td><button type="button" id="ok" class="okbutton">OK</button></td>
+                                        <td><button type="button" id="cancel" class="cancelbutton">Abbrechen</button></td>
                                       </tr>
                                       <tr>
                                         <td><label for="kindname">Name des Kindes</label></td>
@@ -285,18 +285,24 @@
           switchTo.prev();
         });
 
-        function tableContentsToJson() {
-          function makePair(key, value) {
-            return ['"', key, '": "', value, '"'].join();
-          }
+        function getChildren() {
           var ret = [];
-          $('#list-children tbody tr').each(function(row) {
+          $('#list-children tbody tr').each(function() {
             var tmp = {};
-            $(row).children('td').each(function(field) {
-              tmp[$(field).attr('class')] = $(field).val();
+            $(this).children('td').each(function() {
+              tmp[$(this).attr('class')] = $(this).text();
             });
             ret.push(tmp);
           });
+          return ret;
+        }
+
+        function getInput() {
+          var ret = {};
+          $('#form input, #form select').each(function() {
+            ret[$(this).attr('id')] = $(this).val();
+          });
+          ret['children'] = getChildren();
           return ret;
         }
 
@@ -371,7 +377,9 @@
         });
 
         $('#send').click(function(e) {
-          $('#dialog').text(tableContentsToJson());
+          $.post('#', getInput(), function(ret) {
+            $('#dialog').text(ret);
+          });
         })
       });
     </script>
