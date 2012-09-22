@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+<!DOCTYPE html>
+<html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="shortcut icon" href="http://comebackgloebb.ch/content/misc/favicon.ico" type="image/x-icon"/>
@@ -153,7 +153,7 @@
                               </td>
                               <td>
                                 <button class="helpbutton" value="help">Hilfe zur Anmeldung</button>
-                                <button class="submitbutton" value="submit">Anmeldung abschicken</button>
+                                <button id="send" class="submitbutton" value="submit">Anmeldung abschicken</button>
                               </td>
                             </tr>
                             <tr>
@@ -205,6 +205,7 @@
                             </tr>
                           </table>
                         </fieldset>
+                      <div id="dialog"></div>
                       <!--</form>-->
                     </div>
                     <div class="clear-block">
@@ -221,91 +222,144 @@
     </div>
     <!-- /layout -->
     <script type="text/javascript">
-      //<!--
-      $(document).ready(function() {
-	function tableContentsToJson() {
-	  function makePair(key, value) {
-	    return ['"', key, '": "', value, '"'].join();
-	  }
-	  var ret = [];
-	  var columnIds = [];
-	  $('.editable td > input [id], .editable td > textarea [id]').each(function(el) {
-	    columnIds.push(el.attr('id').text());
-	  });
-	  $('#list-children tbody tr').not('.editable').each(function(row) {
-	    var tmp = {};
-	    var contents = row('td input, td textarea');
-	    for (var i = 0; i < columnIds.length; ++i) {
-	      tmp[columnIds[i]] = contents[i].text();
-	    }
-	    ret.push(tmp);
-	  });
-	  return ret;
-	}
-	function validate(regexp, element) {
-		if ($(element).val().match(regexp)) {
-			$(element).parent().parent().find(".invalidMessage").css("visibility", "hidden");
-		}
-		else {
-			$(element).parent().parent().find(".invalidMessage").css("visibility", "visible");
-		}
-	}
-	function validateSomething(event) {
-		validate(/^.../, event.target);
-	}
-	function validateEmail(event) {
-		validate(/^.+@..+\...+/, event.target);
-	}
-	function validateTime(event) {
-	  return validate(/1[0-9]:[03]0/, event.target);
-	}
-	$(".validateSomething").blur(validateSomething);
-	$(".validateEmail").blur(validateEmail);
-	$(".validateTime").change(validateTime);
-	$("#add").click(function(e) {
-	  $('.editable').css('visibility', 'visible');
-	});
-	$('#del').click(function(e) {
-	  var sel = $('tbody tr.selected');
-	  if (sel.length > 0)
-	    sel.remove();
-	  else
-	    $('tbody tr:last !.editable').remove();
-	});
-	$('.okbutton').click(function(e) {
-	  $('#list-children tbody').append([
-	    '<tr class="lastInserted"><td class="childname">',
-	    $('#kindname').val(),
-	    '</td><td class="childage">',
-	    $('#kindalter').val(),
-	    '</td><td class="childpos">',
-	    $('#zuloben').val(),
-	    '</td><td class="childneg">',
-	    $('#zutadeln').val(),
-	    '</td></tr>'
-	  ].join(''));
-	  $('.lastInserted')
-	  .click(function(e) {
-	    if ($(this).hasClass('selected')) {
-	      $('#list-children tr.selected').removeClass('selected');
-	    } else {
-	      $('#list-children tr.selected').removeClass('selected');
-	      $(this).addClass('selected');
-	    }
-	  })
-	  .removeClass('lastInserted');
-	  $('.editable').css('visibility', 'hidden');
-	  $('.editable input, .editable textarea').val('');
-	});
-	$('.cancelbutton').click(function(e) {
-	  $('.editable').css('visibility', 'hidden');
-	  $('.editable input, .editable textarea').val('');
-	});
-	$('#send').click(function(e) {
-	  alert($.param(tableContentsToJson()));
-	})
+     $(document).ready(function(){
+
+        var switchTo = {
+          currentPage : 0,
+          pages : [
+            function() {
+              switchTo.currentPage = 0;
+              $('#prev').hide();
+              $('#next').show();
+              $('div.page').hide();
+              $('div.page#intro').show('slow');
+            },
+            function() {
+              switchTo.currentPage = 1;
+              $('#prev').show();
+              $('#next').show();
+              $('div.page').hide();
+              $('div.page#form').show('slow');
+            },
+            function() {
+              switchTo.currentPage = 2;
+              $('#prev').show();
+              $('#next').hide();
+              $('div.page').hide();
+              $('div.page#table').show('slow');
+            }
+          ],
+          pageNo : function(no) {
+            switchTo.pages[no]();
+          },
+          prev : function() {
+            switchTo.pages[(--switchTo.currentPage + switchTo.pages.length) % switchTo.pages.length]();
+          },
+          next : function() {
+            switchTo.pages[++switchTo.currentPage % switchTo.pages.length]();
+          }
+        };
+
+        switchTo.pageNo(0);
+
+        $("#next").click(function(event){
+          event.preventDefault();
+          switchTo.next();
+        });
+        $("#prev").click(function(event){
+          event.preventDefault();
+          switchTo.prev();
+        });
+
+        function tableContentsToJson() {
+          function makePair(key, value) {
+            return ['"', key, '": "', value, '"'].join();
+          }
+          var ret = [];
+          $('#list-children tbody tr').each(function(row) {
+            var tmp = [];
+            $(row).children('td').each(function(field) {
+              tmp.push(makePair($(field).attr('class').text(), $(field).text()));
+            });
+            ret.push("{ " + tmp.join(",") + " }");
+          });
+          return "[ " + ret.join(",") + " ]";
+        }
+
+        function validate(regexp, element) {
+          if ($(element).val().match(regexp)) {
+            $(element).parent().parent().find(".invalidMessage").css("visibility", "hidden");
+          }
+          else {
+            $(element).parent().parent().find(".invalidMessage").css("visibility", "visible");
+          }
+        }
+
+        function validateSomething(event) {
+          validate(/^.../, event.target);
+        }
+
+        function validateEmail(event) {
+          validate(/^.+@..+\...+/, event.target);
+        }
+
+        function validateTime(event) {
+          return validate(/1[0-9]:[03]0/, event.target);
+        }
+
+        $(".validateSomething").blur(validateSomething);
+
+        $(".validateEmail").blur(validateEmail);
+
+        $(".validateTime").change(validateTime);
+
+        $("#add").click(function(e) {
+          $('.editable').css('visibility', 'visible');
+        });
+
+        $('#del').click(function(e) {
+          var sel = $('tbody tr.selected');
+          if (sel.length > 0)
+            sel.remove();
+          else
+            $('tbody tr:last !.editable').remove();
+        });
+
+        $('.okbutton').click(function(e) {
+          $('#list-children tbody').append([
+            '<tr class="lastInserted"><td class="childname">',
+            $('#kindname').val(),
+            '</td><td class="childage">',
+            $('#kindalter').val(),
+            '</td><td class="childpos">',
+            $('#zuloben').val(),
+            '</td><td class="childneg">',
+            $('#zutadeln').val(),
+            '</td></tr>'
+          ].join(''));
+          $('.lastInserted')
+          .click(function(e) {
+            if ($(this).hasClass('selected')) {
+              $('#list-children tr.selected').removeClass('selected');
+            } else {
+              $('#list-children tr.selected').removeClass('selected');
+              $(this).addClass('selected');
+            }
+          })
+          .removeClass('lastInserted');
+          $('.editable').css('visibility', 'hidden');
+          $('.editable input, .editable textarea').val('');
+        });
+
+        $('.cancelbutton').click(function(e) {
+          $('.editable').css('visibility', 'hidden');
+          $('.editable input, .editable textarea').val('');
+        });
+
+        $('#send').click(function(e) {
+          $('#dialog').text(tableContentsToJson());
+        })
       });
-      // -->
     </script>
   </body>
 </html>

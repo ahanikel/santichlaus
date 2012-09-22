@@ -38,7 +38,7 @@
                 <div class="clear-block">
                   <div id="node-393" class="node">
                     <div class="content clear-block">
-                      <div id="buttons">
+                      <div id="buttons" class="twobuttons">
                         <button id="prev"> &lt;--- </button>
                         <button id="next"> ---&gt; </button>
                       </div>
@@ -89,144 +89,141 @@
                         <p><strong>Wir freuen uns schon jetzt auf eine fröhliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen!</strong></p>
                         <p><b><i>Ihr Come Back Glöbb</i></b></p>
                       </div>
-                      <form method="post">
-                        <div id="form" class="page">
-                          <fieldset>
-                            <legend>Adresse</legend>
-                            <table>
-                              <tr>
-                                <td><label for="name">Name</label></td>
-                                <td><input id="name" class="validateSomething" name="name" type="text"/></td>
-                                <td class="invalidMessage">Bitte geben Sie Ihren Familiennamen an</td>
-                              </tr>
-                              <tr>
-                                <td><label for="vorname">Vorname</label></td>
-                                <td><input id="vorname" class="validateSomething" name="vorname" type="text"/></td>
-                                <td class="invalidMessage">Bitte geben Sie Ihren Vornamen an</td>
-                              </tr>
-                              <tr>
-                                <td><label for="strasse">Strasse Nr</label></td>
-                                <td><input id="strasse" class="validateSomething" name="strasse" type="text"/></td>
-                                <td class="invalidMessage">Bitte geben Sie Ihre Adresse an</td>
-                              </tr>
-                              <tr>
-                                <td><label for="ort">Plz Ort</label></td>
-                                <td><input id="ort" class="validateSomething" name="ort" type="text"/></td>
-                                <td class="invalidMessage">Bitte geben Sie Ihren Wohnort an</td>
-                              </tr>
-                              <tr>
-                                <td><label for="telefon">Telefon</label></td>
-                                <td><input id="telefon" class="validateSomething" name="telefon" type="text"/></td>
-                                <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre Telefonnummer an</td>
-                              </tr>
-                              <tr>
-                                <td><label for="email">E-Mail</label></td>
-                                <td><input id="email" class="validateEmail" name="email" type="text"/></td>
-                                <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre E-Mail-Adresse an</td>
-                              </tr>
-                            </table>
-                          </fieldset>
-                          <fieldset>
-                            <legend>Gewünschte Uhrzeit</legend>
-                            <p>Ich wünsche den Besuch des Santichlauses am 6. Dezember 2012 um:</p>
-                            <table>
-                              <tr>
-                                <td><label>Uhrzeit</label></td>
-                                <td>
-                                  <select class="validateTime">
-                                    <option></option>
-                                    <option>16:30</option>
-                                    <option>17:00</option>
-                                    <option>17:30</option>
-                                    <option>18:00</option>
-                                    <option>18:30</option>
-                                    <option>19:00</option>
-                                    <option>19:30</option>
-                                    <option>20:00</option>
-                                  </select>
-                                </td>
-                                <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
-                              </tr>
-                            </table>
-                          </fieldset>
+                      <div id="form" class="page">
+                        <fieldset>
+                          <legend>Adresse</legend>
+                          <table>
+                            <tr>
+                              <td><label for="name">Name</label></td>
+                              <td><input id="name" class="validateSomething" name="name" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihren Familiennamen an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="vorname">Vorname</label></td>
+                              <td><input id="vorname" class="validateSomething" name="vorname" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihren Vornamen an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="strasse">Strasse Nr</label></td>
+                              <td><input id="strasse" class="validateSomething" name="strasse" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihre Adresse an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="ort">Plz Ort</label></td>
+                              <td><input id="ort" class="validateSomething" name="ort" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie Ihren Wohnort an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="telefon">Telefon</label></td>
+                              <td><input id="telefon" class="validateSomething" name="telefon" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre Telefonnummer an</td>
+                            </tr>
+                            <tr>
+                              <td><label for="email">E-Mail</label></td>
+                              <td><input id="email" class="validateEmail" name="email" type="text"/></td>
+                              <td class="invalidMessage">Bitte geben Sie für Rückfragen Ihre E-Mail-Adresse an</td>
+                            </tr>
+                          </table>
+                        </fieldset>
+                        <fieldset>
+                          <legend>Gewünschte Uhrzeit</legend>
+                          <p>Ich wünsche den Besuch des Santichlauses am 6. Dezember 2012 um:</p>
+                          <table>
+                            <tr>
+                              <td><label>Uhrzeit</label></td>
+                              <td>
+                                <select class="validateTime">
+                                  <option></option>
+                                  <option>16:30</option>
+                                  <option>17:00</option>
+                                  <option>17:30</option>
+                                  <option>18:00</option>
+                                  <option>18:30</option>
+                                  <option>19:00</option>
+                                  <option>19:30</option>
+                                  <option>20:00</option>
+                                </select>
+                              </td>
+                              <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
+                            </tr>
+                          </table>
+                        </fieldset>
+                      </div>
+                      <div id="table" class="page">
+                        <div class="twobuttons">
+                          <button id="help" class="helpbutton">Hilfe zur Anmeldung</button>
+                          <button id="send" class="submitbutton">Anmeldung abschicken</button>
                         </div>
-                        <div id="table" class="page">
-                          <div>
-                            <button id="help">Hilfe zur Anmeldung</button>
-                            <button id="send">Anmeldung abschicken</button>
-                          </div>
-                          <div id="tableframe">
-                            <div id="tabledata"></div>
-                            <div id="details">
-                              <fieldset>
-                                <legend>Angaben zum Kind / zu den Kindern</legend>
-                                <table id="layout-children">
-                                  <tr>
-                                    <td>
-                                      <img id="add" src="santichlaus/list-add.png" alt="Kind hinzufügen"/>
-                                      <img id="del" src="santichlaus/list-remove.png" alt="Kind löschen"/>
-                                    </td>
-                                    <td>
-                                      <button class="helpbutton" value="help">Hilfe zur Anmeldung</button>
-                                      <button class="submitbutton" value="submit">Anmeldung abschicken</button>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <table id="list-children">
-                                        <thead>
-                                          <tr>
-                                            <td class="childname">Name</td>
-                                            <td class="childage">Alter</td>
-                                            <td class="childpos">Zu loben</td>
-                                            <td class="childneg">Zu tadeln</td>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                      </table>
-                                    </td>
-                                    <td>
-                                      <table id="details-children" class="editable">
+                        <div id="tableframe">
+                          <div id="tabledata"></div>
+                          <div id="details">
+                            <fieldset>
+                              <legend>Angaben zum Kind / zu den Kindern</legend>
+                              <table id="layout-children">
+                                <tr>
+                                  <td>
+                                    <button id="add"><img src="santichlaus/list-add.png" alt="Kind hinzufügen"/></button>
+                                    <button id="del"><img src="santichlaus/list-remove.png" alt="Kind löschen"/></button>
+                                  </td>
+                                  <td>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <table id="list-children">
+                                      <thead>
                                         <tr>
-                                          <td><button id="ok" class="okbutton">OK</button></td>
-                                          <td><button id="cancel" class="cancelbutton">Abbrechen</button></td>
+                                          <td class="childname">Name</td>
+                                          <td class="childage">Alter</td>
+                                          <td class="childpos">Zu loben</td>
+                                          <td class="childneg">Zu tadeln</td>
                                         </tr>
-                                        <tr>
-                                          <td><label for="kindname">Name des Kindes</label></td>
-                                          <td><input id="kindname" name="kindname"/></td>
-                                        </tr>
-                                        <tr>
-                                          <td><label for="kindalter">Alter des Kindes</label></td>
-                                          <td><input id="kindalter" name="kindalter"/></td>
-                                        </tr>
-                                        <tr>
-                                          <td><label for="zuloben">Zu loben</label></td>
-                                          <td></td>
-                                        </tr>
-                                        <tr>
-                                          <td colspan="2"><textarea id="zuloben" cols="120" rows="20"></textarea></td>
-                                        </tr>
-                                        <tr>
-                                          <td><label for="zutadeln">Zu tadeln</label></td>
-                                          <td></td>
-                                        </tr>
-                                        <tr>
-                                          <td colspan="2"><textarea id="zutadeln" cols="120" rows="20"></textarea></td>
-                                          <td></td>
-                                        </tr>
-                                      </table>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </fieldset>
-                            </div>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                  <td>
+                                    <table id="details-children" class="editable">
+                                      <tr>
+                                        <td><button id="ok" class="okbutton">OK</button></td>
+                                        <td><button id="cancel" class="cancelbutton">Abbrechen</button></td>
+                                      </tr>
+                                      <tr>
+                                        <td><label for="kindname">Name des Kindes</label></td>
+                                        <td><input id="kindname" name="kindname"/></td>
+                                      </tr>
+                                      <tr>
+                                        <td><label for="kindalter">Alter des Kindes</label></td>
+                                        <td><input id="kindalter" name="kindalter"/></td>
+                                      </tr>
+                                      <tr>
+                                        <td><label for="zuloben">Zu loben</label></td>
+                                        <td></td>
+                                      </tr>
+                                      <tr>
+                                        <td colspan="2"><textarea id="zuloben" cols="120" rows="15"></textarea></td>
+                                      </tr>
+                                      <tr>
+                                        <td><label for="zutadeln">Zu tadeln</label></td>
+                                        <td></td>
+                                      </tr>
+                                      <tr>
+                                        <td colspan="2"><textarea id="zutadeln" cols="120" rows="15"></textarea></td>
+                                        <td></td>
+                                      </tr>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </table>
+                            </fieldset>
                           </div>
                         </div>
-                      </form>
+                      </div>
                     </div>
                     <div class="clear-block">
                       <div class="meta">
+                        <div id="dialog"/>
                       </div>
                     </div>
                   </div>
@@ -293,16 +290,11 @@
             return ['"', key, '": "', value, '"'].join();
           }
           var ret = [];
-          var columnIds = [];
-          $('.editable td > input [id], .editable td > textarea [id]').each(function(el) {
-            columnIds.push(el.attr('id').text());
-          });
-          $('#list-children tbody tr').not('.editable').each(function(row) {
+          $('#list-children tbody tr').each(function(row) {
             var tmp = {};
-            var contents = row('td input, td textarea');
-            for (var i = 0; i < columnIds.length; ++i) {
-              tmp[columnIds[i]] = contents[i].text();
-            }
+            $(row).children('td').each(function(field) {
+              tmp[$(field).attr('class')] = $(field).val();
+            });
             ret.push(tmp);
           });
           return ret;
@@ -379,7 +371,7 @@
         });
 
         $('#send').click(function(e) {
-          alert($.param(tableContentsToJson()));
+          $('#dialog').text(tableContentsToJson());
         })
       });
     </script>

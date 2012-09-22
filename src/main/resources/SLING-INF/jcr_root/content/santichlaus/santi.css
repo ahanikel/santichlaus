@@ -6,12 +6,12 @@ html {
     text-align: justify;
 }
 
-#buttons {
+.twobuttons {
     height: 50px;
     vertical-align: middle;
 }
 
-#buttons > button:last-child {
+.twobuttons > button:last-child {
     float: right;
 }
 
