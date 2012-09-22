@@ -21,7 +21,12 @@ html {
 
 .invalidMessage {
 	color: red;
+  visibility: hidden;
 } 
+
+.show {
+  visibility: visible;
+}
 
 table tr {
 	vertical-align: top;

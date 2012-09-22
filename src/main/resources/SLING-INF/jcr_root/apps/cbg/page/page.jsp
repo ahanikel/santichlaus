@@ -1,5 +1,8 @@
 <%@page import="java.util.Date" %><%
+%><%@page import="ch.comebackgloebb.website.santichlaus.SantichlausService"%><%
+%><%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling/1.0"%><%
 %><%@page contentType="text/html" pageEncoding="UTF-8" session="true"%><%
+%><sling:defineObjects/><%
 %><!DOCTYPE HTML>
 <html>
   <head>
@@ -54,14 +57,14 @@
                           zu bereiten. Wir sind ganz nette, aufgestellte Chläuse.</p>
                         <p><strong>In diesem Jahr sind wir unterwegs am:</strong></p>
                         <p><strong>6. Dezember von 16.30 bis 20.00 Uhr</strong></p>
-                        <p><strong>Anmeldeschluss ist der 1. Dezember 2011</strong></p>
+                        <p><strong>Anmeldeschluss ist der 1. Dezember <%= new Date().getYear() + 1900%></strong></p>
                         <p>Möchten Sie unseren Santichlaus buchen? Ja?</p>
                         <p>Dann beachten Sie bitte folgende «Spielregeln»:</p>
                         <ol>
                           <li>
                             Für Ihre <strong>definitive Anmeldung</strong> füllen Sie bitte unser Web-Anmeldeformular aus. Sie gelangen
                             dort hin, indem Sie oben "weiter zur Anmeldung" anklicken. Falls Sie sich lieber auf
-                            herkömmlichem Weg anmelden möchten, gibt es auch ein <a href="/santichlaus/resource/Formular_Anmeldung_2011.pdf" target="_blank">Anmeldeformular im PDF-Format</a>, das Sie
+                            herkömmlichem Weg anmelden möchten, gibt es auch ein <a href="santichlaus/Formular_Anmeldung_2012.pdf" target="_blank">Anmeldeformular im PDF-Format</a>, das Sie
                             herunterladen, ausdrucken und per Post schicken können.
                           </li>
                           <li>
@@ -82,7 +85,7 @@
                             aber in den letzten Jahren zu Unsicherheiten bezüglich der Höhe des Betrags
                             gekommen ist, erlauben wir es uns, Ihnen eine Empfehlung abzugeben.
                             Mit ca. 20 Franken pro Kind sind unsere
-                            Auslagen gedeckt, und wir können weiterhin wichtige <a href="/http://comebackgloebb.ch/content/node/6" target="_top"><strong>Projekte</strong></a> – ganz im Sinne von St.
+                            Auslagen gedeckt, und wir können weiterhin wichtige <a href="http://comebackgloebb.ch/content/node/6" target="_top"><strong>Projekte</strong></a> – ganz im Sinne von St.
                             Nikolaus – grosszügig unterstützen.
                           </li>
                         </ol>
@@ -133,16 +136,10 @@
                               <td><label>Uhrzeit</label></td>
                               <td>
                                 <select id="zeit" class="validateTime">
-                                  <option></option>
-                                  <option>16:30</option>
-                                  <option>17:00</option>
-                                  <option>17:30</option>
-                                  <option>18:00</option>
-                                  <option>18:30</option>
-                                  <option>19:00</option>
-                                  <option>19:30</option>
-                                  <option>20:00</option>
-                                </select>
+                                  <option></option><%
+                                  SantichlausService svc = sling.getService(SantichlausService.class);
+                                  out.print(svc.getTimesMarkup());
+%>                                </select>
                               </td>
                               <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
                             </tr>
@@ -152,7 +149,7 @@
                       <div id="table" class="page">
                         <div class="twobuttons">
                           <button type="button" id="help" class="helpbutton">Hilfe zur Anmeldung</button>
-                          <button type="button" id="send" class="submitbutton">Anmeldung abschicken</button>
+                          <button type="button" id="send" class="submitbutton" disabled="disabled">Anmeldung abschicken</button>
                         </div>
                         <div id="tableframe">
                           <div id="tabledata"></div>
@@ -238,6 +235,8 @@
     <script>
       $(document).ready(function(){
 
+        $('.invalidMessage').addClass('show');
+
         var switchTo = {
           currentPage : 0,
           pages : [
@@ -308,11 +307,15 @@
 
         function validate(regexp, element) {
           if ($(element).val().match(regexp)) {
-            $(element).parent().parent().find(".invalidMessage").css("visibility", "hidden");
+            $(element).parent().parent().find(".invalidMessage").removeClass("show");
           }
           else {
-            $(element).parent().parent().find(".invalidMessage").css("visibility", "visible");
+            $(element).parent().parent().find(".invalidMessage").addClass("show");
           }
+          if ($('.page .invalidMessage.show').length)
+            $('#send').attr("disabled", "disabled");
+          else
+            $('#send').removeAttr("disabled");
         }
 
         function validateSomething(event) {
@@ -324,7 +327,7 @@
         }
 
         function validateTime(event) {
-          return validate(/1[0-9]:[03]0/, event.target);
+          return validate(/1[0-9][:.][03]0/, event.target);
         }
 
         $(".validateSomething").blur(validateSomething);
