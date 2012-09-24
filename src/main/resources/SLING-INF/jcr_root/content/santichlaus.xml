@@ -1,8 +1,13 @@
 <node>
-    <primaryNodeType>cbg:page</primaryNodeType>
+    <primaryNodeType>nt:unstructured</primaryNodeType>
     <property>
         <name>title</name>
         <type>String</type>
         <value>Santichlaus-Anmeldung</value>
+    </property>
+    <property>
+        <name>sling:resourceType</name>
+        <type>String</type>
+        <value>cbg/components/page</value>
     </property>
 </node>
