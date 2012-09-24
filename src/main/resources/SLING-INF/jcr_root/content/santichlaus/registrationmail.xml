@@ -1,0 +1,8 @@
+<node>
+    <primaryNodeType>nt:unstructured</primaryNodeType>
+    <property>
+        <name>sling:resourceType</name>
+        <type>String</type>
+        <value>cbg/components/registrationmail</value>
+    </property>
+</node>
