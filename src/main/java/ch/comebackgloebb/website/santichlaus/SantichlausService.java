@@ -1,7 +1,9 @@
 package ch.comebackgloebb.website.santichlaus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -45,20 +47,18 @@ public class SantichlausService {
   @Reference
   private MailService mailService;
 
-  public String getTimesMarkup() {
-    StringBuilder ret = new StringBuilder();
+  public List<String> getAvailableTimes() {
+    List<String> ret = new ArrayList<String>();
     try {
       ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
       Resource times = resAdmin.getResource("/etc/times");
       for (Iterator<Resource> it = times.listChildren(); it.hasNext();) {
-        ret.append("<option>");
-        ret.append(it.next().getName());
-        ret.append("</option>");
+        ret.add(it.next().getName());
       }
     } catch (LoginException ex) {
       java.util.logging.Logger.getLogger(SantichlausService.class.getName()).log(Level.SEVERE, null, ex);
     }
-    return ret.toString();
+    return ret;
   }
 
   public boolean register(HttpServletRequest request) {

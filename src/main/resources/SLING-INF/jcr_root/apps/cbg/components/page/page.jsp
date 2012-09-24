@@ -138,10 +138,19 @@
                                 <select id="zeit" class="validateTime">
                                   <option></option><%
                                   SantichlausService svc = sling.getService(SantichlausService.class);
-                                  out.print(svc.getTimesMarkup());
+                                  List<String> times = svc.getAvailableTimes();
+                                  for (String time : times) {
+                                    out.print("<option>");
+                                    out.print(time.replace("\\.",":"));
+                                    out.print("</option>");
+                                  }
 %>                                </select>
                               </td>
                               <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
+                            </tr>
+                            <tr>
+                              <td><label for="remarks">Bemerkungen (z.B. «Wo findet der Santichlaus den Sack.»)</label></td>
+                              <td><textarea id="remarks"></textarea></td>
                             </tr>
                           </table>
                         </fieldset>
@@ -298,7 +307,7 @@
 
         function getInput() {
           var ret = {};
-          $('#form input, #form select').each(function() {
+          $('#form input, #form select, #remarks').each(function() {
             ret[$(this).attr('id')] = $(this).val();
           });
           ret['children'] = getChildren();
