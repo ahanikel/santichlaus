@@ -10,9 +10,17 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.mail.MessagingException;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.ActivityViolationException;
+import javax.jcr.version.VersionException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -38,7 +46,7 @@ public class SantichlausService {
   }
 
   private static final Logger log = LoggerFactory.getLogger(SantichlausService.class);
-  private static final String[] FIELDS = {"name", "vorname", "strasse", "ort", "telefon", "email", "zeit"};
+  private static final String[] FIELDS = {"name", "vorname", "strasse", "ort", "telefon", "email", "zeit", "remarks"};
   private static final String[] CHILDFIELDS = {"childname", "childage", "childpos", "childneg"};
 
   @Reference
@@ -63,27 +71,46 @@ public class SantichlausService {
     return ret;
   }
 
-  public boolean register(HttpServletRequest request) {
+  public boolean register(HttpServletRequest request) throws Exception {
 
     SlingHttpServletRequest req = (SlingHttpServletRequest) request;
     ResourceResolver resAdmin = null;
 
     try {
       resAdmin = resFactory.getAdministrativeResourceResolver(null);
-      String registrationMessage = resAdmin.getResource("/apps/cbg/components/registrationmail.txt").toString();
-      String confirmationMessage = resAdmin.getResource("/apps/cbg/components/confirmationmail.txt").toString();
+      Resource registrationResource = resAdmin.getResource("/apps/cbg/components/registrationmail");
+      String registrationMessageHeader = ((Node) registrationResource.adaptTo(Node.class)).getProperty("header").getString();
+      String registrationMessageBody = ((Node) registrationResource.adaptTo(Node.class)).getProperty("body").getString();
+
+      StringBuilder sbRegistration = new StringBuilder();
+      List<String> fields = new ArrayList<String>();
+      for (String field : FIELDS) {
+        fields.add(req.getParameter(field));
+      }
+      sbRegistration.append(String.format(registrationMessageHeader, (Object[]) fields.toArray(new String[0])));
+
+      final Map<String, Map<String, String>> children = parseChildrenFromRequestParams(req);
+      for (Entry<String, Map<String, String>> child : children.entrySet()) {
+        List<String> childfields = new ArrayList<String>();
+        for (String field : FIELDS) {
+          childfields.add(child.getValue().get(field));
+        }
+        sbRegistration.append(String.format(registrationMessageBody, (Object[]) childfields.toArray(new String[0])));
+      }
+
+      Resource confirmationResource = resAdmin.getResource("/apps/cbg/components/confirmationmail");
+      String confirmationMessageBody = ((Node) confirmationResource.adaptTo(Node.class)).getProperty("text").getString();
+      String confirmationMessage = String.format(confirmationMessageBody, req.getParameter("zeit"));
+
       registerInternal(req);
+
       if (mailService != null) {
-        mailService.sendRegistrationMail(registrationMessage);
+        mailService.sendRegistrationMail(sbRegistration.toString());
         mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage);
       }
       else {
         throw new IllegalStateException("Mail service not present");
       }
-    }
-    catch (Exception ex) {
-      log.error(ex.getMessage());
-      return false;
     }
     finally {
       if (resAdmin != null) {
@@ -100,88 +127,127 @@ public class SantichlausService {
 
     Node registrations;
     ResourceResolver resAdmin = null;
-    try {
-      resAdmin = resFactory.getAdministrativeResourceResolver(null);
-      log.info(resAdmin.toString());
-      Resource res = resAdmin.getResource("/etc/registrations");
-      log.info(res.toString());
-      registrations = res.adaptTo(Node.class);
-      log.info(registrations.toString());
-    }
-    catch (LoginException ex) {
-      log.error(ex.getMessage());
-      throw new RegistrationException(ex);
-    }
-    finally {
-      if (resAdmin != null) {
-        resAdmin.close();
-        resAdmin = null;
-      }
-    }
-
     Node registration = null;
-    try {
-      registration = registrations.addNode(key);
-      log.info(registration.toString());
-    }
-    catch (ItemExistsException ex) {
-      log.info("Updating existing registration for " + key);
-      updateRegistration(req);
-      return;
-    }
-    catch (Exception ex) {
-      log.error(ex.getMessage());
-      throw new RegistrationException(ex);
-    }
 
     try {
-      registration.getSession().save();
-    }
-    catch (Exception ex) {
-      log.error(ex.getMessage());
-      throw new RegistrationException(ex);
-    }
-
-    final Map<String, Map<String, String>> children = parseChildrenFromRequestParams(req);
-
-    for (Entry<String, Map<String, String>> child : children.entrySet()) {
-
-      log.info("child: " + child.toString());
-      Node childNode = null;
+      try {
+        resAdmin = resFactory.getAdministrativeResourceResolver(null);
+        log.info(resAdmin.toString());
+        Resource res = resAdmin.getResource("/etc/registrations");
+        log.info(res.toString());
+        registrations = res.adaptTo(Node.class);
+        log.info(registrations.toString());
+      }
+      catch (LoginException ex) {
+        log.error(ex.getMessage());
+        throw new RegistrationException(ex);
+      }
+  
+      try {
+        registration = registrations.getNode(key);
+      }
+      catch (Exception ex) {
+        try {
+          registration = registrations.addNode(key);
+          registration.addMixin("mix:versionable");
+          log.info(registration.toString());
+        }
+        catch (Exception e) {
+          log.error(e.getMessage());
+          throw new RegistrationException(e);
+        }
+    
+        try {
+          registration.getSession().save();
+        }
+        catch (Exception e) {
+          log.error(e.getMessage());
+          throw new RegistrationException(e);
+        }
+      }
 
       try {
-        childNode = registration.addNode("child" + child.getKey());
-        log.info(childNode.toString());
+        registration.checkout();
       }
       catch (Exception ex) {
         log.error(ex.getMessage());
         throw new RegistrationException(ex);
       }
 
-      Map<String, String> fields = child.getValue();
-      log.info("fields: " + fields.toString());
-
-      for (String fieldName : CHILDFIELDS) {
+      for (String field : FIELDS) {
         try {
-          childNode.setProperty(fieldName, fields.get(fieldName));
+          registration.setProperty(field, req.getRequestParameter(field).getString());
+        }
+        catch (Exception e) {
+          log.error(e.getMessage());
+          throw new RegistrationException(e);
+        }
+      }
+
+      final Map<String, Map<String, String>> children = parseChildrenFromRequestParams(req);
+  
+      for (Entry<String, Map<String, String>> child : children.entrySet()) {
+  
+        log.info("child: " + child.toString());
+        Node childNode = null;
+        String childKey = "child" + child.getKey();
+  
+        // delete the child node if it exists
+        try {
+          childNode = registration.getNode(childKey);
+          childNode.remove();
+        }
+        catch (Exception e) {
+          // ignore
+        }
+
+        try {
+          childNode = registration.addNode(childKey);
+          log.info(childNode.toString());
+        }
+        catch (Exception ex) {
+          log.error(ex.getMessage());
+          throw new RegistrationException(ex);
+        }
+  
+        Map<String, String> fields = child.getValue();
+        log.info("fields: " + fields.toString());
+  
+        for (String fieldName : CHILDFIELDS) {
+          try {
+            childNode.setProperty(fieldName, fields.get(fieldName));
+          }
+          catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new RegistrationException(ex);
+          }
+        }
+  
+        try {
+          childNode.getSession().save();
         }
         catch (Exception ex) {
           log.error(ex.getMessage());
           throw new RegistrationException(ex);
         }
       }
-
-      try {
-        childNode.getSession().save();
+    }
+    finally {
+      if (registration != null) {
+        try {
+          registration.checkin();
+          registration.getSession().save();
+        }
+        catch (Exception ex) {
+          log.error(ex.getMessage());
+        }
       }
-      catch (Exception ex) {
-        log.error(ex.getMessage());
-        throw new RegistrationException(ex);
+      if (resAdmin != null) {
+        log.info("Closing session");
+        resAdmin.close();
+        resAdmin = null;
       }
     }
-  }
-
-  private void updateRegistration(SlingHttpServletRequest req) {
   }
 
   private Map<String, Map<String, String>> parseChildrenFromRequestParams(SlingHttpServletRequest req) {

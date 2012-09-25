@@ -226,10 +226,41 @@
                           </div>
                         </div>
                       </div>
+                      <div id="success" class="page">
+                        <h1>Vielen Dank für Ihre Anmeldung!</h1>
+                        <p>
+                          Dr Santichlaus und dr Schmutzli werden um <span id="timeconfirm"></span> Uhr bei Ihrer Familie vorbeikommen.
+                        </p>
+                        <p>
+					                Bitte haben Sie Verständnis: der Santichlaus kann Verspätung haben, wenn sein Esel plötzlich bockt, bzw. wenn es (hoffentlich nur ganz kleine)
+					                Verzögerungen gibt. Falls der gewünschte Zeitpunkt für den Chlaus-Besuch nicht mehr frei ist, werden wir Sie rechtzeitig
+					                per Mail informieren. Bitte informieren auch Sie uns rechtzeitig über Änderungen Ihrerseits. Bitte vergessen Sie nicht,
+					                die Gaben für die Kinder am angegebenen Ort rechtzeitig zu hinterlegen.
+                        </p>
+                        <p>
+                          Wir freuen uns jetzt schon auf eine fröhliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen...
+                          Für weitere Fragen stehen wir gerne zur Verfügung: <a href="mailto:santichlaus@comebackgloebb.ch">santichlaus@comebackgloebb.ch</a>.
+                        </p>
+                        <p>
+                          Das OK Santichlaus-Aktion
+                        </p>
+                        <p>
+                          Come Back Glöbb Allschwil
+                        </p>
+                      </div>
+                      <div id="error" class="page">
+                        <h1>Fehler: Anmeldung wurde nicht registriert!</h1>
+                        <p>
+                          Beim Registrieren Ihrer Anmeldung ist leider ein Fehler aufgetreten. Bitte versuchen Sie es nochmals,
+					                oder melden Sie sich direkt via E-Mail an <a href="mailto:santichlaus@comebackgloebb.ch">santichlaus@comebackgloebb.ch</a>.
+                          Vielen Dank und sorry für die Umstände!
+                        </p>
+					              <p><b>Das OK Santichlaus-Aktion</b></p>
+                        <p><b>Come Back Glöbb Allschwil</b></p>
+                      </div>
                     </div>
                     <div class="clear-block">
                       <div class="meta">
-                        <div id="dialog"/>
                       </div>
                     </div>
                   </div>
@@ -279,6 +310,18 @@
           },
           next : function() {
             switchTo.pages[++switchTo.currentPage % switchTo.pages.length]();
+          },
+          success : function() {
+            $('#prev').hide();
+            $('#next').hide();
+            $('div.page').hide();
+            $('div.page#success').show('slow');
+          },
+          error : function() {
+            $('#prev').hide();
+            $('#next').hide();
+            $('div.page').hide();
+            $('div.page#error').show('slow');
           }
         };
 
@@ -395,9 +438,11 @@
         });
 
         $('#send').click(function(e) {
+          $('#send').attr("disabled", "disabled");
           $.post('#', getInput(), function(ret) {
-            $('#dialog').text(ret);
-          });
+          })
+          .success(function() { $('#timeconfirm').text($('zeit').val()); switchTo.success(); })
+          .error(function() { switchTo.error(); });
         })
       });
     </script>
