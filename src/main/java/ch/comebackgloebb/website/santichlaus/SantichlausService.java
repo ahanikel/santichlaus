@@ -48,6 +48,7 @@ public class SantichlausService {
   private MailService mailService;
 
   public List<String> getAvailableTimes() {
+
     List<String> ret = new ArrayList<String>();
     try {
       ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
@@ -55,8 +56,9 @@ public class SantichlausService {
       for (Iterator<Resource> it = times.listChildren(); it.hasNext();) {
         ret.add(it.next().getName());
       }
-    } catch (LoginException ex) {
-      java.util.logging.Logger.getLogger(SantichlausService.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    catch (LoginException ex) {
+      log.error(ex.getMessage());
     }
     return ret;
   }
@@ -64,28 +66,29 @@ public class SantichlausService {
   public boolean register(HttpServletRequest request) {
 
     SlingHttpServletRequest req = (SlingHttpServletRequest) request;
-    String registrationMessage = "registration message";
-    String confirmationMessage = "confirmation message";
+    ResourceResolver resAdmin = null;
 
     try {
+      resAdmin = resFactory.getAdministrativeResourceResolver(null);
+      String registrationMessage = resAdmin.getResource("/apps/cbg/components/registrationmail.txt").toString();
+      String confirmationMessage = resAdmin.getResource("/apps/cbg/components/confirmationmail.txt").toString();
       registerInternal(req);
       if (mailService != null) {
-        try {
-          mailService.sendRegistrationMail(registrationMessage);
-        }
-        catch (Exception ex) {
-          log.error("Sending registration mail failed: " + ex.getMessage());
-        }
-        try {
-          mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage);
-        }
-        catch (MessagingException ex) {
-          log.error("Sending confirmation mail failed: " + ex.getMessage());
-        }
+        mailService.sendRegistrationMail(registrationMessage);
+        mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage);
+      }
+      else {
+        throw new IllegalStateException("Mail service not present");
       }
     }
-    catch (RegistrationException ex) {
+    catch (Exception ex) {
+      log.error(ex.getMessage());
       return false;
+    }
+    finally {
+      if (resAdmin != null) {
+        resAdmin.close();
+      }
     }
     return true;
   }
@@ -96,34 +99,45 @@ public class SantichlausService {
     log.info("Got registration request for " + key);
 
     Node registrations;
+    ResourceResolver resAdmin = null;
     try {
-      ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
+      resAdmin = resFactory.getAdministrativeResourceResolver(null);
       log.info(resAdmin.toString());
       Resource res = resAdmin.getResource("/etc/registrations");
       log.info(res.toString());
       registrations = res.adaptTo(Node.class);
       log.info(registrations.toString());
-    } catch (LoginException ex) {
+    }
+    catch (LoginException ex) {
       log.error(ex.getMessage());
       throw new RegistrationException(ex);
+    }
+    finally {
+      if (resAdmin != null) {
+        resAdmin.close();
+        resAdmin = null;
+      }
     }
 
     Node registration = null;
     try {
       registration = registrations.addNode(key);
       log.info(registration.toString());
-    } catch (ItemExistsException ex) {
+    }
+    catch (ItemExistsException ex) {
       log.info("Updating existing registration for " + key);
       updateRegistration(req);
       return;
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       log.error(ex.getMessage());
       throw new RegistrationException(ex);
     }
 
     try {
       registration.getSession().save();
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       log.error(ex.getMessage());
       throw new RegistrationException(ex);
     }
@@ -138,7 +152,8 @@ public class SantichlausService {
       try {
         childNode = registration.addNode("child" + child.getKey());
         log.info(childNode.toString());
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         log.error(ex.getMessage());
         throw new RegistrationException(ex);
       }
@@ -149,7 +164,8 @@ public class SantichlausService {
       for (String fieldName : CHILDFIELDS) {
         try {
           childNode.setProperty(fieldName, fields.get(fieldName));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
           log.error(ex.getMessage());
           throw new RegistrationException(ex);
         }
@@ -157,7 +173,8 @@ public class SantichlausService {
 
       try {
         childNode.getSession().save();
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         log.error(ex.getMessage());
         throw new RegistrationException(ex);
       }

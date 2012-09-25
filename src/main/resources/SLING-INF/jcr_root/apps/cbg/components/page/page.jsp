@@ -141,7 +141,7 @@
                                   List<String> times = svc.getAvailableTimes();
                                   for (String time : times) {
                                     out.print("<option>");
-                                    out.print(time.replace("\\.",":"));
+                                    out.print(time.replace(".",":"));
                                     out.print("</option>");
                                   }
 %>                                </select>
@@ -149,8 +149,8 @@
                               <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
                             </tr>
                             <tr>
-                              <td><label for="remarks">Bemerkungen (z.B. «Wo findet der Santichlaus den Sack.»)</label></td>
-                              <td><textarea id="remarks"></textarea></td>
+                              <td><label for="remarks">Bemerkungen<br/>(z.B. «Wo findet der Santichlaus den Sack.»)</label></td>
+                              <td><textarea id="remarks" cols="30" rows="10"></textarea></td>
                             </tr>
                           </table>
                         </fieldset>
@@ -314,6 +314,13 @@
           return ret;
         }
 
+        function validateAll() {
+          if ($('.page .invalidMessage.show').length > 0 || $('#list-children tbody tr').length == 0)
+            $('#send').attr("disabled", "disabled");
+          else
+            $('#send').removeAttr("disabled");
+        }
+
         function validate(regexp, element) {
           if ($(element).val().match(regexp)) {
             $(element).parent().parent().find(".invalidMessage").removeClass("show");
@@ -321,10 +328,7 @@
           else {
             $(element).parent().parent().find(".invalidMessage").addClass("show");
           }
-          if ($('.page .invalidMessage.show').length)
-            $('#send').attr("disabled", "disabled");
-          else
-            $('#send').removeAttr("disabled");
+          validateAll();
         }
 
         function validateSomething(event) {
@@ -355,6 +359,7 @@
             sel.remove();
           else
             $('tbody tr:last !.editable').remove();
+          validateAll();
         });
 
         $('.okbutton').click(function(e) {
@@ -381,6 +386,7 @@
           .removeClass('lastInserted');
           $('.editable').css('visibility', 'hidden');
           $('.editable input, .editable textarea').val('');
+          validateAll();
         });
 
         $('.cancelbutton').click(function(e) {
