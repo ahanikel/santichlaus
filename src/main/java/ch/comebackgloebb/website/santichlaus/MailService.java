@@ -37,6 +37,10 @@ public class MailService {
     postMail(RECIPIENTS, SUBJECT, message, FROM);
   }
 
+  public void sendRegistrationMail(String subject, String message) throws Exception {
+    postMail(RECIPIENTS, subject, message, FROM);
+  }
+
   public void sendConfirmationMail(String recipient, String message) throws MessagingException {
     postMail(new String[]{recipient}, SUBJECT, message, FROM);
   }
@@ -47,6 +51,7 @@ public class MailService {
     props.put("mail.smtp.port", "587");
     props.put("mail.smtp.auth", "true");
     props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.mime.charset", "utf-8");
     Session session = Session.getDefaultInstance(props, new Authenticator() {
       @Override
       public PasswordAuthentication getPasswordAuthentication() {

@@ -354,6 +354,7 @@
             ret[$(this).attr('id')] = $(this).val();
           });
           ret['children'] = getChildren();
+          ret['_charset_'] = 'utf-8';
           return ret;
         }
 

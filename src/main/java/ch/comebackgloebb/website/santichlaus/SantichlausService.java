@@ -10,17 +10,9 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.ActivityViolationException;
-import javax.jcr.version.VersionException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -88,15 +80,17 @@ public class SantichlausService {
         fields.add(req.getParameter(field));
       }
       sbRegistration.append(String.format(registrationMessageHeader, (Object[]) fields.toArray(new String[0])));
+      sbRegistration.append("\n\n");
 
       final Map<String, Map<String, String>> children = parseChildrenFromRequestParams(req);
       for (Entry<String, Map<String, String>> child : children.entrySet()) {
         List<String> childfields = new ArrayList<String>();
-        for (String field : FIELDS) {
+        for (String field : CHILDFIELDS) {
           childfields.add(child.getValue().get(field));
         }
         sbRegistration.append(String.format(registrationMessageBody, (Object[]) childfields.toArray(new String[0])));
       }
+      String registrationMessage = sbRegistration.toString();
 
       Resource confirmationResource = resAdmin.getResource("/apps/cbg/components/confirmationmail");
       String confirmationMessageBody = ((Node) confirmationResource.adaptTo(Node.class)).getProperty("text").getString();
@@ -105,8 +99,10 @@ public class SantichlausService {
       registerInternal(req);
 
       if (mailService != null) {
-        mailService.sendRegistrationMail(sbRegistration.toString());
-        mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage);
+        String subject = "Santichlaus-Anmeldung " + req.getParameter("name");
+        log.info(registrationMessage);
+        mailService.sendRegistrationMail(subject, registrationMessage);
+        mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage + registrationMessage);
       }
       else {
         throw new IllegalStateException("Mail service not present");
@@ -130,6 +126,8 @@ public class SantichlausService {
     Node registration = null;
 
     try {
+
+      // get the registration root node
       try {
         resAdmin = resFactory.getAdministrativeResourceResolver(null);
         log.info(resAdmin.toString());
@@ -143,6 +141,8 @@ public class SantichlausService {
         throw new RegistrationException(ex);
       }
   
+      // see if there's already a registration with that key
+      // and create a new one if there isn't
       try {
         registration = registrations.getNode(key);
       }
@@ -166,6 +166,7 @@ public class SantichlausService {
         }
       }
 
+      // create a new version of the registration
       try {
         registration.checkout();
       }
@@ -174,6 +175,7 @@ public class SantichlausService {
         throw new RegistrationException(ex);
       }
 
+      // add the simple fields
       for (String field : FIELDS) {
         try {
           registration.setProperty(field, req.getRequestParameter(field).getString());
@@ -184,23 +186,27 @@ public class SantichlausService {
         }
       }
 
+      // delete existing child nodes
+      try {
+        for (NodeIterator it = registration.getNodes(); it.hasNext(); ) {
+          Node n = it.nextNode();
+          if (n.getName().startsWith("child")) {
+            n.remove();
+          }
+        }
+      }
+      catch (RepositoryException ex) {
+        // ignore
+      }
+
+      // add child(ren)
       final Map<String, Map<String, String>> children = parseChildrenFromRequestParams(req);
-  
       for (Entry<String, Map<String, String>> child : children.entrySet()) {
   
         log.info("child: " + child.toString());
         Node childNode = null;
         String childKey = "child" + child.getKey();
   
-        // delete the child node if it exists
-        try {
-          childNode = registration.getNode(childKey);
-          childNode.remove();
-        }
-        catch (Exception e) {
-          // ignore
-        }
-
         try {
           childNode = registration.addNode(childKey);
           log.info(childNode.toString());
@@ -222,21 +228,13 @@ public class SantichlausService {
             throw new RegistrationException(ex);
           }
         }
-  
-        try {
-          childNode.getSession().save();
-        }
-        catch (Exception ex) {
-          log.error(ex.getMessage());
-          throw new RegistrationException(ex);
-        }
       }
     }
     finally {
       if (registration != null) {
         try {
-          registration.checkin();
           registration.getSession().save();
+          registration.checkin();
         }
         catch (Exception ex) {
           log.error(ex.getMessage());
