@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <node>
     <primaryNodeType>nt:unstructured</primaryNodeType>
     <property>
@@ -14,7 +15,7 @@ PLZ / Ort:    %s
 Telefon:      %s
 E-Mail:       %s
 
-Wir wünschen den Besuch des Santichlauses am 6. Dezember 2012 um
+Wir w√ºnschen den Besuch des Santichlauses am 6. Dezember 2012 um
 
         %s
         

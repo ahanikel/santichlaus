@@ -51,7 +51,6 @@ public class MailService {
     props.put("mail.smtp.port", "587");
     props.put("mail.smtp.auth", "true");
     props.put("mail.smtp.starttls.enable", "true");
-    props.put("mail.mime.charset", "utf-8");
     Session session = Session.getDefaultInstance(props, new Authenticator() {
       @Override
       public PasswordAuthentication getPasswordAuthentication() {
@@ -69,7 +68,8 @@ public class MailService {
     msg.setRecipients(Message.RecipientType.TO, addressTo);
     msg.addHeader("X-Santichlaus-Mailing-Central", "Schwarzwald");
     msg.setSubject(subject);
-    msg.setContent(message, "text/plain");
+    msg.setContent(message, "text/plain; charset=utf-8");
+    msg.setHeader("Content-Transfer-Encoding", "8bit");
     Transport.send(msg);
   }
 

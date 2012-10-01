@@ -1,23 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <node>
     <primaryNodeType>nt:unstructured</primaryNodeType>
     <property>
         <name>text</name>
         <type>String</type>
         <value>
-					Vielen Dank für Ihre Anmeldung!
-          
-          Dr Santichlaus und dr Schmutzli werden um %s Uhr bei Ihrer Familie vorbeikommen.
+Vielen Dank f√ºr Ihre Anmeldung!
 
-					Bitte haben Sie Verständnis: der Santichlaus kann Verspätung haben, wenn sein Esel plötzlich bockt, bzw. wenn es (hoffentlich nur ganz kleine)
-					Verzögerungen gibt. Falls der gewünschte Zeitpunkt für den Chlaus-Besuch nicht mehr frei ist, werden wir Sie rechtzeitig
-					per Mail informieren. Bitte informieren auch Sie uns rechtzeitig über Änderungen Ihrerseits. Bitte vergessen Sie nicht,
-					die Gaben für die Kinder am angegebenen Ort rechtzeitig zu hinterlegen.
-          
-          Wir freuen uns jetzt schon auf eine fröhliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen...
-          Für weitere Fragen stehen wir gerne zur Verfügung: santichlaus@comebackgloebb.ch
-          
-          Das OK Santichlaus-Aktion
-          Come Back Glöbb Allschwil
-        </value>
+Dr Santichlaus und dr Schmutzli werden um %s Uhr bei Ihrer Familie vorbeikommen.
+
+Bitte haben Sie Verst√§ndnis: der Santichlaus kann Versp√§tung haben, wenn sein Esel pl√∂tzlich bockt, bzw. wenn es (hoffentlich nur ganz kleine)
+Verz√∂gerungen gibt. Falls der gew√ºnschte Zeitpunkt f√ºr den Chlaus-Besuch nicht mehr frei ist, werden wir Sie rechtzeitig
+per Mail informieren. Bitte informieren auch Sie uns rechtzeitig √ºber √Ñnderungen Ihrerseits. Bitte vergessen Sie nicht,
+die Gaben f√ºr die Kinder am angegebenen Ort rechtzeitig zu hinterlegen.
+
+Wir freuen uns jetzt schon auf eine fr√∂hliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen...
+F√ºr weitere Fragen stehen wir gerne zur Verf√ºgung: santichlaus@comebackgloebb.ch
+
+Das OK Santichlaus-Aktion
+Come Back Gl√∂bb Allschwil</value>
     </property>
 </node>
