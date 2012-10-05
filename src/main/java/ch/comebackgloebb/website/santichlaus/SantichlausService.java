@@ -100,7 +100,6 @@ public class SantichlausService {
 
       if (mailService != null) {
         String subject = "Santichlaus-Anmeldung " + req.getParameter("name");
-        log.info(registrationMessage);
         mailService.sendRegistrationMail(subject, registrationMessage);
         mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage + registrationMessage);
       }
