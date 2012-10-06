@@ -1,6 +1,9 @@
 package ch.comebackgloebb.website.santichlaus;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -9,6 +12,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -67,8 +71,14 @@ public class MailService {
     }
     msg.setRecipients(Message.RecipientType.TO, addressTo);
     msg.addHeader("X-Santichlaus-Mailing-Central", "Schwarzwald");
-    msg.setSubject(subject);
-    msg.setContent(message, "text/plain; charset=utf-8");
+    try {
+      msg.setSubject(MimeUtility.encodeText(subject, "utf-8", "Q"));
+    }
+    catch (UnsupportedEncodingException ex) {
+      log.warn("subject has not been encoded correctly: " + ex.getMessage());
+      msg.setSubject(subject);
+    }
+    msg.setContent(message.getBytes(Charset.forName("UTF-8")), "text/plain; charset=utf-8");
     msg.setHeader("Content-Transfer-Encoding", "8bit");
     Transport.send(msg);
   }

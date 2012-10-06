@@ -101,7 +101,7 @@ public class SantichlausService {
       if (mailService != null) {
         String subject = "Santichlaus-Anmeldung " + req.getParameter("name");
         mailService.sendRegistrationMail(subject, registrationMessage);
-        mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage + registrationMessage);
+        mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage + "\n\n\n" + registrationMessage);
       }
       else {
         throw new IllegalStateException("Mail service not present");

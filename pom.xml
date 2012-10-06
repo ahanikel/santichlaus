@@ -7,6 +7,9 @@
   <version>0.9-SNAPSHOT</version>
   <name>CBG-Santichlaus</name>
   <description>ch.comebackgloebb.website.santichlaus</description>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.osgi</groupId>
