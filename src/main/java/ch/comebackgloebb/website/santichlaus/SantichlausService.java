@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.felix.scr.annotations.Component;
@@ -56,11 +56,83 @@ public class SantichlausService {
       for (Iterator<Resource> it = times.listChildren(); it.hasNext();) {
         ret.add(it.next().getName());
       }
-    }
-    catch (LoginException ex) {
+    } catch (LoginException ex) {
       log.error(ex.getMessage());
     }
     return ret;
+  }
+
+  private static void appendProperty(StringBuilder sb, String name, String value) {
+    sb.append('"');
+    sb.append(name);
+    sb.append('"');
+    sb.append(':');
+    sb.append('"');
+    sb.append(value);
+    sb.append('"');
+    sb.append(',');
+  }
+
+  /**
+   * Find the registration with jcr:uuid == id and serialize it into a
+   * JSON string.
+   * @param id
+   * @return 
+   */
+  public String getRegistrationAsJson(String id) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{");
+    try {
+      ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
+      Resource registrations = resAdmin.getResource("/etc/registrations");
+      for (Iterator<Resource> it = registrations.listChildren(); it.hasNext();) {
+        Node res = it.next().adaptTo(Node.class);
+        if (res != null) {
+          Property uuid = res.getProperty("jcr:uuid");
+          if (uuid != null && uuid.getString().equals(id)) {
+            for (String field : FIELDS) {
+              try {
+                Property value = res.getProperty(field);
+                appendProperty(sb, field, value.getString());
+              }
+              catch(RepositoryException e) {
+                appendProperty(sb, field, "");
+              }
+            }
+            for (int i = 0; ; ++i) {
+              Node child = res.getNode("child" + i);
+              if (child == null)
+                break;
+              sb.append('"');
+              sb.append(child.getName());
+              sb.append('"');
+              sb.append(':');
+              sb.append('{');
+              for (String childfield : CHILDFIELDS) {
+                try {
+                Property value = child.getProperty(childfield);
+                appendProperty(sb, childfield, value.getString());
+                }
+                catch (RepositoryException e) {
+                  appendProperty(sb, childfield, "");
+                }
+              }
+              sb.deleteCharAt(sb.length() - 1); // delete trailing comma
+              sb.append('}');
+              sb.append(',');
+            }
+            sb.deleteCharAt(sb.length() - 1); // delete trailing comma
+            break;
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      // ignore
+    }
+    sb.append("}");
+    log.info(sb.toString());
+    return sb.toString();
   }
 
   public boolean register(HttpServletRequest request) throws Exception {
@@ -94,20 +166,19 @@ public class SantichlausService {
 
       Resource confirmationResource = resAdmin.getResource("/apps/cbg/components/confirmationmail");
       String confirmationMessageBody = ((Node) confirmationResource.adaptTo(Node.class)).getProperty("text").getString();
-      String confirmationMessage = String.format(confirmationMessageBody, req.getParameter("zeit"));
 
-      registerInternal(req);
+      String uuid = registerInternal(req);
+
+      String confirmationMessage = String.format(confirmationMessageBody, req.getParameter("zeit"), uuid);
 
       if (mailService != null) {
         String subject = "Santichlaus-Anmeldung " + req.getParameter("name");
         mailService.sendRegistrationMail(subject, registrationMessage);
         mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage + "\n\n\n" + registrationMessage);
-      }
-      else {
+      } else {
         throw new IllegalStateException("Mail service not present");
       }
-    }
-    finally {
+    } finally {
       if (resAdmin != null) {
         resAdmin.close();
       }
@@ -115,7 +186,7 @@ public class SantichlausService {
     return true;
   }
 
-  private void registerInternal(SlingHttpServletRequest req) throws RegistrationException {
+  private String registerInternal(SlingHttpServletRequest req) throws RegistrationException {
 
     String key = req.getRequestParameter("name") + "-" + req.getRequestParameter("email");
     log.info("Got registration request for " + key);
@@ -123,6 +194,7 @@ public class SantichlausService {
     Node registrations;
     ResourceResolver resAdmin = null;
     Node registration = null;
+    String uuid; // what we return: the jcr:uuid of the new registration node
 
     try {
 
@@ -134,32 +206,28 @@ public class SantichlausService {
         log.info(res.toString());
         registrations = res.adaptTo(Node.class);
         log.info(registrations.toString());
-      }
-      catch (LoginException ex) {
+      } catch (LoginException ex) {
         log.error(ex.getMessage());
         throw new RegistrationException(ex);
       }
-  
+
       // see if there's already a registration with that key
       // and create a new one if there isn't
       try {
         registration = registrations.getNode(key);
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         try {
           registration = registrations.addNode(key);
           registration.addMixin("mix:versionable");
           log.info(registration.toString());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           log.error(e.getMessage());
           throw new RegistrationException(e);
         }
-    
+
         try {
           registration.getSession().save();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           log.error(e.getMessage());
           throw new RegistrationException(e);
         }
@@ -168,8 +236,7 @@ public class SantichlausService {
       // create a new version of the registration
       try {
         registration.checkout();
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         log.error(ex.getMessage());
         throw new RegistrationException(ex);
       }
@@ -178,8 +245,7 @@ public class SantichlausService {
       for (String field : FIELDS) {
         try {
           registration.setProperty(field, req.getRequestParameter(field).getString());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           log.error(e.getMessage());
           throw new RegistrationException(e);
         }
@@ -187,46 +253,49 @@ public class SantichlausService {
 
       // delete existing child nodes
       try {
-        for (NodeIterator it = registration.getNodes(); it.hasNext(); ) {
+        for (NodeIterator it = registration.getNodes(); it.hasNext();) {
           Node n = it.nextNode();
           if (n.getName().startsWith("child")) {
             n.remove();
           }
         }
-      }
-      catch (RepositoryException ex) {
+      } catch (RepositoryException ex) {
         // ignore
       }
 
       // add child(ren)
       final Map<String, Map<String, String>> children = parseChildrenFromRequestParams(req);
       for (Entry<String, Map<String, String>> child : children.entrySet()) {
-  
+
         log.info("child: " + child.toString());
         Node childNode = null;
         String childKey = "child" + child.getKey();
-  
+
         try {
           childNode = registration.addNode(childKey);
           log.info(childNode.toString());
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           log.error(ex.getMessage());
           throw new RegistrationException(ex);
         }
-  
+
         Map<String, String> fields = child.getValue();
         log.info("fields: " + fields.toString());
-  
+
         for (String fieldName : CHILDFIELDS) {
           try {
             childNode.setProperty(fieldName, fields.get(fieldName));
-          }
-          catch (Exception ex) {
+          } catch (Exception ex) {
             log.error(ex.getMessage());
             throw new RegistrationException(ex);
           }
         }
+      }
+      try {
+        uuid = registration.getProperty("jcr:uuid").getString();
+      }
+      catch (Exception ex) {
+        throw new RegistrationException(ex);
       }
     }
     finally {
@@ -234,8 +303,7 @@ public class SantichlausService {
         try {
           registration.getSession().save();
           registration.checkin();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           log.error(ex.getMessage());
         }
       }
@@ -245,6 +313,7 @@ public class SantichlausService {
         resAdmin = null;
       }
     }
+    return uuid;
   }
 
   private Map<String, Map<String, String>> parseChildrenFromRequestParams(SlingHttpServletRequest req) {

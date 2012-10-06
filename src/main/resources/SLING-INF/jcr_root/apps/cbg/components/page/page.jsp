@@ -1,8 +1,9 @@
-<%@page import="java.util.Date, java.util.List" %><%
+<%@page import="java.util.Date, java.util.List, org.apache.sling.api.request.RequestParameter" %><%
 %><%@page import="ch.comebackgloebb.website.santichlaus.SantichlausService"%><%
 %><%@taglib prefix="sling" uri="http://sling.apache.org/taglibs/sling/1.0"%><%
 %><%@page contentType="text/html" pageEncoding="UTF-8" session="false"%><%
 %><sling:defineObjects/><%
+  SantichlausService svc = sling.getService(SantichlausService.class);
 %><!DOCTYPE HTML>
 <html>
   <head>
@@ -137,7 +138,6 @@
                               <td>
                                 <select id="zeit" class="validateTime">
                                   <option></option><%
-                                  SantichlausService svc = sling.getService(SantichlausService.class);
                                   List<String> times = svc.getAvailableTimes();
                                   for (String time : times) {
                                     out.print("<option>");
@@ -150,7 +150,7 @@
                             </tr>
                             <tr>
                               <td><label for="remarks">Bemerkungen<br/>(z.B. «Wo findet der Santichlaus den Sack.»)</label></td>
-                              <td><textarea id="remarks" cols="30" rows="10"></textarea></td>
+                              <td><textarea id="remarks" class="validateAnything" cols="30" rows="10"></textarea></td>
                             </tr>
                           </table>
                         </fieldset>
@@ -325,8 +325,6 @@
           }
         };
 
-        switchTo.pageNo(0);
-
         $("#next").click(function(event){
           event.preventDefault();
           switchTo.next();
@@ -346,6 +344,51 @@
             ret.push(tmp);
           });
           return ret;
+        }
+
+        function initInput() {
+          var json = eval(<%
+            RequestParameter idParam = sling.getRequest().getRequestParameter("id");
+            if (idParam != null) {
+              String id = idParam.getString();
+              if (id != null && !"".equals(id)) {
+                 out.print(svc.getRegistrationAsJson(id));
+              }
+              else {
+                out.print("\"\"");
+              }
+            }
+            else {
+              out.print("\"\"");
+            }
+          %>);
+          if (json) {
+            for (var key in json) {
+              if (key.indexOf("child") == 0) {
+                var child = json[key];
+                var html = [];
+                html.push('<tr class="lastInserted">');
+                for (var childkey in child) {
+                  html.push('<td class="');
+                  html.push(childkey);
+                  html.push('">');
+                  html.push(child[childkey]);
+                  html.push('</td>');
+                }
+                html.push('</tr>');
+                $('#list-children tbody').append(html.join(''));
+              }
+              else {
+                $('#' + key)
+                  .val(json[key])
+                  .parent().parent().find(".invalidMessage").removeClass("show");
+              }
+            }
+            switchTo.pageNo(1);
+          }
+          else {
+            switchTo.pageNo(0);
+          }
         }
 
         function getInput() {
@@ -392,6 +435,8 @@
         $(".validateEmail").blur(validateEmail);
 
         $(".validateTime").change(validateTime);
+
+        $(".validateAnything").blur(validateAll);
 
         $("#add").click(function(e) {
           $('.editable').css('visibility', 'visible');
@@ -445,6 +490,8 @@
           .success(function() { $('#timeconfirm').text($('zeit').val()); switchTo.success(); })
           .error(function() { switchTo.error(); });
         })
+
+        initInput();
       });
     </script>
   </body>
