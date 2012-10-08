@@ -57,8 +57,9 @@ input {
 	width: 30%;
 }
 
-.editable {
-	visibility: hidden;
+.editable:read-only input, .editable:read-only textarea, .editable:readonly label, button:disabled {
+    background-color: lightgrey;
+    color: lightgrey;
 }
 
 #list-children tbody tr:hover {

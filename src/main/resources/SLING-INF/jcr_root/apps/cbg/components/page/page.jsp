@@ -275,6 +275,8 @@
     <script>
       $(document).ready(function(){
 
+        $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+        $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
         $('.invalidMessage').addClass('show');
 
         var switchTo = {
@@ -439,7 +441,10 @@
         $(".validateAnything").blur(validateAll);
 
         $("#add").click(function(e) {
-          $('.editable').css('visibility', 'visible');
+          $('.editable input, .editable textarea').removeAttr('readonly').val('');
+          $('.cancelbutton, .okbutton').removeAttr('disabled');
+          $('#list-children tr.selected').removeClass('selected');
+          $('#details-children').removeAttr('modify');
         });
 
         $('#del').click(function(e) {
@@ -448,11 +453,30 @@
             sel.remove();
           else
             $('tbody tr:last !.editable').remove();
+          $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
+          $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+          $('#details-children').removeAttr('modify');
           validateAll();
         });
 
+        /**
+         * Edit the childRow-th child
+         */
+        function editChild(childIndex) {
+            var theRow = $('#list-children tbody tr').eq(childIndex);
+            $('#kindname').val(theRow.children('td.childname').text());
+            $('#kindalter').val(theRow.children('td.childage').text());
+            $('#zuloben').val(theRow.children('td.childpos').text());
+            $('#zutadeln').val(theRow.children('td.childneg').text());
+            $('#details-children').attr('modify', childIndex);
+            $('.cancelbutton, .okbutton').removeAttr('disabled');
+            $('.editable input, .editable textarea').removeAttr('readonly');
+        }
+
         $('.okbutton').click(function(e) {
-          $('#list-children tbody').append([
+          $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
+          var modify = $('#details-children').attr('modify');
+          var htmlCode = [
             '<tr class="lastInserted"><td class="childname">',
             $('#kindname').val(),
             '</td><td class="childage">',
@@ -462,7 +486,14 @@
             '</td><td class="childneg">',
             $('#zutadeln').val(),
             '</td></tr>'
-          ].join(''));
+          ].join('');
+
+          if (!isNaN(modify)) {
+              $('#list-children tbody tr').eq(modify).replaceWith(htmlCode);
+          } else {
+              $('#list-children tbody').append(htmlCode);
+          }
+
           $('.lastInserted')
           .click(function(e) {
             if ($(this).hasClass('selected')) {
@@ -470,17 +501,21 @@
             } else {
               $('#list-children tr.selected').removeClass('selected');
               $(this).addClass('selected');
+              var childIndex = $('#list-children tbody tr').index(e.currentTarget);
+              editChild(childIndex);
             }
           })
           .removeClass('lastInserted');
-          $('.editable').css('visibility', 'hidden');
-          $('.editable input, .editable textarea').val('');
+          $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+          $('#details-children').removeAttr('modify');
           validateAll();
         });
 
         $('.cancelbutton').click(function(e) {
-          $('.editable').css('visibility', 'hidden');
-          $('.editable input, .editable textarea').val('');
+          $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
+          $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+          $('#details-children').removeAttr('modify');
+          $('#list-children tr.selected').removeClass('selected');
         });
 
         $('#send').click(function(e) {
