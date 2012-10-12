@@ -6,6 +6,14 @@ html {
     text-align: justify;
 }
 
+#prev, #next {
+  font-size: xx-large;
+}
+
+#send {
+  font-size: x-large;
+}
+
 .twobuttons {
     height: 50px;
     vertical-align: middle;
@@ -57,7 +65,7 @@ input {
 	width: 30%;
 }
 
-.editable:read-only input, .editable:read-only textarea, .editable:readonly label, button:disabled {
+.editable.read-only input, .editable.read-only textarea, .editable.readonly label {
     background-color: lightgrey;
     color: lightgrey;
 }

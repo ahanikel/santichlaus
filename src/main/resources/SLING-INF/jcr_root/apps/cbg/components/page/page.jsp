@@ -43,8 +43,8 @@
                   <div id="node-393" class="node">
                     <div class="content clear-block">
                       <div id="buttons" class="twobuttons">
-                        <button type="button" id="prev"> &lt;--- </button>
-                        <button type="button" id="next"> ---&gt; </button>
+                        <button type="button" id="prev"> ← zurück </button>
+                        <button type="button" id="next"> ➝ weiter </button>
                       </div>
                       <div id="intro" class="page">
                         <h1>
@@ -157,7 +157,7 @@
                       </div>
                       <div id="table" class="page">
                         <div class="twobuttons">
-                          <button type="button" id="help" class="helpbutton">Hilfe zur Anmeldung</button>
+                          <!--button type="button" id="help" class="helpbutton">Hilfe zur Anmeldung</button-->
                           <button type="button" id="send" class="submitbutton" disabled="disabled">Anmeldung abschicken</button>
                         </div>
                         <div id="tableframe">
@@ -165,6 +165,20 @@
                           <div id="details">
                             <fieldset>
                               <legend>Angaben zum Kind / zu den Kindern</legend>
+                              <p>
+                                Klicken Sie auf "+", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Ok". Der
+                                Name und das Alter des Kindes erscheinen nun links unter den "+" und "-" Knöpfen. Auf dieselbe
+                                Art können Sie nun weitere Kinder erfassen.
+                              </p>
+                              <p>
+                                Um einen Eintrag zu bearbeiten, klicken Sie auf den entsprechenden Namen und nehmen dann rechts Ihre
+                                Änderungen vor. Klicken Sie anschliessend "Ok", um die Änderungen zu übernehmen, oder "Abbrechen", um
+                                Ihre Änderungen zu verwerfen.
+                              </p>
+                              <p>
+                                Wenn Sie einen Eintrag aus der Liste löschen möchten, wählen Sie ihn mit einem Klick aus (der Hintergrund
+                                ist nun blau) und klicken dann auf "-".
+                              </p>
                               <table id="layout-children">
                                 <tr>
                                   <td>
@@ -275,6 +289,7 @@
     <script>
       $(document).ready(function(){
 
+        $('.editable').addClass('readonly');
         $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
         $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
         $('.invalidMessage').addClass('show');
@@ -287,21 +302,21 @@
               $('#prev').hide();
               $('#next').show();
               $('div.page').hide();
-              $('div.page#intro').show('slow');
+              $('div.page#intro').show();
             },
             function() {
               switchTo.currentPage = 1;
               $('#prev').show();
               $('#next').show();
               $('div.page').hide();
-              $('div.page#form').show('slow');
+              $('div.page#form').show();
             },
             function() {
               switchTo.currentPage = 2;
               $('#prev').show();
               $('#next').hide();
               $('div.page').hide();
-              $('div.page#table').show('slow');
+              $('div.page#table').show();
             }
           ],
           pageNo : function(no) {
@@ -317,13 +332,13 @@
             $('#prev').hide();
             $('#next').hide();
             $('div.page').hide();
-            $('div.page#success').show('slow');
+            $('div.page#success').show();
           },
           error : function() {
-            $('#prev').hide();
+            $('#prev').show();
             $('#next').hide();
             $('div.page').hide();
-            $('div.page#error').show('slow');
+            $('div.page#error').show();
           }
         };
 
@@ -441,6 +456,7 @@
         $(".validateAnything").blur(validateAll);
 
         $("#add").click(function(e) {
+          $('.editable').removeClass('readonly');
           $('.editable input, .editable textarea').removeAttr('readonly').val('');
           $('.cancelbutton, .okbutton').removeAttr('disabled');
           $('#list-children tr.selected').removeClass('selected');
@@ -454,6 +470,7 @@
           else
             $('tbody tr:last !.editable').remove();
           $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
+          $('.editable').addClass('readonly');
           $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
           $('#details-children').removeAttr('modify');
           validateAll();
@@ -470,6 +487,7 @@
             $('#zutadeln').val(theRow.children('td.childneg').text());
             $('#details-children').attr('modify', childIndex);
             $('.cancelbutton, .okbutton').removeAttr('disabled');
+            $('.editable').removeClass('readonly');
             $('.editable input, .editable textarea').removeAttr('readonly');
         }
 
@@ -506,6 +524,7 @@
             }
           })
           .removeClass('lastInserted');
+          $('.editable').addClass('readonly');
           $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
           $('#details-children').removeAttr('modify');
           validateAll();
@@ -513,6 +532,7 @@
 
         $('.cancelbutton').click(function(e) {
           $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
+          $('.editable').addClass('readonly');
           $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
           $('#details-children').removeAttr('modify');
           $('#list-children tr.selected').removeClass('selected');
@@ -522,7 +542,7 @@
           $('#send').attr("disabled", "disabled");
           $.post('#', getInput(), function(ret) {
           })
-          .success(function() { $('#timeconfirm').text($('zeit').val()); switchTo.success(); })
+          .success(function() { $('#timeconfirm').text($('#zeit').val()); switchTo.success(); })
           .error(function() { switchTo.error(); });
         })
 

@@ -128,7 +128,7 @@
                   <goal>install</goal>
                 </goals>
                 <configuration>
-                  <slingUrl>http://opensolaris:443/system/console</slingUrl>
+                  <slingUrl>http://santichlaus.comebackgloebb.ch/system/console</slingUrl>
                   <user>admin</user>
                   <password>${slingpwd}</password>
                 </configuration>

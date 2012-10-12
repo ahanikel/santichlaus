@@ -29,9 +29,10 @@ public class MailService {
 
   public static final Logger log = LoggerFactory.getLogger(MailService.class);
 
-  public static final String FROM = "santichlaus@comebackgloebb.ch";
+  public static final String FROM = "Santichlaus <santichlaus@comebackgloebb.ch>";
   public static final String SUBJECT = "Santichlaus-Anmeldung";
-  public static final String[] RECIPIENTS = new String[]{"santichlaus@comebackgloebb.ch"};
+  public static final String[] RECIPIENTS = new String[]{"Santichlaus <santichlaus@comebackgloebb.ch>"};
+  public static final String SMTPUSER = "santichlaus@comebackgloebb.ch";
   public static final String SMTPHOST = "mail.comebackgloebb.ch";
 
   @Reference
@@ -58,7 +59,7 @@ public class MailService {
     Session session = Session.getDefaultInstance(props, new Authenticator() {
       @Override
       public PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(from, getSMTPPassword());
+        return new PasswordAuthentication(SMTPUSER, getSMTPPassword());
       }
     });
     session.setDebug(false);

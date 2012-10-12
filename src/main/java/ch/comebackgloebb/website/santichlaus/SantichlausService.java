@@ -161,6 +161,7 @@ public class SantichlausService {
           childfields.add(child.getValue().get(field));
         }
         sbRegistration.append(String.format(registrationMessageBody, (Object[]) childfields.toArray(new String[0])));
+        sbRegistration.append("\n\n");
       }
       String registrationMessage = sbRegistration.toString();
 
@@ -169,7 +170,7 @@ public class SantichlausService {
 
       String uuid = registerInternal(req);
 
-      String confirmationMessage = String.format(confirmationMessageBody, req.getParameter("zeit"), uuid);
+      String confirmationMessage = String.format(confirmationMessageBody, req.getRequestParameter("zeit").getString(), uuid);
 
       if (mailService != null) {
         String subject = "Santichlaus-Anmeldung " + req.getParameter("name");
