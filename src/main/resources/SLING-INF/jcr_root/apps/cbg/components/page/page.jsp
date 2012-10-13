@@ -461,6 +461,7 @@
           $('.cancelbutton, .okbutton').removeAttr('disabled');
           $('#list-children tr.selected').removeClass('selected');
           $('#details-children').removeAttr('modify');
+          $('#add, #del').attr('disabled', 'disabled');
         });
 
         $('#del').click(function(e) {
@@ -527,6 +528,7 @@
           $('.editable').addClass('readonly');
           $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
           $('#details-children').removeAttr('modify');
+          $('#add, #del').removeAttr('disabled');
           validateAll();
         });
 
@@ -536,6 +538,7 @@
           $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
           $('#details-children').removeAttr('modify');
           $('#list-children tr.selected').removeClass('selected');
+          $('#add, #del').removeAttr('disabled');
         });
 
         $('#send').click(function(e) {

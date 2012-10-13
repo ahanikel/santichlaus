@@ -54,7 +54,16 @@ public class SantichlausService {
       ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
       Resource times = resAdmin.getResource("/etc/times");
       for (Iterator<Resource> it = times.listChildren(); it.hasNext();) {
-        ret.add(it.next().getName());
+        Node time = it.next().adaptTo(Node.class);
+        try {
+          Property maxCount = time.getProperty("maxCount");
+          Property count = time.getProperty("count");
+          if (maxCount != null && count != null && count.getLong() < maxCount.getLong()) {
+            ret.add(time.getName());
+          }
+        }
+        catch (Exception e) {
+        }
       }
     } catch (LoginException ex) {
       log.error(ex.getMessage());
@@ -298,6 +307,7 @@ public class SantichlausService {
       catch (Exception ex) {
         throw new RegistrationException(ex);
       }
+      incrementTimeCount(req.getRequestParameter("zeit").getString());
     }
     finally {
       if (registration != null) {
@@ -342,5 +352,41 @@ public class SantichlausService {
     }
 
     return children;
+  }
+
+  private void incrementTimeCount(String time) throws RegistrationException {
+    time = time.replace(':', '.');
+    ResourceResolver resAdmin = null;
+    try {
+      resAdmin = resFactory.getAdministrativeResourceResolver(null);
+      Resource times = resAdmin.getResource("/etc/times");
+      for (Iterator<Resource> it = times.listChildren(); it.hasNext();) {
+        Resource resTime = it.next();
+        if (resTime.getName().equals(time)) {
+          Node nTime = resTime.adaptTo(Node.class);
+          Property count = nTime.getProperty("count");
+          if (count != null) {
+            count.setValue(count.getLong() + 1);
+          }
+          else {
+            nTime.setProperty("count", 1L);
+          }
+          nTime.getSession().save();
+          log.info("Increased time count on " + time);
+          break;
+        }
+      }
+    }
+    catch (Exception ex) {
+      log.error(ex.toString());
+      throw new RegistrationException(ex);
+    }
+    finally {
+      if (resAdmin != null) {
+        log.info("Closing session");
+        resAdmin.close();
+        resAdmin = null;
+      }
+    }
   }
 }
