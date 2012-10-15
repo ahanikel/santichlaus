@@ -85,3 +85,13 @@ input {
 	background-color: blue;
 	cursor: pointer;
 }
+
+legend {
+  font-size: large;
+  font-weight: bold;
+}
+
+label {
+  font-size: medium;
+  font-weight: bold;
+}
