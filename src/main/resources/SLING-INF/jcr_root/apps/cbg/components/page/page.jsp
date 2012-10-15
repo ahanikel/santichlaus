@@ -179,6 +179,13 @@
                                 Wenn Sie einen Eintrag aus der Liste löschen möchten, wählen Sie ihn mit einem Klick aus (der Hintergrund
                                 ist nun blau) und klicken dann auf "-".
                               </p>
+                              <p>
+                                Unter "zu loben" und "zu tadeln" geben Sie uns bitte eine stichwortartige Liste, das ist für den Santichlaus am
+                                Übersichtlichsten. Also zum Beispiel:<br>
+                                - Ist super in der Schule<br>
+                                - Ist schnell im Sport<br>
+                                - Musiziert täglich<br>
+                              </p>
                               <table id="layout-children">
                                 <tr>
                                   <td>
