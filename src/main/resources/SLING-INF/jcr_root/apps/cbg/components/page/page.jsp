@@ -195,11 +195,12 @@
                                     <table id="list-children">
                                       <thead>
                                         <tr>
-                                          <th colspan="4">Erfasste Kinder</th>
+                                          <th colspan="5">Erfasste Kinder</th>
                                         </tr>
                                         <tr>
                                           <td class="childname">Name</td>
                                           <td class="childage">Alter</td>
+                                          <td class="childsex">Geschlecht</td>
                                           <td class="childpos">Zu loben</td>
                                           <td class="childneg">Zu tadeln</td>
                                         </tr>
@@ -221,6 +222,13 @@
                                       <tr>
                                         <td><label for="kindalter">Alter des Kindes</label></td>
                                         <td><input id="kindalter" name="kindalter"/></td>
+                                      </tr>
+                                      <tr>
+                                        <td><label for="kindgeschlecht">Geschlecht</label></td>
+                                        <td>
+                                          <input type="radio" name="kindgeschlecht" value="m"/><span>männlich</span>
+                                          <input type="radio" name="kindgeschlecht" value="w"/><span>weiblich</span>
+                                        </td>
                                       </tr>
                                       <tr>
                                         <td><label for="zuloben">Zu loben</label></td>
@@ -295,7 +303,8 @@
       $(document).ready(function(){
 
         $('.editable').addClass('readonly');
-        $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+        $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
+        $('.editable input[type="radio"]').removeAttr('checked');
         $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
         $('.invalidMessage').addClass('show');
 
@@ -476,7 +485,8 @@
 
         $("#add").click(function(e) {
           $('.editable').removeClass('readonly');
-          $('.editable input, .editable textarea').removeAttr('readonly').val('');
+          $('.editable input[type!="radio"], .editable textarea').removeAttr('readonly').val('');
+          $('.editable input[type="radio"]').removeAttr('checked');
           $('.cancelbutton, .okbutton').removeAttr('disabled');
           $('#list-children tr.selected').removeClass('selected');
           $('#details-children').removeAttr('modify');
@@ -491,7 +501,8 @@
             $('tbody tr:last !.editable').remove();
           $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
           $('.editable').addClass('readonly');
-          $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+          $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
+          $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
           validateAll();
         });
@@ -503,6 +514,12 @@
             var theRow = $('#list-children tbody tr').eq(childIndex);
             $('#kindname').val(theRow.children('td.childname').text());
             $('#kindalter').val(theRow.children('td.childage').text());
+            if (theRow.children('td.childsex').text() == "m") {
+              $('input[name="kindgeschlecht"][value="m"]').attr('checked', 'checked');
+            }
+            else {
+              $('input[name="kindgeschlecht"][value="w"]').attr('checked', 'checked');
+            }
             $('#zuloben').val(theRow.children('td.childpos').text());
             $('#zutadeln').val(theRow.children('td.childneg').text());
             $('#details-children').attr('modify', childIndex);
@@ -519,6 +536,8 @@
             $('#kindname').val(),
             '</td><td class="childage">',
             $('#kindalter').val(),
+            '</td><td class="childsex">',
+            $('input[name="kindgeschlecht"]:checked').val(),
             '</td><td class="childpos">',
             $('#zuloben').val(),
             '</td><td class="childneg">',
@@ -545,7 +564,8 @@
           })
           .removeClass('lastInserted');
           $('.editable').addClass('readonly');
-          $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+          $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
+          $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
           $('#add, #del').removeAttr('disabled');
           validateAll();
@@ -554,7 +574,8 @@
         $('.cancelbutton').click(function(e) {
           $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
           $('.editable').addClass('readonly');
-          $('.editable input, .editable textarea').attr('readonly', 'readonly').val('');
+          $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
+          $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
           $('#list-children tr.selected').removeClass('selected');
           $('#add, #del').removeAttr('disabled');

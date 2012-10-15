@@ -39,7 +39,7 @@ public class SantichlausService {
 
   private static final Logger log = LoggerFactory.getLogger(SantichlausService.class);
   private static final String[] FIELDS = {"name", "vorname", "strasse", "ort", "telefon", "email", "zeit", "remarks"};
-  private static final String[] CHILDFIELDS = {"childname", "childage", "childpos", "childneg"};
+  private static final String[] CHILDFIELDS = {"childname", "childage", "childsex", "childpos", "childneg"};
 
   @Reference
   private ResourceResolverFactory resFactory;
