@@ -198,6 +198,9 @@
                                     <table id="list-children">
                                       <thead>
                                         <tr>
+                                          <th colspan="4">Erfasste Kinder</th>
+                                        </tr>
+                                        <tr>
                                           <td class="childname">Name</td>
                                           <td class="childage">Alter</td>
                                           <td class="childpos">Zu loben</td>
