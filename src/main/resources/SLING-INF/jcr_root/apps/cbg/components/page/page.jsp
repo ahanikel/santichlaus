@@ -311,6 +311,7 @@
             },
             function() {
               switchTo.currentPage = 1;
+              validateAll();
               $('#prev').show();
               $('#next').show();
               $('div.page').hide();
@@ -424,6 +425,16 @@
         }
 
         function validateAll() {
+          if (switchTo.currentPage == 1) {
+            if ($('.page:eq(1) .invalidMessage.show').length > 0) {
+              $('#prev').attr('disabled', 'disabled');
+              $('#next').attr('disabled', 'disabled');
+            }
+            else {
+              $('#prev').removeAttr('disabled');
+              $('#next').removeAttr('disabled');
+            }
+          }
           if ($('.page .invalidMessage.show').length > 0 || $('#list-children tbody tr').length == 0)
             $('#send').attr("disabled", "disabled");
           else
