@@ -57,16 +57,14 @@
                           zu Ihnen in die gute Stube zu kommen, und Ihren Kindern und/oder Ihren Gästen eine Freude
                           zu bereiten. Wir sind ganz nette, aufgestellte Chläuse.</p>
                         <p><strong>In diesem Jahr sind wir unterwegs am:</strong></p>
-                        <p><strong>6. Dezember von 16.30 bis 20.00 Uhr</strong></p>
+                        <p><strong>6. Dezember von 17.30 bis 20.00 Uhr</strong></p>
                         <p><strong>Anmeldeschluss ist der 1. Dezember <%= new Date().getYear() + 1900%></strong></p>
                         <p>Möchten Sie unseren Santichlaus buchen? Ja?</p>
                         <p>Dann beachten Sie bitte folgende «Spielregeln»:</p>
                         <ol>
                           <li>
                             Für Ihre <strong>definitive Anmeldung</strong> füllen Sie bitte unser Web-Anmeldeformular aus. Sie gelangen
-                            dort hin, indem Sie oben "weiter zur Anmeldung" anklicken. Falls Sie sich lieber auf
-                            herkömmlichem Weg anmelden möchten, gibt es auch ein <a href="santichlaus/Formular_Anmeldung_2012.pdf" target="_blank">Anmeldeformular im PDF-Format</a>, das Sie
-                            herunterladen, ausdrucken und per Post schicken können.
+                            dort hin, indem Sie oben "weiter" anklicken.
                           </li>
                           <li>
                             Falls der gewünschte Zeitpunkt für den Chlaus-Besuch <strong>nicht mehr frei</strong> ist, werden
@@ -149,7 +147,7 @@
                               <td class="invalidMessage">Bitte wählen Sie eine Zeit aus der Dropdown-Liste</td>
                             </tr>
                             <tr>
-                              <td><label for="remarks">Bemerkungen<br/>(z.B. «Wo findet der Santichlaus den Sack.»)</label></td>
+                              <td><label for="remarks">Bemerkungen</label><p>(z.B. «Wo findet der Santichlaus den Sack.»)</p></td>
                               <td><textarea id="remarks" class="validateAnything" cols="30" rows="10"></textarea></td>
                             </tr>
                           </table>
