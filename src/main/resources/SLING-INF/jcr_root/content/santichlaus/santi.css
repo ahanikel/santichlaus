@@ -17,9 +17,10 @@ html {
 .twobuttons {
     height: 50px;
     vertical-align: middle;
+    padding-bottom: 3ex;
 }
 
-.twobuttons > button:last-child {
+.twobuttons > button.alignright {
     float: right;
 }
 
@@ -94,4 +95,8 @@ legend {
 label {
   font-size: medium;
   font-weight: bold;
+}
+
+h1 {
+  font-size: xx-large;
 }

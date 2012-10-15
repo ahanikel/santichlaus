@@ -44,7 +44,8 @@
                     <div class="content clear-block">
                       <div id="buttons" class="twobuttons">
                         <button type="button" id="prev"> ← zurück </button>
-                        <button type="button" id="next"> ➝ weiter </button>
+                        <button type="button" id="next" class="alignright"> ➝ weiter </button>
+                        <button type="button" id="send" class="submitbutton alignright" disabled="disabled">Anmeldung abschicken</button>
                       </div>
                       <div id="intro" class="page">
                         <h1>
@@ -154,10 +155,6 @@
                         </fieldset>
                       </div>
                       <div id="table" class="page">
-                        <div class="twobuttons">
-                          <!--button type="button" id="help" class="helpbutton">Hilfe zur Anmeldung</button-->
-                          <button type="button" id="send" class="submitbutton" disabled="disabled">Anmeldung abschicken</button>
-                        </div>
                         <div id="tableframe">
                           <div id="tabledata"></div>
                           <div id="details">
@@ -309,6 +306,7 @@
               switchTo.currentPage = 0;
               $('#prev').hide();
               $('#next').show();
+              $('#send').hide();
               $('div.page').hide();
               $('div.page#intro').show();
             },
@@ -317,6 +315,7 @@
               validateAll();
               $('#prev').show();
               $('#next').show();
+              $('#send').hide();
               $('div.page').hide();
               $('div.page#form').show();
             },
@@ -324,6 +323,7 @@
               switchTo.currentPage = 2;
               $('#prev').show();
               $('#next').hide();
+              $('#send').show();
               $('div.page').hide();
               $('div.page#table').show();
             }
