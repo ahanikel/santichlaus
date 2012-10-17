@@ -104,3 +104,7 @@ label {
 h1 {
   font-size: xx-large;
 }
+
+.sidebar img {
+  margin-left: -150px;
+}

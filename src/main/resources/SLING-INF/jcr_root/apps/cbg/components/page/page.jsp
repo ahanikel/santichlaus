@@ -34,7 +34,7 @@
             <li class="menu-170 last"><a href="http://comebackgloebb.ch/content/node/103" title="Archiv">Archiv</a></li>
           </ul>                                  
         </div>
-        <div id="sidebar-left" class="sidebar"></div>
+        <div id="sidebar-left" class="sidebar"><img src="/content/santichlaus/santichlaus.png"/></div>
         <div id="center">
           <div id="squeeze">
             <div class="right-corner">
