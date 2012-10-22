@@ -349,12 +349,14 @@
           success : function() {
             $('#prev').hide();
             $('#next').hide();
+            $('#send').hide();
             $('div.page').hide();
             $('div.page#success').show();
           },
           error : function() {
             $('#prev').show();
             $('#next').hide();
+            $('#send').hide();
             $('div.page').hide();
             $('div.page#error').show();
           }
