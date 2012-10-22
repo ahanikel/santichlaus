@@ -102,7 +102,7 @@ public class SantichlausService {
             for (String field : FIELDS) {
               try {
                 Property value = res.getProperty(field);
-                appendProperty(sb, field, value.getString());
+                appendProperty(sb, field, recodeForJson(value.getString()));
               }
               catch(RepositoryException e) {
                 appendProperty(sb, field, "");
@@ -120,7 +120,7 @@ public class SantichlausService {
               for (String childfield : CHILDFIELDS) {
                 try {
                 Property value = child.getProperty(childfield);
-                appendProperty(sb, childfield, value.getString());
+                appendProperty(sb, childfield, recodeForJson(value.getString()));
                 }
                 catch (RepositoryException e) {
                   appendProperty(sb, childfield, "");
@@ -141,6 +141,29 @@ public class SantichlausService {
     }
     sb.append("}");
     log.info(sb.toString());
+    return sb.toString();
+  }
+
+  private String recodeForJson(String raw) {
+    StringBuilder sb = new StringBuilder();
+    for (char c : raw.toCharArray()) {
+      switch (c) {
+        case '\n': sb.append("\\n"); break;
+        case '\t': sb.append("\\t"); break;
+        case '\r': sb.append("\\r"); break;
+        case '\\': sb.append("\\\\"); break;
+        case '\"': sb.append("\\\""); break;
+        case '\'': sb.append("\\\'"); break;
+        default:
+          if (c < 32) {
+            sb.append(String.format("\\u%04x", (int) c));
+          }
+          else {
+            sb.append(c);
+          }
+          break;
+      }
+    }
     return sb.toString();
   }
 
