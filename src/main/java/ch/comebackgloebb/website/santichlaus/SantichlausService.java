@@ -50,22 +50,41 @@ public class SantichlausService {
   public List<String> getAvailableTimes() {
 
     List<String> ret = new ArrayList<String>();
+    Map<String, Integer> timesMap = new HashMap<String, Integer>();
     try {
       ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
-      Resource times = resAdmin.getResource("/etc/times");
-      for (Iterator<Resource> it = times.listChildren(); it.hasNext();) {
-        Node time = it.next().adaptTo(Node.class);
+      Node registrations = resAdmin.getResource("/etc/registrations").adaptTo(Node.class);
+      for (Iterator<Node> it = registrations.getNodes(); it.hasNext();) {
         try {
-          Property maxCount = time.getProperty("maxCount");
-          Property count = time.getProperty("count");
-          if (maxCount != null && count != null && count.getLong() < maxCount.getLong()) {
-            ret.add(time.getName());
+          Node reg = it.next();
+          Property time = reg.getProperty("zeit");
+          String timeVal = time.getString();
+          if (timesMap.containsKey(timeVal)) {
+            timesMap.put(timeVal, timesMap.get(timeVal) + 1);
+          } else {
+            timesMap.put(timeVal, 1);
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+          log.error(e.getMessage());
         }
       }
-    } catch (LoginException ex) {
+      Node times = resAdmin.getResource("/etc/times").adaptTo(Node.class);
+      for (Iterator<Node> it = times.getNodes(); it.hasNext();) {
+        Node time = it.next();
+        try {
+          Property maxCount = time.getProperty("maxCount");
+          String timeName = time.getName().replace('.', ':');
+          Integer count = timesMap.get(timeName);
+          if (count == null) {
+            count = 0;
+          }
+          if (maxCount != null && count < maxCount.getLong()) {
+            ret.add(time.getName());
+          }
+        } catch (Exception e) {
+        }
+      }
+    } catch (Exception ex) {
       log.error(ex.getMessage());
     }
     return ret;
