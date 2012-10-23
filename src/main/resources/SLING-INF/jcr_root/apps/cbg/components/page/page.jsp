@@ -421,6 +421,10 @@
                   .parent().parent().find(".invalidMessage").removeClass("show");
               }
             }
+            if ($('#zeit').val() != json["zeit"]) {
+              $('#zeit').append("<option>" + json["zeit"] + "</option>");
+              $('#zeit').val(json["zeit"]);
+            }
             switchTo.pageNo(1);
           }
           else {
