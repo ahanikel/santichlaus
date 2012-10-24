@@ -414,8 +414,20 @@
                 }
                 html.push('</tr>');
                 $('#list-children tbody').append(html.join(''));
-              }
-              else {
+                $('.lastInserted')
+                  .click(function(e) {
+                    if ($(this).hasClass('selected')) {
+                      $('#list-children tr.selected').removeClass('selected');
+                    } else {
+                      $('#list-children tr.selected').removeClass('selected');
+                      $(this).addClass('selected');
+                      var childIndex = $('#list-children tbody tr').index(e.currentTarget);
+                      editChild(childIndex);
+                    }
+                  })
+                  .removeClass('lastInserted');
+                }
+                else {
                 $('#' + key)
                   .val(json[key])
                   .parent().parent().find(".invalidMessage").removeClass("show");
