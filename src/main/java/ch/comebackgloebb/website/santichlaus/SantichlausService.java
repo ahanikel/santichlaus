@@ -431,4 +431,98 @@ public class SantichlausService {
       }
     }
   }
+
+  private String recodeForCSV(String s) {
+    return s.replaceAll("\"", "\"\"");
+  }
+
+  public String getRegistrationsAsCSV() {
+    final String endOfObject = "\r\n";
+    final String valueSeparator = ",";
+    final String startOfKey = "";
+    final String endOfKey = "";
+    final String startOfValue = "\"";
+    final String endOfValue = "\"";
+    StringBuilder sb = new StringBuilder();
+    int maxChildren = 0;
+    try {
+      ResourceResolver resAdmin = resFactory.getAdministrativeResourceResolver(null);
+      Resource registrations = resAdmin.getResource("/etc/registrations");
+      for (Iterator<Resource> it = registrations.listChildren(); it.hasNext();) {
+        Node res = it.next().adaptTo(Node.class);
+        if (res != null) {
+          Property uuid = res.getProperty("jcr:uuid");
+          if (uuid != null) {
+            for (String field : FIELDS) {
+              try {
+                Property value = res.getProperty(field);
+                sb.append(startOfValue);
+                sb.append(recodeForCSV(value.getString()));
+                sb.append(endOfValue);
+              }
+              catch(RepositoryException e) {
+                sb.append(startOfValue);
+                sb.append(endOfValue);
+              }
+              sb.append(valueSeparator);
+            }
+            for (int i = 0; ; ++i) {
+              Node child = null;
+              try {
+                child = res.getNode("child" + i);
+              } catch (Exception e) {
+                break;
+              }
+              for (String childfield : CHILDFIELDS) {
+                try {
+                Property value = child.getProperty(childfield);
+                sb.append(startOfValue);
+                sb.append(recodeForCSV(value.getString()));
+                sb.append(endOfValue);
+                }
+                catch (RepositoryException e) {
+                  sb.append(startOfValue);
+                   sb.append(endOfValue);
+                }
+                sb.append(valueSeparator);
+              }
+              if (i >= maxChildren) {
+                 maxChildren = i + 1;
+            }
+            }
+            sb.deleteCharAt(sb.length() - 1); // delete trailing comma
+            sb.append(endOfObject);
+          }
+          else {
+            log.error("Registration without jcr:uuid: " + res.getPath());
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      // ignore
+      log.error(e.getMessage());
+    }
+    sb.append(endOfObject);
+    log.info("maxChildren: " + maxChildren);
+    StringBuilder header = new StringBuilder();
+    for (int i = 0; i < FIELDS.length; ++i) {
+      header.append(startOfValue);
+      header.append(recodeForCSV(FIELDS[i]));
+      header.append(endOfValue);
+      header.append(valueSeparator);
+    }
+    for (int i = 0; i < maxChildren; ++i) {
+      for (int j = 0; j < CHILDFIELDS.length; ++j) {
+        header.append(startOfValue);
+        header.append(recodeForCSV(CHILDFIELDS[j] + i));
+        header.append(endOfValue);
+        header.append(valueSeparator);
+      }
+    }
+    header.deleteCharAt(header.length() - 1);
+    header.append(endOfObject);
+    sb.insert(0, header.toString());
+    return sb.toString();
+  }
 }
