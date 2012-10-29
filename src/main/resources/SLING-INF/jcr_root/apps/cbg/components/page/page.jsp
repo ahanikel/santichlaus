@@ -13,6 +13,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="santichlaus/garland.css">
     <link rel="stylesheet" type="text/css" href="santichlaus/santi.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="santichlaus/jquery.blockUI.js"></script>
   </head>
   <body class="sidebar-left">
     <div id="header-region" class="clear-block"></div>
@@ -212,7 +213,7 @@
                                   <td>
                                     <table id="details-children" class="editable">
                                       <tr>
-                                        <td><button type="button" id="ok" class="okbutton">OK</button></td>
+                                        <td><button type="button" id="ok" class="okbutton">Daten speichern</button></td>
                                         <td><button type="button" id="cancel" class="cancelbutton">Abbrechen</button></td>
                                       </tr>
                                       <tr>
@@ -255,7 +256,7 @@
                       </div>
                       <div id="success" class="page">
                         <h1>Vielen Dank für Ihre Anmeldung!</h1>
-                        <p>
+                        <p style="font-size: larger; margin-top: 5ex; font-weight: bold;">
                           Dr Santichlaus und dr Schmutzli werden um <span id="timeconfirm"></span> Uhr bei Ihrer Familie vorbeikommen.
                         </p>
                         <p>
@@ -490,7 +491,7 @@
         }
 
         function validateTime(event) {
-          return validate(/1[0-9][:.][03]0/, event.target);
+          return validate(/[12][0-9][:.][03]0/, event.target);
         }
 
         $(".validateSomething").blur(validateSomething);
@@ -601,10 +602,20 @@
 
         $('#send').click(function(e) {
           $('#send').attr("disabled", "disabled");
+          $.blockUI({ css: { 
+            border: 'none', 
+            padding: '15px', 
+            backgroundColor: '#000', 
+            '-webkit-border-radius': '10px', 
+            '-moz-border-radius': '10px', 
+            opacity: .5, 
+            color: '#fff' 
+          }, message: "Mails werden versendet (~15 sec)..."
+          }); 
           $.post('#', getInput(), function(ret) {
           })
-          .success(function() { $('#timeconfirm').text($('#zeit').val()); switchTo.success(); })
-          .error(function() { switchTo.error(); });
+          .success(function() { $.unblockUI(); $('#timeconfirm').text($('#zeit').val()); switchTo.success(); })
+          .error(function() { $.unblockUI(); switchTo.error(); });
         })
 
         initInput();
