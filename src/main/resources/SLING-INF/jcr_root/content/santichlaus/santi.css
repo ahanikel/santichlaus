@@ -86,12 +86,18 @@ input[type="radio"] {
 	cursor: pointer;
 }
 
+#list-children:disabled tbody tr:hover {
+  background-color: lightgrey;
+  cursor: auto;
+  color: lightgrey;
+}
+
 #list-children tbody tr.selected, #list-children tbody tr.selected:hover {
 	background-color: blue;
 	cursor: pointer;
 }
 
-legend {
+legend, th {
   font-size: large;
   font-weight: bold;
 }
@@ -99,6 +105,12 @@ legend {
 label {
   font-size: medium;
   font-weight: bold;
+}
+
+#add, #del {
+  font-size: medium;
+  font-weight: bold;
+  vertical-align: middle;
 }
 
 h1 {

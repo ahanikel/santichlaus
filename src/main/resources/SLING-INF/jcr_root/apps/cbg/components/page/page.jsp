@@ -168,7 +168,7 @@
                               </p>
                               <p>
                                 Um einen Eintrag zu bearbeiten, klicken Sie auf den entsprechenden Namen und nehmen dann rechts Ihre
-                                Änderungen vor. Klicken Sie anschliessend "Ok", um die Änderungen zu übernehmen, oder "Abbrechen", um
+                                Änderungen vor. Klicken Sie anschliessend "Daten speichern", um die Änderungen zu übernehmen, oder "Abbrechen", um
                                 Ihre Änderungen zu verwerfen.
                               </p>
                               <p>
@@ -185,13 +185,7 @@
                               <table id="layout-children">
                                 <tr>
                                   <td>
-                                    <button type="button" id="add"><img src="santichlaus/list-add.png" alt="Kind hinzufügen"/></button>
-                                    <button type="button" id="del"><img src="santichlaus/list-remove.png" alt="Kind löschen"/></button>
                                   </td>
-                                  <td>
-                                  </td>
-                                </tr>
-                                <tr>
                                   <td>
                                     <table id="list-children">
                                       <thead>
@@ -209,6 +203,18 @@
                                       <tbody>
                                       </tbody>
                                     </table>
+                                  </td>
+                                </tr>
+                                <tr height="70">
+                                  <td>
+                                  </td>
+                                  <td valign="bottom">
+                                    <button type="button" id="add"><img src="santichlaus/list-add.png" alt="Kind hinzufügen"/>Kind hinzufügen</button>
+                                    <button type="button" id="del"><img src="santichlaus/list-remove.png" alt="Kind löschen"/>Kind löschen</button>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
                                   </td>
                                   <td>
                                     <table id="details-children" class="editable">
@@ -306,7 +312,7 @@
         $('.editable').addClass('readonly');
         $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
         $('.editable input[type="radio"]').removeAttr('checked');
-        $('.cancelbutton, .okbutton').attr('disabled', 'disabled');
+        $('.cancelbutton, .okbutton, #del').attr('disabled', 'disabled');
         $('.invalidMessage').addClass('show');
 
         var switchTo = {
@@ -417,6 +423,9 @@
                 $('#list-children tbody').append(html.join(''));
                 $('.lastInserted')
                   .click(function(e) {
+                    if ($('#list-children').attr('disabled')) {
+                      return;
+                    }
                     if ($(this).hasClass('selected')) {
                       $('#list-children tr.selected').removeClass('selected');
                     } else {
@@ -509,7 +518,7 @@
           $('.cancelbutton, .okbutton').removeAttr('disabled');
           $('#list-children tr.selected').removeClass('selected');
           $('#details-children').removeAttr('modify');
-          $('#add, #del').attr('disabled', 'disabled');
+          $('#add, #del, #send').attr('disabled', 'disabled');
         });
 
         $('#del').click(function(e) {
@@ -523,6 +532,8 @@
           $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
           $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
+          $('#del').attr('disabled', 'disabled');
+          $('#add, #list-children').removeAttr('disabled');
           validateAll();
         });
 
@@ -545,6 +556,8 @@
             $('.cancelbutton, .okbutton').removeAttr('disabled');
             $('.editable').removeClass('readonly');
             $('.editable input, .editable textarea').removeAttr('readonly');
+            $('#add, #send, #list-children').attr('disabled', 'disabled');
+            $('#del').removeAttr('disabled');
         }
 
         $('.okbutton').click(function(e) {
@@ -572,6 +585,9 @@
 
           $('.lastInserted')
           .click(function(e) {
+            if ($('#list-children').attr('disabled')) {
+              return;
+            }
             if ($(this).hasClass('selected')) {
               $('#list-children tr.selected').removeClass('selected');
             } else {
@@ -586,7 +602,8 @@
           $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
           $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
-          $('#add, #del').removeAttr('disabled');
+          $('#add, #list-children').removeAttr('disabled');
+          $('#del').attr('disabled', 'disabled');
           validateAll();
         });
 
@@ -597,7 +614,9 @@
           $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
           $('#list-children tr.selected').removeClass('selected');
-          $('#add, #del').removeAttr('disabled');
+          $('#add, #list-children').removeAttr('disabled');
+          $('#del').attr('disabled', 'disabled');
+          validateAll();
         });
 
         $('#send').click(function(e) {
