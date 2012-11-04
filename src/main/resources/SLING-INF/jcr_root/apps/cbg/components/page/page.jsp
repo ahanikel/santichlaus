@@ -162,8 +162,8 @@
                             <fieldset>
                               <legend>Angaben zum Kind / zu den Kindern</legend>
                               <p>
-                                Klicken Sie auf "+", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Ok". Der
-                                Name und das Alter des Kindes erscheinen nun links unter den "+" und "-" Knöpfen. Auf dieselbe
+                                Klicken Sie auf "+ Kind hinzufügen", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Ok". Der
+                                Name und das Alter des Kindes erscheinen nun links unter den "+ Kind hinzufügen" und "- Kind löschen" Knöpfen. Auf dieselbe
                                 Art können Sie nun weitere Kinder erfassen.
                               </p>
                               <p>
@@ -173,7 +173,7 @@
                               </p>
                               <p>
                                 Wenn Sie einen Eintrag aus der Liste löschen möchten, wählen Sie ihn mit einem Klick aus (der Hintergrund
-                                ist nun blau) und klicken dann auf "-".
+                                ist nun blau) und klicken dann auf "- Kind löschen".
                               </p>
                               <p>
                                 Unter "zu loben" und "zu tadeln" geben Sie uns bitte eine stichwortartige Liste, das ist für den Santichlaus am

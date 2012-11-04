@@ -192,6 +192,8 @@ public class SantichlausService {
     ResourceResolver resAdmin = null;
 
     try {
+      String uuid = registerInternal(req);
+
       resAdmin = resFactory.getAdministrativeResourceResolver(null);
       Resource registrationResource = resAdmin.getResource("/apps/cbg/components/registrationmail");
       String registrationMessageHeader = ((Node) registrationResource.adaptTo(Node.class)).getProperty("header").getString();
@@ -219,12 +221,10 @@ public class SantichlausService {
       Resource confirmationResource = resAdmin.getResource("/apps/cbg/components/confirmationmail");
       String confirmationMessageBody = ((Node) confirmationResource.adaptTo(Node.class)).getProperty("text").getString();
 
-      String uuid = registerInternal(req);
-
       String confirmationMessage = String.format(confirmationMessageBody, req.getRequestParameter("zeit").getString(), uuid);
 
       if (mailService != null) {
-        String subject = "Santichlaus-Anmeldung " + req.getParameter("name");
+        String subject = "Santichlaus-Anmeldung " + req.getParameter("name") + " - http://santichlaus.comebackgloebb.ch/content/santichlaus.html?id=" + uuid;
         mailService.sendRegistrationMail(subject, registrationMessage);
         mailService.sendConfirmationMail(req.getRequestParameter("email").getString(), confirmationMessage + "\n\n\n" + registrationMessage);
       } else {
@@ -240,7 +240,7 @@ public class SantichlausService {
 
   private String registerInternal(SlingHttpServletRequest req) throws RegistrationException {
 
-    String key = req.getRequestParameter("name") + "-" + req.getRequestParameter("email");
+    String key = req.getRequestParameter("name").getString().replace(" ", "_") + "-" + req.getRequestParameter("email");
     log.info("Got registration request for " + key);
 
     Node registrations;
