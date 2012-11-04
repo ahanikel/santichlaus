@@ -162,7 +162,7 @@
                             <fieldset>
                               <legend>Angaben zum Kind / zu den Kindern</legend>
                               <p>
-                                Klicken Sie auf "+ Kind hinzufügen", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Ok". Der
+                                Klicken Sie auf "+ Kind hinzufügen", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Daten speichern". Der
                                 Name und das Alter des Kindes erscheinen nun links unter den "+ Kind hinzufügen" und "- Kind löschen" Knöpfen. Auf dieselbe
                                 Art können Sie nun weitere Kinder erfassen.
                               </p>
@@ -177,7 +177,7 @@
                               </p>
                               <p>
                                 Unter "zu loben" und "zu tadeln" geben Sie uns bitte eine stichwortartige Liste, das ist für den Santichlaus am
-                                Übersichtlichsten. Also zum Beispiel:<br>
+                                übersichtlichsten. Also zum Beispiel:<br>
                                 - Ist super in der Schule<br>
                                 - Ist schnell im Sport<br>
                                 - Musiziert täglich<br>
