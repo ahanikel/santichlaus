@@ -127,3 +127,12 @@ h1 {
   font-weight: bold;
   font-size: x-large;
 }
+
+#details p {
+  font-size: large;
+}
+
+#details p em {
+  font-weight: bold;
+  font-variant: normal;
+}
