@@ -122,5 +122,8 @@ h1 {
 }
 
 #ok {
-  color: red;
+  background-color: red;
+  color: black;
+  font-weight: bold;
+  font-size: x-large;
 }

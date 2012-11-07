@@ -162,13 +162,13 @@
                             <fieldset>
                               <legend>Angaben zum Kind / zu den Kindern</legend>
                               <p>
-                                Klicken Sie auf "+ Kind hinzufügen", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Daten speichern". Der
+                                Klicken Sie auf "+ Kind hinzufügen", um ein neues Kind zu erfassen. Wenn Sie fertig sind, klicken Sie auf "Meine Eingaben übernehmen". Der
                                 Name und das Alter des Kindes erscheinen nun links unter den "+ Kind hinzufügen" und "- Kind löschen" Knöpfen. Auf dieselbe
                                 Art können Sie nun weitere Kinder erfassen.
                               </p>
                               <p>
                                 Um einen Eintrag zu bearbeiten, klicken Sie auf den entsprechenden Namen und nehmen dann rechts Ihre
-                                Änderungen vor. Klicken Sie anschliessend "Daten speichern", um die Änderungen zu übernehmen, oder "Abbrechen", um
+                                Änderungen vor. Klicken Sie anschliessend "Meine Eingaben übernehmen", um die Änderungen zu übernehmen, oder "Abbrechen", um
                                 Ihre Änderungen zu verwerfen.
                               </p>
                               <p>
@@ -219,7 +219,7 @@
                                   <td>
                                     <table id="details-children" class="editable">
                                       <tr>
-                                        <td><button type="button" id="ok" class="okbutton">Daten speichern</button></td>
+                                        <td><button type="button" id="ok" class="okbutton">Meine Eingaben übernehmen</button></td>
                                         <td><button type="button" id="cancel" class="cancelbutton">Abbrechen</button></td>
                                       </tr>
                                       <tr>
