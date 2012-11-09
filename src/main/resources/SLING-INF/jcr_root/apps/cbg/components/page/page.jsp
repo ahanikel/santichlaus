@@ -46,7 +46,6 @@
                       <div id="buttons" class="twobuttons">
                         <button type="button" id="prev"> ← zurück </button>
                         <button type="button" id="next" class="alignright"> ➝ weiter </button>
-                        <button type="button" id="send" class="submitbutton alignright" disabled="disabled">Anmeldung abschicken</button>
                       </div>
                       <div id="intro" class="page">
                         <h1>
@@ -162,14 +161,15 @@
                             <fieldset>
                               <legend>Angaben zum Kind / zu den Kindern</legend>
                               <p>
-                                Klicken Sie auf "+ Kind hinzufügen", um ein neues Kind zu erfassen. <em>Wenn Sie fertig sind, klicken Sie auf "Meine Eingaben übernehmen".</em>Der
-                                Name und das Alter des Kindes erscheinen nun links unter den "+ Kind hinzufügen" und "- Kind löschen" Knöpfen. Auf dieselbe
-                                Art können Sie nun weitere Kinder erfassen.
+                                Klicken Sie auf "+ Kind erfassen", um ein neues Kind zu erfassen.
+                                <em>Wenn Sie fertig sind, klicken Sie auf "Angaben speichern".</em> Der
+                                Name und das Alter des Kindes erscheinen nun unter "erfasste Kinder".
+                                Auf dieselbe Art können Sie nun weitere Kinder erfassen, oder wenn Sie
+                                mit allem fertig sind, die Anmeldung abschicken.
                               </p>
                               <p>
                                 Um einen Eintrag zu bearbeiten, klicken Sie auf den entsprechenden Namen und nehmen dann rechts Ihre
-                                Änderungen vor. Klicken Sie anschliessend <em>"Meine Eingaben übernehmen", um die Änderungen zu übernehmen</em>, oder "Abbrechen", um
-                                Ihre Änderungen zu verwerfen.
+                                Änderungen vor. Klicken Sie anschliessend <em>"Angaben speichern", um die Änderungen zu übernehmen</em>.
                               </p>
                               <p>
                                 Wenn Sie einen Eintrag aus der Liste löschen möchten, wählen Sie ihn mit einem Klick aus (der Hintergrund
@@ -181,6 +181,9 @@
                                 - Ist super in der Schule<br>
                                 - Ist schnell im Sport<br>
                                 - Musiziert täglich<br>
+                              </p>
+                              <p>
+                                <em>Bitte vergessen Sie nicht, vor dem Abschicken auf "Angaben speichern" zu klicken.</em>
                               </p>
                               <table id="layout-children">
                                 <tr>
@@ -209,7 +212,7 @@
                                   <td>
                                   </td>
                                   <td valign="bottom">
-                                    <button type="button" id="add"><img src="santichlaus/list-add.png" alt="Kind hinzufügen"/>Kind hinzufügen</button>
+                                    <button type="button" class="add"><img src="santichlaus/list-add.png" alt="Kind erfassen"/>Kind erfassen</button>
                                     <button type="button" id="del"><img src="santichlaus/list-remove.png" alt="Kind löschen"/>Kind löschen</button>
                                   </td>
                                 </tr>
@@ -218,10 +221,6 @@
                                   </td>
                                   <td>
                                     <table id="details-children" class="editable">
-                                      <tr>
-                                        <td><button type="button" id="ok" class="okbutton">Meine Eingaben übernehmen</button></td>
-                                        <td><button type="button" id="cancel" class="cancelbutton">Abbrechen</button></td>
-                                      </tr>
                                       <tr>
                                         <td><label for="kindname">Name des Kindes</label></td>
                                         <td><input id="kindname" name="kindname"/></td>
@@ -250,7 +249,28 @@
                                       </tr>
                                       <tr>
                                         <td colspan="2"><textarea id="zutadeln" cols="120" rows="15"></textarea></td>
-                                        <td></td>
+                                      </tr>
+                                      <tr>
+                                        <td colspan="2">
+                                          <table class="buttonlayout">
+                                            <tr>
+                                              <td></td>
+                                              <td><button type="button" id="ok" class="okbutton">Angaben speichern</button></td>
+                                              <td></td>
+                                            </tr>
+                                            <tr>
+                                              <td><img src="santichlaus/larrow.png"/></td>
+                                              <td></td>
+                                              <td><img src="santichlaus/rarrow.png"/></td>
+                                            </tr>
+                                            <tr>
+                                              <td><button type="button" class="add"><img src="santichlaus/list-add.png" alt="Kind erfassen"/>Kind erfassen</button></td>
+                                              <td></td>
+                                              <td style="text-align: right;"><button type="button" id="send" class="submitbutton alignright" disabled="disabled">Anmeldung abschicken</button></td>
+                                              <!--td><button type="button" id="cancel" class="cancelbutton">Abbrechen</button></td-->
+                                            </tr>
+                                          </table>
+                                        </td>
                                       </tr>
                                     </table>
                                   </td>
@@ -511,14 +531,14 @@
 
         $(".validateAnything").blur(validateAll);
 
-        $("#add").click(function(e) {
+        $(".add").click(function(e) {
           $('.editable').removeClass('readonly');
           $('.editable input[type!="radio"], .editable textarea').removeAttr('readonly').val('');
           $('.editable input[type="radio"]').removeAttr('checked');
           $('.cancelbutton, .okbutton').removeAttr('disabled');
           $('#list-children tr.selected').removeClass('selected');
           $('#details-children').removeAttr('modify');
-          $('#add, #del, #send').attr('disabled', 'disabled');
+          $('.add, #del, #send').attr('disabled', 'disabled');
         });
 
         $('#del').click(function(e) {
@@ -533,7 +553,7 @@
           $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
           $('#del').attr('disabled', 'disabled');
-          $('#add, #list-children').removeAttr('disabled');
+          $('.add, #list-children').removeAttr('disabled');
           validateAll();
         });
 
@@ -556,7 +576,7 @@
             $('.cancelbutton, .okbutton').removeAttr('disabled');
             $('.editable').removeClass('readonly');
             $('.editable input, .editable textarea').removeAttr('readonly');
-            $('#add, #send, #list-children').attr('disabled', 'disabled');
+            $('.add, #send, #list-children').attr('disabled', 'disabled');
             $('#del').removeAttr('disabled');
         }
 
@@ -602,7 +622,7 @@
           $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
           $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
-          $('#add, #list-children').removeAttr('disabled');
+          $('.add, #list-children').removeAttr('disabled');
           $('#del').attr('disabled', 'disabled');
           validateAll();
         });
@@ -614,7 +634,7 @@
           $('.editable input[type="radio"]').removeAttr('checked');
           $('#details-children').removeAttr('modify');
           $('#list-children tr.selected').removeClass('selected');
-          $('#add, #list-children').removeAttr('disabled');
+          $('.add, #list-children').removeAttr('disabled');
           $('#del').attr('disabled', 'disabled');
           validateAll();
         });
