@@ -137,3 +137,7 @@ h1 {
 .buttonlayout tr {
   height: 30px;
 }
+
+button {
+  cursor: pointer;
+}
