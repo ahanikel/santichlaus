@@ -539,6 +539,7 @@
           $('#list-children tr.selected').removeClass('selected');
           $('#details-children').removeAttr('modify');
           $('.add, #del, #send').attr('disabled', 'disabled');
+          $('#kindname').val("Bitte Name des Kindes eingeben");
         });
 
         $('#del').click(function(e) {
