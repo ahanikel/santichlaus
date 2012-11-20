@@ -170,10 +170,12 @@
                               <p>
                                 Um einen Eintrag zu bearbeiten, klicken Sie auf den entsprechenden Namen und nehmen dann rechts Ihre
                                 Änderungen vor. Klicken Sie anschliessend <em>"Angaben speichern", um die Änderungen zu übernehmen</em>.
+                                Wenn Sie mit allem fertig sind, die Anmeldung (= Änderung) abschicken.
                               </p>
                               <p>
                                 Wenn Sie einen Eintrag aus der Liste löschen möchten, wählen Sie ihn mit einem Klick aus (der Hintergrund
                                 ist nun blau) und klicken dann auf "- Kind löschen".
+                                Wenn Sie mit allem fertig sind, die Anmeldung (= Änderung) abschicken.
                               </p>
                               <p>
                                 Unter "zu loben" und "zu tadeln" geben Sie uns bitte eine stichwortartige Liste, das ist für den Santichlaus am
