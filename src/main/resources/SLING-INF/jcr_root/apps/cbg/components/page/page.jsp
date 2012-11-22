@@ -4,6 +4,18 @@
 %><%@page contentType="text/html" pageEncoding="UTF-8" session="false"%><%
 %><sling:defineObjects/><%
   SantichlausService svc = sling.getService(SantichlausService.class);
+  boolean mayRegister = false;
+  String currentUser = ((org.apache.sling.api.SlingHttpServletRequest) request).getResourceResolver().adaptTo(javax.jcr.Session.class).getUserID();
+  RequestParameter idParam = sling.getRequest().getRequestParameter("id");
+  if (idParam != null) {
+    String id = idParam.getString();
+    if (id != null && !"".equals(id)) {
+      String reg = svc.getRegistrationAsJson(id);
+      if ("admin".equals(currentUser) || !"{}".equals(reg)) {
+        mayRegister = true;
+      }
+    }
+  }
 %><!DOCTYPE HTML>
 <html>
   <head>
@@ -41,7 +53,9 @@
             <div class="right-corner">
               <div class="left-corner">
                 <div class="clear-block">
-                  <div id="node-393" class="node">
+                  <div id="node-393" class="node"><%
+                  if (mayRegister) {
+%>
                     <div class="content clear-block">
                       <div id="buttons" class="twobuttons">
                         <button type="button" id="prev"> ← zurück </button>
@@ -314,7 +328,28 @@
 					              <p><b>Das OK Santichlaus-Aktion</b></p>
                         <p><b>Come Back Glöbb Allschwil</b></p>
                       </div>
-                    </div>
+                    </div><%
+                   } else {
+%>
+                    <div class="content clear-block">
+                      <div id="soldout" class="page">
+                        <h1>
+                          Dr Santichlaus chunnt - Danke für Ihr Interesse!
+                        </h1>
+                        <p><b>Liebe Eltern,</b></p>
+                        <p>Leider sind wir bereits ausgebucht, sodass wir keine neuen Anmeldungen mehr entgegen nehmen können.
+                          Versuchen Sie es doch bei
+                          <a href="http://www.jubla-allschwil.ch/index.php?option=com_contact&view=contact&id=9%3Asantichlaus&catid=12%3Akontakte&Itemid=60">
+                            unseren Freunden von Jungwacht/Blauring Allschwil
+                          </a>.
+                          Vielen Dank für Ihr Interesse und Ihre Unterstützung. Wir freuen uns auf einen schönen Santichlaus-Abend!
+                        </p>
+					              <p><b>Das OK Santichlaus-Aktion</b></p>
+                        <p><b>Come Back Glöbb Allschwil</b></p>
+                      </div>
+                    </div><%
+                   }
+%>
                     <div class="clear-block">
                       <div class="meta">
                       </div>
@@ -327,7 +362,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </div><%
+                  if (mayRegister) {
+%>
     <script>
       $(document).ready(function(){
 
@@ -414,7 +451,6 @@
 
         function initInput() {
           var json = eval(<%
-            RequestParameter idParam = sling.getRequest().getRequestParameter("id");
             if (idParam != null) {
               String id = idParam.getString();
               if (id != null && !"".equals(id)) {
@@ -662,6 +698,8 @@
 
         initInput();
       });
-    </script>
+    </script><%
+    }
+%>
   </body>
 </html>

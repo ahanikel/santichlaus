@@ -141,3 +141,11 @@ h1 {
 button {
   cursor: pointer;
 }
+
+#soldout p {
+  margin-top: 4ex;
+}
+
+#soldout h1 {
+  margin-bottom: 4ex;
+}
