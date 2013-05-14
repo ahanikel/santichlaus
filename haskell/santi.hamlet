@@ -1,0 +1,167 @@
+<div .content .clear-block>
+    <div #buttons .twobuttons>
+        <button #prev type=button> ← zurück 
+        <button #next type=button> ➝ weiter 
+    <div #intro .page>
+        <h1>Dr Santichlaus chunnt!
+        <p><b>Liebe Eltern,</b>
+        <p>Dr Santichlaus und sein Schmutzli werden auch in diesem Jahr zu Ihnen unterwegs sein! Das erfahrene Chlause-Team des Come Back Glöbb (ehemals Jungwacht und Blauring St. Peter &amp; Paul, Allschwil) würde sich freuen, auch in diesem Jahr zu Ihnen in die gute Stube zu kommen, und Ihren Kindern und/oder Ihren Gästen eine Freude zu bereiten. Wir sind ganz nette, aufgestellte Chläuse
+        <p><strong>In diesem Jahr sind wir unterwegs am:</strong>
+        <p><strong>6. Dezember von 17.30 bis 20.00 Uhr</strong>
+        <p><strong>Anmeldeschluss ist der 1. Dezember #{year}</strong>
+        <p>Möchten Sie unseren Santichlaus buchen? Ja?
+        <p>Dann beachten Sie bitte folgende «Spielregeln»:
+        <ol>
+            <li>Für Ihre <strong>definitive Anmeldung</strong> füllen Sie bitte unser Web-Anmeldeformular aus. Sie gelangen dort hin, indem Sie oben "weiter" anklicken.
+            <li>Falls der gewünschte Zeitpunkt für den Chlaus-Besuch <strong>nicht mehr frei</strong> ist, werden wir Sie rechtzeitig per Mail oder telefonisch informieren.
+            <li>Bitte haben Sie Verständnis: <strong>dr Santichlaus kann Verspätung haben</strong>, wenn sein Esel plötzlich bockt bzw. wenn es (hoffentlich nur ganz kleine) Verzögerungen gibt.
+            <li>Geschenke für Ihre Kleinen übergeben Sie dem Santichlaus, <strong>bevor</strong> er Ihre Wohnung betritt. Eine nette, chlausmässige Verpackung macht den Kindern Spass!
+            <li>Nach wie vor bestimmen Sie den Preis für den Besuch vom Santichlaus. Da es aber in den letzten Jahren zu Unsicherheiten bezüglich der Höhe des Betrags gekommen ist, erlauben wir es uns, Ihnen eine Empfehlung abzugeben. Mit ca. 20 Franken pro Kind sind unsere Auslagen gedeckt, und wir können weiterhin wichtige <a href="http://comebackgloebb.ch/content/node/6" target="_top"><strong>Projekte</strong></a> – ganz im Sinne von St. Nikolaus – grosszügig unterstützen.
+        <p><strong>Wir freuen uns schon jetzt auf eine fröhliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen!</strong>
+        <p><b><i>Ihr Come Back Glöbb</i></b>
+    <div #form .page>
+        <fieldset>
+            <legend>Adresse
+            <table>
+                <tr>
+                    <td>
+                        <label for=name>Name
+                    <td>
+                        <input #name .validateSomething name=name type=text>
+                    <td .invalidMessage>Bitte geben Sie Ihren Familiennamen an
+                <tr>
+                    <td>
+                        <label for=vorname>Vorname
+                    <td>
+                        <input #vorname .validateSomething name=vorname type=text>
+                    <td .invalidMessage>Bitte geben Sie Ihren Vornamen an
+                <tr>
+                    <td>
+                        <label for=strasse>Strasse Nr
+                    <td>
+                        <input #strasse .validateSomething name=strasse type=text>
+                    <td .invalidMessage>Bitte geben Sie Ihre Adresse an
+                <tr>
+                    <td>
+                        <label for=ort>Plz Ort
+                    <td>
+                        <input #ort .validateSomething name=ort type=text>
+                    <td .invalidMessage>Bitte geben Sie Ihren Wohnort an
+                <tr>
+                    <td>
+                        <label for=telefon>Telefon
+                    <td>
+                        <input #telefon .validateSomething name=telefon type=text>
+                    <td .invalidMessage>Bitte geben Sie für Rückfragen Ihre Telefonnummer an
+                <tr>
+                    <td>
+                        <label for=email>E-Mail
+                    <td>
+                        <input #email .validateEmail name=email type=text>
+                    <td .invalidMessage>Bitte geben Sie für Rückfragen Ihre E-Mail-Adresse an
+        <fieldset>
+            <legend>Gewünschte Uhrzeit
+            <p>Ich wünsche den Besuch des Santichlauses am 6. Dezember 2012 um:
+            <table>
+                <tr>
+                    <td>
+                        <label>Uhrzeit
+                    <td>
+                        <select id="zeit" class="validateTime">
+                            $forall time <- availableTimes
+                                <option>#{time}
+                    <td .invalidMessage>Bitte wählen Sie eine Zeit aus der Dropdown-Liste
+                <tr>
+                    <td>
+                        <label for=remarks>Bemerkungen
+                        <p>(z.B. «Wo findet der Santichlaus den Sack.»)
+                    <td>
+                        <textarea #remarks .validateAnything cols=30 rows=10>
+    <div #table .page>
+        <div #tableframe>
+            <div #tabledata>
+                <div #details>
+                    <fieldset>
+                        <legend>Angaben zum Kind / zu den Kindern
+                        <p>Klicken Sie auf "+ Kind erfassen", um ein neues Kind zu erfassen. <em>Wenn Sie fertig sind, klicken Sie auf "Angaben speichern".</em> Der Name und das Alter des Kindes erscheinen nun unter "erfasste Kinder".  Auf dieselbe Art können Sie nun weitere Kinder erfassen, oder wenn Sie mit allem fertig sind, die Anmeldung abschicken.
+                        <p>Um einen Eintrag zu bearbeiten, klicken Sie auf den entsprechenden Namen und nehmen dann rechts Ihre Änderungen vor. Klicken Sie anschliessend <em>"Angaben speichern", um die Änderungen zu übernehmen</em>. Wenn Sie mit allem fertig sind, die Anmeldung (= Änderung) abschicken.
+                        <p>Wenn Sie einen Eintrag aus der Liste löschen möchten, wählen Sie ihn mit einem Klick aus (der Hintergrund ist nun blau) und klicken dann auf "- Kind löschen". Wenn Sie mit allem fertig sind, die Anmeldung (= Änderung) abschicken.
+                        <p>Unter "zu loben" und "zu tadeln" geben Sie uns bitte eine stichwortartige Liste, das ist für den Santichlaus am übersichtlichsten. Also zum Beispiel:<br>- Ist super in der Schule<br>- Ist schnell im Sport<br>- Musiziert täglich<br>
+                        <p><em>Bitte vergessen Sie nicht, vor dem Abschicken auf "Angaben speichern" zu klicken.</em>
+                        <table #layout-children>
+                            <tr>
+                                <td>
+                                <td>
+                                    <table #list-children>
+                                        <thead>
+                                            <tr>
+                                                <th colspan=5>Erfasste Kinder
+                                            <tr>
+                                                <td .childname>Name
+                                                <td .childage>Alter
+                                                <td .childsex>Geschlecht
+                                                <td .childpos>Zu loben
+                                                <td .childneg>Zu tadeln
+                                        <tbody>
+                            <tr height=70>
+                                <td>
+                                <td valign=bottom>
+                                    <button .add type=button>
+                                        <img src=@{StaticR list_add_png} alt="Kind erfassen">Kind erfassen
+                                    <button #del type=button>
+                                        <img src=@{StaticR list_remove_png} alt="Kind löschen">Kind löschen
+                            <tr>
+                                <td>
+                                <td>
+                                    <table #details-children .editable>
+                                        <tr>
+                                            <td>
+                                                <label for=kindname>Name des Kindes
+                                            <td>
+                                                <input #kindname name=kindname>
+                                        <tr>
+                                            <td>
+                                                <label for=kindalter>Alter des Kindes
+                                            <td>
+                                                <input #kindalter name=kindalter>
+                                        <tr>
+                                            <td>
+                                                <label for=kindgeschlecht>Geschlecht
+                                            <td>
+                                                <input type=radio name=kindgeschlecht value=m><span>männlich</span>
+                                                <input type=radio name=kindgeschlecht value=w><span>weiblich</span>
+                                        <tr>
+                                            <td>
+                                                <label for=zuloben>Zu loben
+                                            <td>
+                                        <tr>
+                                            <td colspan=2>
+                                                <textarea #zuloben cols=120 rows=15>
+                                        <tr>
+                                            <td>
+                                                <label for=zutadeln>Zu tadeln
+                                            <td>
+                                        <tr>
+                                            <td colspan=2>
+                                                <textarea #zutadeln cols=120 rows=15>
+                                        <tr>
+                                            <td colspan=2>
+                                                <table .buttonlayout>
+                                                    <tr>
+                                                        <td>
+                                                        <td>
+                                                            <button #ok .okbutton type=button>Angaben speichern
+                                                        <td>
+                                                    <tr>
+                                                        <td>
+                                                            <img src=@{StaticR larrow_png}>
+                                                        <td>
+                                                        <td>
+                                                            <img src=@{StaticR rarrow_png}>
+                                                    <tr>
+                                                        <td>
+                                                            <button .add type=button>
+                                                                <img src=@{StaticR list_add_png} alt="Kind erfassen">Kind erfassen
+                                                        <td>
+                                                        <td style="text-align: right;">
+                                                            <button #send .submitbutton .alignright type=button disabled=disabled>Anmeldung abschicken
