@@ -9,6 +9,7 @@ import Data.Text (Text)
 import Control.Applicative ((<$>), (<*>))
 import Control.Monad.IO.Class (liftIO)
 import Data.String
+import Text.Hamlet
 import Text.Julius
 
 staticFiles "static"
@@ -20,6 +21,7 @@ data Santi = Santi
 mkYesod "Santi" [parseRoutes|
 /       RootR   GET
 /person PersonR POST
+/reg    RegR    POST
 /static StaticR Static getStatic
 |]
 
@@ -34,52 +36,7 @@ instance YesodJquery Santi
 myLayout :: GWidget s Santi () -> GHandler s Santi RepHtml
 myLayout widget = do
     pc <- widgetToPageContent widget
-    hamletToRepHtml [hamlet|
-$doctype 5
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>#{pageTitle pc}
-        <link type="text/css" rel="stylesheet" media="all" href=@{StaticR defaults_css}>
-        <link type="text/css" rel="stylesheet" media="all" href=@{StaticR garland_css}>
-        <link type="text/css" rel="stylesheet" media="all" href=@{StaticR santi_css}>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
-        <script src=@{StaticR jquery_blockUI_js}>
-        ^{pageHead pc}
-    <body .sidebar-left>
-        <div #header-region .clear-block>
-        <div #wrapper>
-            <div #container .clear-block>
-                <div #header>
-                    <div #logo-floater>
-                        <h1>
-                            <a href="http://comebackgloebb.ch/">
-                                <img #logo src=@{StaticR garland_logo_png} alt="">
-                    <ul .links .primary-links>
-                        <li .menu-122 .first>
-                            <a href="http://comebackgloebb.ch/content/node/5" title="Willkommen beim Come Back Glöbb Allschwil">Willkommen
-                        <li .menu-115 .active-trail>
-                            <a href="http://comebackgloebb.ch/content/node" title="Aktuelles rund um den Glöbb">Aktuelles
-                        <li .menu-123>
-                            <a href="http://comebackgloebb.ch/content/node/6" title="Projekte">Projekte
-                        <li .menu-124>
-                            <a href="http://comebackgloebb.ch/content/node/7" title="Mitglieder">Mitglieder
-                        <li .menu-170 .last>
-                            <a href="http://comebackgloebb.ch/content/node/103" title="Archiv">Archiv
-                <div #sidebar-left .sidebar>
-                    <img src=@{StaticR santichlaus_png}>
-                <div #center>
-                    <div #squeeze>
-                        <djv .right-corner>
-                            <div .left-corner>
-                                <div .clear-block>
-                                    <div #node-393 .node>
-                                        <div .content .clear-block>
-                                          ^{pageBody pc}
-                                    <div .clear-block>
-                                        <div .meta>
-                <div #footer>
-|]
+    hamletToRepHtml $(hamletFile "layout.hamlet")
 
 data Person = Person
         { personName :: Text
@@ -114,7 +71,8 @@ title = do
     return $ "Santichlaus-Anmeldung " ++ y
 
 availableTimes :: [String]
-availableTimes = [ "17:00"
+availableTimes = [ ""
+                 , "17:00"
                  , "17:30"
                  , "18:00"
                  , "18:30"
@@ -144,6 +102,9 @@ postPersonR = do
         ^{widget}
         <input type=submit>
 |]
+
+postRegR :: Handler RepHtml
+postRegR = undefined
 
 main :: IO ()
 main = do

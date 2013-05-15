@@ -310,7 +310,7 @@ $(document).ready(function(){
       color: '#fff' 
     }, message: "Mails werden versendet (~15 sec)..."
     }); 
-    $.post('#', getInput(), function(ret) {
+    $.post('@{RegR}', getInput(), function(ret) {
     })
     .success(function() { $.unblockUI(); $('#timeconfirm').text($('#zeit').val()); switchTo.success(); })
     .error(function() { $.unblockUI(); switchTo.error(); });

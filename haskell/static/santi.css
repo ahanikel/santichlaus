@@ -57,6 +57,10 @@ input[type="radio"] {
 	width: 10px;
 }
 
+textarea {
+	width: 100%;
+}
+
 .childsex, .childpos, .childneg {
 	visibility: hidden;
 	display: none;
