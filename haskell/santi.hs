@@ -131,7 +131,7 @@ getRootR = do
         t <- liftIO title
         setTitle $ toHtml t
         $(whamletFile "santi.hamlet")
-        toWidget $(juliusFile "santi.julius")
+        toWidget $(juliusFile "santi.js")
 
 postPersonR :: Handler RepHtml
 postPersonR = do
