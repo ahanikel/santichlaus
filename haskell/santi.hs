@@ -47,6 +47,31 @@ data Person = Person
         }
     deriving Show
 
+data Registration = Registration
+        { name :: Text
+        , vorname :: Text
+        , strasse :: Text
+        , ort :: Text
+        , telefon :: Text
+        , email :: Text
+        , zeit :: Text
+        , remarks :: Text
+        --, children :: [Child]
+        }
+    deriving Show
+
+data Sex = M | F
+    deriving Show
+
+data Child = Child
+        { childname :: Text
+        , childage :: Int
+        , childsex :: Sex
+        , childpos :: Text
+        , childneg :: Text
+        }
+    deriving Show
+
 personForm :: Html -> MForm Santi Santi (FormResult Person, Widget)
 personForm = renderDivs $ Person
         <$> areq textField "Name" Nothing
@@ -104,7 +129,18 @@ postPersonR = do
 |]
 
 postRegR :: Handler RepHtml
-postRegR = undefined
+postRegR = do
+        result <- runInputPost $ Registration
+            <$> ireq textField "name"
+            <*> ireq textField "vorname"
+            <*> ireq textField "strasse"
+            <*> ireq textField "ort"
+            <*> ireq textField "telefon"
+            <*> ireq textField "email"
+            <*> ireq textField "zeit"
+            <*> ireq textField "remarks"
+            -- children missing yet
+        defaultLayout [whamlet|<p>#{show result}|]
 
 main :: IO ()
 main = do

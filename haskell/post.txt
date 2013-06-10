@@ -1,0 +1,19 @@
+name:sldfkj
+vorname:sdlfkj
+strasse:sdflj
+ort:sdlfkj
+telefon:dslfkj
+email:qah@bluewin.ch
+zeit:17:30
+remarks:sdfsf
+children[0][childname]:Bitte Name des Kindesdfs eingeben
+children[0][childage]:sdf
+children[0][childsex]:m
+children[0][childpos]:sdf
+children[0][childneg]:sdf
+children[1][childname]:zwei
+children[1][childage]:8
+children[1][childsex]:w
+children[1][childpos]:sldfkj 
+children[1][childneg]:sldfkj
+_charset_:utf-8
