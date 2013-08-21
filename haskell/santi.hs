@@ -5,7 +5,7 @@ import Yesod.Static
 import Yesod.Form.Jquery
 import Data.Time (Day, toGregorian)
 import Data.Time.Clock
-import Data.Text (Text)
+import Data.Text (Text,unpack)
 import Control.Applicative ((<$>), (<*>))
 import Control.Monad.IO.Class (liftIO)
 import Data.String
@@ -14,13 +14,10 @@ import Text.Julius
 
 staticFiles "static"
 
-data Santi = Santi 
-    {getStatic :: Static
-    }
+data Santi = Santi { getStatic :: Static }
 
 mkYesod "Santi" [parseRoutes|
 /       RootR   GET
-/person PersonR POST
 /reg    RegR    POST
 /static StaticR Static getStatic
 |]
@@ -38,15 +35,6 @@ myLayout widget = do
     pc <- widgetToPageContent widget
     hamletToRepHtml $(hamletFile "layout.hamlet")
 
-data Person = Person
-        { personName :: Text
-        , personBirthday :: Day
-        , personFavoriteColor :: Maybe Text
-        , personEmail :: Text
-        , personWebsite :: Maybe Text
-        }
-    deriving Show
-
 data Registration = Registration
         { name :: Text
         , vorname :: Text
@@ -55,33 +43,19 @@ data Registration = Registration
         , telefon :: Text
         , email :: Text
         , zeit :: Text
-        , remarks :: Text
-        --, children :: [Child]
+        , remarks :: Maybe Text
+        , children :: [Child]
         }
-    deriving Show
-
-data Sex = M | F
-    deriving Show
+    deriving (Show, Read)
 
 data Child = Child
         { childname :: Text
         , childage :: Int
-        , childsex :: Sex
+        , childmw :: Text
         , childpos :: Text
         , childneg :: Text
         }
-    deriving Show
-
-personForm :: Html -> MForm Santi Santi (FormResult Person, Widget)
-personForm = renderDivs $ Person
-        <$> areq textField "Name" Nothing
-        <*> areq (jqueryDayField def
-            { jdsChangeYear = True -- give a year dropdown
-            , jdsYearRange = "1900:-5" -- 1900 till five years ago
-            }) "Birthday" Nothing
-        <*> aopt textField "Favorite color" Nothing
-        <*> areq emailField "Email address" Nothing
-        <*> aopt urlField "Website" Nothing
+    deriving (Show, Read)
 
 currentYear :: IO String
 currentYear = do
@@ -116,17 +90,14 @@ getRootR = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-postPersonR :: Handler RepHtml
-postPersonR = do
-        ((result, widget), enctype) <- runFormPost personForm
-        case result of
-                FormSuccess person -> defaultLayout [whamlet|<p>#{show person}|]
-                _ -> defaultLayout [whamlet|
-<p>Invalid input, let's try again.
-<form method=post action=@{PersonR} enctype=#{enctype}>
-        ^{widget}
-        <input type=submit>
-|]
+childrenField :: Field sub master [Child]
+childrenField = Field
+    { fieldParse = \values _ ->
+        if values == [] then return $ Right Nothing
+        else return $ Right $ Just $ map (read . ("Child " ++) . unpack) values
+    , fieldView = undefined
+    , fieldEnctype = UrlEncoded
+    }
 
 postRegR :: Handler RepHtml
 postRegR = do
@@ -138,8 +109,8 @@ postRegR = do
             <*> ireq textField "telefon"
             <*> ireq textField "email"
             <*> ireq textField "zeit"
-            <*> ireq textField "remarks"
-            -- children missing yet
+            <*> iopt textField "remarks"
+            <*> ireq childrenField "children[]"
         defaultLayout [whamlet|<p>#{show result}|]
 
 main :: IO ()

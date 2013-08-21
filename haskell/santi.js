@@ -82,6 +82,22 @@ $(document).ready(function(){
     return ret;
   }
 
+  function getChildrenHS() {
+    var ret = [];
+    $('#list-children tbody tr').each(function() {
+      var tmp = [];
+      $(this).children('td').each(function() {
+        var k = $(this).attr('class');
+	if (k == "childage")
+	  tmp.push(k + "=" + $(this).text());
+	else
+	  tmp.push(k + "=" + "\"" + $(this).text() + "\"");
+      });
+      ret.push("{" + tmp.join(",") + "}");
+    });
+    return ret;
+  }
+
   function initInput() {
     var json = ""; // TODO insert previous registration here
     if (json) {
@@ -137,7 +153,9 @@ $(document).ready(function(){
     $('#form input, #form select, #remarks').each(function() {
       ret[$(this).attr('id')] = $(this).val();
     });
-    ret['children'] = getChildren();
+    if (!ret['remarks'])
+      ret['remarks'] = "\"\"";
+    ret['children'] = getChildrenHS();
     ret['_charset_'] = 'utf-8';
     return ret;
   }
@@ -223,11 +241,11 @@ $(document).ready(function(){
       var theRow = $('#list-children tbody tr').eq(childIndex);
       $('#kindname').val(theRow.children('td.childname').text());
       $('#kindalter').val(theRow.children('td.childage').text());
-      if (theRow.children('td.childsex').text() == "m") {
-        $('input[name="kindgeschlecht"][value="m"]').attr('checked', 'checked');
+      if (theRow.children('td.childmw').text() == "M") {
+        $('input[name="kindgeschlecht"][value="M"]').attr('checked', 'checked');
       }
       else {
-        $('input[name="kindgeschlecht"][value="w"]').attr('checked', 'checked');
+        $('input[name="kindgeschlecht"][value="W"]').attr('checked', 'checked');
       }
       $('#zuloben').val(theRow.children('td.childpos').text());
       $('#zutadeln').val(theRow.children('td.childneg').text());
@@ -247,7 +265,7 @@ $(document).ready(function(){
       $('#kindname').val(),
       '</td><td class="childage">',
       $('#kindalter').val(),
-      '</td><td class="childsex">',
+      '</td><td class="childmw">',
       $('input[name="kindgeschlecht"]:checked').val(),
       '</td><td class="childpos">',
       $('#zuloben').val(),

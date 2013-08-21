@@ -128,8 +128,8 @@
                                             <td>
                                                 <label for=kindgeschlecht>Geschlecht
                                             <td>
-                                                <input type=radio name=kindgeschlecht value=m><span>männlich</span>
-                                                <input type=radio name=kindgeschlecht value=w><span>weiblich</span>
+                                                <input type=radio name=kindgeschlecht value=M><span>männlich</span>
+                                                <input type=radio name=kindgeschlecht value=W><span>weiblich</span>
                                         <tr>
                                             <td>
                                                 <label for=zuloben>Zu loben
