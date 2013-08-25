@@ -1,5 +1,8 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, MultiParamTypeClasses, OverloadedStrings, TypeFamilies #-}
 
+import Santi.Types
+import Santi.Times
+import Santi.Mail
 import Yesod
 import Yesod.Static
 import Yesod.Form.Jquery
@@ -22,11 +25,11 @@ mkYesod "Santi" [parseRoutes|
 /static StaticR Static getStatic
 |]
 
-instance Yesod Santi
-    where defaultLayout = myLayout
+instance Yesod Santi where
+    defaultLayout = myLayout
 
 instance RenderMessage Santi FormMessage where
-        renderMessage _ _ = defaultFormMessage
+    renderMessage _ _ = defaultFormMessage
 
 instance YesodJquery Santi
 
@@ -34,28 +37,6 @@ myLayout :: GWidget s Santi () -> GHandler s Santi RepHtml
 myLayout widget = do
     pc <- widgetToPageContent widget
     hamletToRepHtml $(hamletFile "layout.hamlet")
-
-data Registration = Registration
-        { name :: Text
-        , vorname :: Text
-        , strasse :: Text
-        , ort :: Text
-        , telefon :: Text
-        , email :: Text
-        , zeit :: Text
-        , remarks :: Maybe Text
-        , children :: [Child]
-        }
-    deriving (Show, Read)
-
-data Child = Child
-        { childname :: Text
-        , childage :: Int
-        , childmw :: Text
-        , childpos :: Text
-        , childneg :: Text
-        }
-    deriving (Show, Read)
 
 currentYear :: IO String
 currentYear = do
@@ -68,18 +49,6 @@ title :: IO String
 title = do
     y <- currentYear
     return $ "Santichlaus-Anmeldung " ++ y
-
-availableTimes :: [String]
-availableTimes = [ ""
-                 , "17:00"
-                 , "17:30"
-                 , "18:00"
-                 , "18:30"
-                 , "19:00"
-                 , "19:30"
-                 , "20:00"
-                 , "20:30"
-                 ]
 
 getRootR :: Handler RepHtml
 getRootR = do
@@ -111,6 +80,7 @@ postRegR = do
             <*> ireq textField "zeit"
             <*> iopt textField "remarks"
             <*> ireq childrenField "children[]"
+        liftIO $ sendRegistrationMail result
         defaultLayout [whamlet|<p>#{show result}|]
 
 main :: IO ()

@@ -87,11 +87,8 @@ $(document).ready(function(){
     $('#list-children tbody tr').each(function() {
       var tmp = [];
       $(this).children('td').each(function() {
-        var k = $(this).attr('class');
-	if (k == "childage")
-	  tmp.push(k + "=" + $(this).text());
-	else
-	  tmp.push(k + "=" + "\"" + $(this).text() + "\"");
+        var key = $(this).attr('class');
+	tmp.push(key + "=" + "\"" + $(this).text() + "\"");
       });
       ret.push("{" + tmp.join(",") + "}");
     });
