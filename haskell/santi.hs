@@ -1,14 +1,14 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, MultiParamTypeClasses, OverloadedStrings, TypeFamilies #-}
 
 import Santi.Types
-import Santi.Times
 import Santi.Mail
+import Santi.Persist
 import Yesod
 import Yesod.Static
 import Yesod.Form.Jquery
 import Data.Time (Day, toGregorian)
 import Data.Time.Clock
-import Data.Text (Text,unpack)
+import Data.Text (Text,pack,unpack)
 import Control.Applicative ((<$>), (<*>))
 import Control.Monad.IO.Class (liftIO)
 import Data.String
@@ -56,6 +56,7 @@ getRootR = do
         year <- liftIO currentYear
         t <- liftIO title
         setTitle $ toHtml t
+        times <- liftIO availableTimes
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
@@ -80,7 +81,8 @@ postRegR = do
             <*> ireq textField "zeit"
             <*> iopt textField "remarks"
             <*> ireq childrenField "children[]"
-        liftIO $ sendRegistrationMail result
+        liftIO $ saveRegistration result
+        liftIO $ sendRegistrationMails result
         defaultLayout [whamlet|<p>#{show result}|]
 
 main :: IO ()
