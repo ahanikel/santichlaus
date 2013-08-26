@@ -20,9 +20,10 @@ staticFiles "static"
 data Santi = Santi { getStatic :: Static }
 
 mkYesod "Santi" [parseRoutes|
-/       RootR   GET
-/reg    RegR    POST
-/static StaticR Static getStatic
+/            RootR   GET
+/favicon.ico FavR    GET
+/reg         RegR    POST
+/static      StaticR Static getStatic
 |]
 
 instance Yesod Santi where
@@ -84,6 +85,9 @@ postRegR = do
         liftIO $ saveRegistration result
         liftIO $ sendRegistrationMails result
         defaultLayout [whamlet|<p>#{show result}|]
+
+getFavR :: Handler ()
+getFavR = sendFile "image/png" "static/santi-favicon.png"
 
 main :: IO ()
 main = do
