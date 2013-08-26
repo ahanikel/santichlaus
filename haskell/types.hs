@@ -57,7 +57,7 @@ instance Show JsonRegistration where
 		, "  \"email\": \"" ++ unpack (email r) ++ "\","
 		, "  \"zeit\": \"" ++ unpack (zeit r) ++ "\","
 		, "  \"remarks\": \"" ++ rem ++ "\","
-		, "  \"children\": \"" ++ clds ++ "\","
+		, "  \"children\": " ++ clds
 		, "}"
 		]
 		where rem = case remarks r of
@@ -70,6 +70,6 @@ instance Show JsonRegistration where
 		              , "  \"childage\": \"" ++ unpack (childage c) ++ "\","
 		              , "  \"childmw\": \"" ++ unpack (childmw c) ++ "\","
 		              , "  \"childpos\": \"" ++ unpack (childpos c) ++ "\","
-		              , "  \"childneg\": \"" ++ unpack (childneg c) ++ "\","
+		              , "  \"childneg\": \"" ++ unpack (childneg c) ++ "\""
 		              , "}"
 			      ]

@@ -96,39 +96,42 @@ $(document).ready(function(){
   }
 
   function initInput() {
-    var json = ""; // TODO insert previous registration here
+    var json = #{reg};
     if (json) {
       for (var key in json) {
-        if (key.indexOf("child") == 0) {
-          var child = json[key];
-          var html = [];
-          html.push('<tr class="lastInserted">');
-          for (var childkey in child) {
-            html.push('<td class="');
-            html.push(childkey);
-            html.push('">');
-            html.push(child[childkey]);
-            html.push('</td>');
-          }
-          html.push('</tr>');
-          $('#list-children tbody').append(html.join(''));
-          $('.lastInserted')
-            .click(function(e) {
-              if ($('#list-children').attr('disabled')) {
-                return;
-              }
-              if ($(this).hasClass('selected')) {
-                $('#list-children tr.selected').removeClass('selected');
-              } else {
-                $('#list-children tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-                var childIndex = $('#list-children tbody tr').index(e.currentTarget);
-                editChild(childIndex);
-              }
-            })
-            .removeClass('lastInserted');
-          }
-          else {
+        if (key.indexOf("children") == 0) {
+          var children = json[key];
+          for (var i = 0; i < children.length; ++i) {
+            var child = children[i];
+            var html = [];
+            html.push('<tr class="lastInserted">');
+            for (var childkey in child) {
+              html.push('<td class="');
+              html.push(childkey);
+              html.push('">');
+              html.push(child[childkey]);
+              html.push('</td>');
+            }
+            html.push('</tr>');
+            $('#list-children tbody').append(html.join(''));
+            $('.lastInserted')
+              .click(function(e) {
+                if ($('#list-children').attr('disabled')) {
+                  return;
+                }
+                if ($(this).hasClass('selected')) {
+                  $('#list-children tr.selected').removeClass('selected');
+                } else {
+                  $('#list-children tr.selected').removeClass('selected');
+                  $(this).addClass('selected');
+                  var childIndex = $('#list-children tbody tr').index(e.currentTarget);
+                  editChild(childIndex);
+                }
+              })
+              .removeClass('lastInserted');
+	  }
+        }
+        else {
           $('#' + key)
             .val(json[key])
             .parent().parent().find(".invalidMessage").removeClass("show");

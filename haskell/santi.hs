@@ -21,6 +21,7 @@ data Santi = Santi { getStatic :: Static }
 
 mkYesod "Santi" [parseRoutes|
 /            RootR   GET
+/edit/#Text  EditR   GET
 /favicon.ico FavR    GET
 /reg         RegR    POST
 /static      StaticR Static getStatic
@@ -51,9 +52,22 @@ title = do
     y <- currentYear
     return $ "Santichlaus-Anmeldung " ++ y
 
+getEditR :: Text -> Handler RepHtml
+getEditR tId = do
+    defaultLayout $ do
+        sReg <- liftIO $ getRegistrationAsJson tId
+        let reg = rawJS sReg
+        year <- liftIO currentYear
+        t <- liftIO title
+        setTitle $ toHtml t
+        times <- liftIO availableTimes
+        $(whamletFile "santi.hamlet")
+        toWidget $(juliusFile "santi.js")
+
 getRootR :: Handler RepHtml
 getRootR = do
     defaultLayout $ do
+        let reg = toJSON ("" :: String)
         year <- liftIO currentYear
         t <- liftIO title
         setTitle $ toHtml t

@@ -4,7 +4,8 @@ import Santi.Types
 import System.IO (openFile, IOMode(ReadMode, AppendMode), hPutStrLn, hGetContents, hClose)
 import qualified Data.Map as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
 import Data.List (foldl')
-import qualified Data.Text as T (unpack)
+import qualified Data.Text as T (Text, pack, unpack)
+import qualified Data.Text.Lazy as L (Text, pack, unpack)
 
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
@@ -48,11 +49,12 @@ registrations = do
     let sReg = lines cReg
     return $ map (read :: String -> Registration) sReg
 
-getRegistrationAsJson :: String -> IO String
+getRegistrationAsJson :: T.Text -> IO String
 getRegistrationAsJson id = do
+    let sId = T.unpack id
     rs <- registrations
-    let reg = filter (\r -> primaryKey r == id) rs
+    let reg = filter (\r -> primaryKey r == sId) rs
     case reg of
-        []     -> return ""
+        []     -> return $ "\"\""
         [r]    -> return $ show $ JsonRegistration r
         (_:rs) -> return $ show $ JsonRegistration $ last rs
