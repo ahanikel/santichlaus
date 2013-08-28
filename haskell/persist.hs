@@ -10,20 +10,17 @@ import qualified Data.Text.Lazy as L (Text, pack, unpack)
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
     hReg <- openFile "registrations.txt" AppendMode
-    hTimes <- openFile "times.txt" AppendMode
     hPutStrLn hReg $ show r
-    hPutStrLn hTimes $ T.unpack $ zeit r
-    hClose hTimes
     hClose hReg
 
 bookedTimes :: IO TimeCount
 bookedTimes = do
-    hTimes <- openFile "times.txt" ReadMode
-    contents <- hGetContents hTimes
-    return $ foldl' insert Map.empty $ lines contents
-    where insert m line =
-            let count = Map.findWithDefault 0 line m
-            in Map.insert line (count + 1) m
+    regs <- registrations
+    return $ foldl' insert Map.empty $ regs
+    where insert m reg =
+            let time = T.unpack $ zeit reg
+                count = Map.findWithDefault 0 time m
+            in  Map.insert time (count + 1) m
 
 isTimeAvailable :: String -> IO Bool
 isTimeAvailable t = do
