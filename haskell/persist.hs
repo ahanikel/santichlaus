@@ -7,20 +7,55 @@ import Data.List (foldl')
 import qualified Data.Text as T (Text, pack, unpack)
 import qualified Data.Text.Lazy as L (Text, pack, unpack)
 
+fnRegistrations = "registrations.txt"
+fnRegDeletions  = "registrations.del.txt"
+
+
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
-    hReg <- openFile "registrations.txt" AppendMode
+    oldReg <- getRegistration (primaryKey r)
+    case oldReg of
+        Nothing -> _saveRegistration r
+        Just o  -> do
+                       _deleteRegistration o
+                       _saveRegistration r
+
+_saveRegistration :: Registration -> IO ()
+_saveRegistration r = do
+    hReg <- openFile fnRegistrations AppendMode
     hPutStrLn hReg $ show r
     hClose hReg
+
+_deleteRegistration :: Registration -> IO ()
+_deleteRegistration r = do
+    hReg <- openFile fnRegDeletions AppendMode
+    hPutStrLn hReg $ show r
+    hClose hReg
+
+registrations :: IO [Registration]
+registrations = do
+    hReg <- openFile fnRegistrations ReadMode
+    cReg <- hGetContents hReg
+    return $ map (read :: String -> Registration) $ lines cReg
+
+deletions :: IO [Registration]
+deletions = do
+    hReg <- openFile fnRegDeletions ReadMode
+    cReg <- hGetContents hReg
+    return $ map (read :: String -> Registration) $ lines cReg
 
 bookedTimes :: IO TimeCount
 bookedTimes = do
     regs <- registrations
-    return $ foldl' insert Map.empty $ regs
-    where insert m reg =
+    dels <- deletions
+    let madd = foldl' addTime Map.empty $ regs
+    return $ foldl' subTime madd $ dels
+    where insert f m reg =
             let time = T.unpack $ zeit reg
                 count = Map.findWithDefault 0 time m
-            in  Map.insert time (count + 1) m
+            in  Map.insert time (f count) m
+          addTime = insert (+ 1)
+          subTime = insert $ \i -> i - 1
 
 isTimeAvailable :: String -> IO Bool
 isTimeAvailable t = do
@@ -39,19 +74,20 @@ availableTimes = do
     let available = Map.differenceWith diffFn maxTimes booked
     return [ time | (time,_) <- Map.toList available]
 
-registrations :: IO [Registration]
-registrations = do
-    hReg <- openFile "registrations.txt" ReadMode
-    cReg <- hGetContents hReg
-    let sReg = lines cReg
-    return $ map (read :: String -> Registration) sReg
+getRegistration :: String -> IO (Maybe Registration)
+getRegistration pk = do
+    rs <- registrations
+    let reg = filter (\r -> primaryKey r == pk) rs
+    case reg of
+        []     -> return Nothing
+        [r]    -> return $ Just r
+        (_:rs) -> return $ Just $ last rs
 
 getRegistrationAsJson :: T.Text -> IO String
 getRegistrationAsJson id = do
     let sId = T.unpack id
-    rs <- registrations
-    let reg = filter (\r -> primaryKey r == sId) rs
+    rs <-  registrations
+    reg <- getRegistration sId
     case reg of
-        []     -> return $ "\"\""
-        [r]    -> return $ show $ JsonRegistration r
-        (_:rs) -> return $ show $ JsonRegistration $ last rs
+        Nothing -> return $ "\"\""
+        Just r  -> return $ show $ JsonRegistration r
