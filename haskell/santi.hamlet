@@ -68,6 +68,7 @@
                         <label>Uhrzeit
                     <td>
                         <select id="zeit" class="validateTime">
+                                <option>
                             $forall time <- times
                                 <option>#{time}
                     <td .invalidMessage>Bitte wählen Sie eine Zeit aus der Dropdown-Liste

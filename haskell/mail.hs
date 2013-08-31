@@ -81,26 +81,24 @@ sendRegistrationMail :: Registration -> IO ()
 sendRegistrationMail r = do
 	let sender	= T.intercalate " " [(vorname r), (name r)]
 	let from	= Address (Just sender) (email r)
-	--let to		= [Address (Just "Santichlaus") "santichlaus@comebackgloebb.ch"]
-	let to		= [Address (Just "Santichlaus") "qah@bluewin.ch"]
+	let to		= [Address (Just "Santichlaus") "santichlaus@comebackgloebb.ch"]
 	let cc		= []
 	let bcc		= []
 	let subject	= T.append "Santichlaus-Anmeldung von " sender
 	let body	= plainTextPart $ L.pack $ registrationText r
 	let mail	= simpleMail from to cc bcc subject [body]
-        sendMail "smtp.gmail.com" mail
+        sendMail "localhost" mail
 
 sendConfirmationMail :: Registration -> IO ()
 sendConfirmationMail r = do
 	let sender	= T.intercalate " " [(vorname r), (name r)]
 	let from	= Address (Just "Santichlaus") "santichlaus@comebackgloebb.ch"
 	let recipient	= T.intercalate " " [(vorname r), (name r)]
-	--let to		= Address (Just sender) (email r)
-	let to		= [Address (Just sender) "qah@bluewin.ch"]
+	let to		= [Address (Just sender) (email r)]
 	let cc		= []
 	let bcc		= []
 	let subject	= "Santichlaus-Anmeldung"
 	let body	= plainTextPart $ L.pack $ confirmationText r
 	let mail	= simpleMail from to cc bcc subject [body]
-        sendMail "smtp.gmail.com" mail
+        sendMail "localhost" mail
 	
