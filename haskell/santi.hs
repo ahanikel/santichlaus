@@ -106,6 +106,6 @@ getFavR = sendFile "image/png" "static/santi-favicon.png"
 main :: IO ()
 main = do
     static@(Static settings) <- static "static"
-    warpDebug 3000 $ Santi static
+    warpDebug 80 $ Santi static
 
 -- vim:ts=4:sw=4:ai:et

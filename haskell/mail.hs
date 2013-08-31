@@ -68,7 +68,7 @@ confirmationText r =
 	, "Come Back Glöbb Allschwil"
 	, ""
 	, "PS: Falls Sie Änderungen an Ihrer Anmeldung vornehmen möchten, verwenden Sie bitte diesen Link:"
-    	, "http://santichlaus.comebackgloebb.ch/content/santichlaus.html?id=" ++ primaryKey r
+    	, "http://santichlaus.comebackgloebb.ch/edit/" ++ primaryKey r
 	, ""
 	]
 
