@@ -1,8 +1,13 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Santi.Types where
 
-import Data.Text (Text,unpack)
+import Data.Text (Text,unpack,pack)
 import qualified Data.Map as Map
 import Data.List (intercalate)
+import Data.Aeson
+import Control.Applicative
+import Control.Monad
 
 data Registration = Registration
         { name      :: Text
@@ -29,47 +34,66 @@ data Child = Child
         }
     deriving (Show, Read)
 
+-- we need this because the JSON object does not
+-- preserve the order of the keys
+ckeys = "[\"childname\", \"childage\", \"childmw\", \"childpos\", \"childneg\"]"
+
 type TimeCount = Map.Map String Int
 
 maxTimes :: TimeCount
-maxTimes = Map.fromList 	[ ("17:00", 5)
+maxTimes = Map.fromList [ ("17:00", 5)
                  		, ("17:30", 5)
                  		, ("18:00", 5)
                  		, ("18:30", 5)
                  		, ("19:00", 5)
                  		, ("19:30", 5)
                  		, ("20:00", 5)
-                 		, ("20:30", 5)
                  		]
 
-newtype JsonRegistration = JsonRegistration Registration
-	deriving (Read)
+instance FromJSON Registration where
+    parseJSON (Object v) = Registration  <$>
+                           v .: "name" <*>
+                           v .: "vorname" <*>
+                           v .: "strasse" <*>
+                           v .: "ort" <*>
+                           v .: "telefon" <*>
+                           v .: "email" <*>
+                           v .: "zeit" <*>
+                           v .: "remarks" <*>
+                           v .: "children"
+    parseJSON _ = mzero
 
-instance Show JsonRegistration where
-	show (JsonRegistration r) = 
-		intercalate "\r\n" $
-		[ "{"
-		, "  \"name\": \"" ++ unpack (name r) ++ "\","
-		, "  \"vorname\": \"" ++ unpack (vorname r) ++ "\","
-		, "  \"strasse\": \"" ++ unpack (strasse r) ++ "\","
-		, "  \"ort\": \"" ++ unpack (ort r) ++ "\","
-		, "  \"telefon\": \"" ++ unpack (telefon r) ++ "\","
-		, "  \"email\": \"" ++ unpack (email r) ++ "\","
-		, "  \"zeit\": \"" ++ unpack (zeit r) ++ "\","
-		, "  \"remarks\": \"" ++ rem ++ "\","
-		, "  \"children\": " ++ clds
-		, "}"
-		]
+instance ToJSON Registration where
+    toJSON r = object
+        [ "name"     .= name r
+        , "vorname"  .= vorname r
+        , "strasse"  .= strasse r
+        , "ort"      .= ort r
+        , "telefon"  .= telefon r
+        , "email"    .= email r
+        , "zeit"     .= zeit r
+        , "remarks"  .= rem
+        , "children" .= children r
+        ]
 		where rem = case remarks r of
-			Just t -> unpack t
+			Just t -> t
 			Nothing -> ""
-		      clds = "[ " ++ (intercalate ",\r\n" $ map cld (children r)) ++ " ]"
-		      cld c = intercalate "\r\n  " $
-		              [ "{"
-		              , "  \"childname\": \"" ++ unpack (childname c) ++ "\","
-		              , "  \"childage\": \"" ++ unpack (childage c) ++ "\","
-		              , "  \"childmw\": \"" ++ unpack (childmw c) ++ "\","
-		              , "  \"childpos\": \"" ++ unpack (childpos c) ++ "\","
-		              , "  \"childneg\": \"" ++ unpack (childneg c) ++ "\""
-		              , "}"
-			      ]
+
+instance FromJSON Child where
+    parseJSON (Object v) = Child <$>
+                           v .: "childname" <*>
+                           v .: "childage" <*>
+                           v .: "childmw" <*>
+                           v .: "childpos" <*>
+                           v .: "childneg"
+    parseJSON _ = mzero
+
+instance ToJSON Child where
+    toJSON c = object
+        [ "childname" .= childname c
+        , "childage"  .= childage c
+        , "childmw"   .= childmw c
+        , "childpos"  .= childpos c
+        , "childneg"  .= childneg c
+        ]
+

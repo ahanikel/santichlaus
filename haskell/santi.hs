@@ -57,6 +57,7 @@ getEditR tId = do
     defaultLayout $ do
         sReg <- liftIO $ getRegistrationAsJson tId
         let reg = rawJS sReg
+        let childkeys = rawJS ckeys
         year <- liftIO currentYear
         t <- liftIO title
         setTitle $ toHtml t
@@ -68,6 +69,7 @@ getRootR :: Handler RepHtml
 getRootR = do
     defaultLayout $ do
         let reg = toJSON ("" :: String)
+        let childkeys = rawJS ckeys
         year <- liftIO currentYear
         t <- liftIO title
         setTitle $ toHtml t

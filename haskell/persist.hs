@@ -6,6 +6,9 @@ import qualified Data.Map as Map (Map, insert, empty, findWithDefault, differenc
 import Data.List (foldl')
 import qualified Data.Text as T (Text, pack, unpack)
 import qualified Data.Text.Lazy as L (Text, pack, unpack)
+import Data.Aeson
+import qualified Data.ByteString.Lazy as B
+import Data.ByteString.Lazy.UTF8 (toString)
 
 fnRegistrations = "registrations.txt"
 fnRegDeletions  = "registrations.del.txt"
@@ -90,4 +93,4 @@ getRegistrationAsJson id = do
     reg <- getRegistration sId
     case reg of
         Nothing -> return $ "\"\""
-        Just r  -> return $ show $ JsonRegistration r
+        Just r  -> return $ toString $ encode r

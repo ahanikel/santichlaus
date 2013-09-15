@@ -88,7 +88,7 @@ $(document).ready(function(){
       var tmp = [];
       $(this).children('td').each(function() {
         var key = $(this).attr('class');
-	tmp.push(key + "=" + "\"" + $(this).text() + "\"");
+        tmp.push(key + "=" + "\"" + $(this).text() + "\"");
       });
       ret.push("{" + tmp.join(",") + "}");
     });
@@ -97,6 +97,7 @@ $(document).ready(function(){
 
   function initInput() {
     var json = #{reg};
+    var childkeys = #{childkeys};
     if (json) {
       for (var key in json) {
         if (key.indexOf("children") == 0) {
@@ -105,11 +106,11 @@ $(document).ready(function(){
             var child = children[i];
             var html = [];
             html.push('<tr class="lastInserted">');
-            for (var childkey in child) {
+            for (var j = 0; j < childkeys.length; ++j) {
               html.push('<td class="');
-              html.push(childkey);
+              html.push(childkeys[j]);
               html.push('">');
-              html.push(child[childkey]);
+              html.push(child[childkeys[j]]);
               html.push('</td>');
             }
             html.push('</tr>');
@@ -129,7 +130,7 @@ $(document).ready(function(){
                 }
               })
               .removeClass('lastInserted');
-	  }
+            }
         }
         else {
           $('#' + key)
