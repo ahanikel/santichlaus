@@ -302,6 +302,7 @@ $(document).ready(function(){
     $('.add, #list-children').removeAttr('disabled');
     $('#del').attr('disabled', 'disabled');
     validateAll();
+    $('#list-children')[0].scrollIntoView(true);
   });
 
   $('.cancelbutton').click(function(e) {

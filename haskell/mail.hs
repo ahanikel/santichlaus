@@ -54,11 +54,10 @@ confirmationText r =
 	intercalate "\r\n" $
 	[ "Vielen Dank für Ihre Anmeldung!"
 	, ""
-	, "Dr Santichlaus und dr Schmutzli werden um " ++ T.unpack (zeit r) ++ " Uhr bei Ihrer Familie vorbeikommen."
+	, "Dr Santichlaus und dr Schmutzli werden am 6. Dezember um " ++ T.unpack (zeit r) ++ " Uhr bei Ihrer Familie vorbeikommen."
 	, ""
 	, "Bitte haben Sie Verständnis: der Santichlaus kann Verspätung haben, wenn sein Esel plötzlich bockt, bzw. wenn es (hoffentlich nur ganz kleine)"
-	, "Verzögerungen gibt. Falls der gewünschte Zeitpunkt für den Chlaus-Besuch nicht mehr frei ist, werden wir Sie rechtzeitig"
-	, "per Mail informieren. Bitte informieren auch Sie uns rechtzeitig über Änderungen Ihrerseits. Bitte vergessen Sie nicht,"
+	, "Verzögerungen gibt. Bitte informieren Sie uns rechtzeitig über Änderungen Ihrerseits. Bitte vergessen Sie nicht,"
 	, "die Gaben für die Kinder am angegebenen Ort rechtzeitig zu hinterlegen."
 	, ""
 	, "Wir freuen uns jetzt schon auf eine fröhliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen..."
