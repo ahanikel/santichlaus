@@ -1,7 +1,7 @@
 module Santi.Persist where
 
 import Santi.Types
-import System.IO (openFile, IOMode(ReadMode, AppendMode), hPutStrLn, hGetContents, hClose)
+import System.IO (readFile, appendFile)
 import qualified Data.Map as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
 import Data.List (foldl')
 import qualified Data.Text as T (Text, pack, unpack)
@@ -15,7 +15,6 @@ import Control.Exception (evaluate)
 fnRegistrations = "registrations.txt"
 fnRegDeletions  = "registrations.del.txt"
 
-
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
     oldReg <- getRegistration (primaryKey r)
@@ -27,40 +26,21 @@ saveRegistration r = do
 
 _saveRegistration :: Registration -> IO ()
 _saveRegistration r = do
-    bracket
-        (openFile fnRegistrations AppendMode)
-        (hClose)
-        (\hReg -> hPutStrLn hReg $ show r)
+        appendFile fnRegistrations (show r)
 
 _deleteRegistration :: Registration -> IO ()
 _deleteRegistration r = do
-    bracket
-        (openFile fnRegDeletions AppendMode)
-        (hClose)
-        (\hReg -> hPutStrLn hReg $ show r)
+        appendFile fnRegDeletions (show r)
 
 registrations :: IO [Registration]
-registrations = bracket
-        (openFile fnRegistrations ReadMode)
-        (hClose)
-        (\hReg -> do
-            cReg <- hGetContents hReg
-            let ret = map (read :: String -> Registration) $ lines cReg
-            evaluate $ length ret -- TODO: hack until we know how to do better
-            return ret
-        )
+registrations = do
+        cReg <- readFile fnRegistrations
+        return $ map (read :: String -> Registration) $ lines cReg
 
 deletions :: IO [Registration]
 deletions = do
-    bracket
-        (openFile fnRegDeletions ReadMode)
-        (hClose)
-        (\hReg -> do
-            cReg <- hGetContents hReg
-            let ret = map (read :: String -> Registration) $ lines cReg
-            evaluate $ length ret -- TODO: hack until we know how to do better
-            return ret
-        )
+        cReg <- readFile fnRegDeletions
+        return $ map (read :: String -> Registration) $ lines cReg
 
 bookedTimes :: IO TimeCount
 bookedTimes = do
