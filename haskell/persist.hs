@@ -9,6 +9,8 @@ import qualified Data.Text.Lazy as L (Text, pack, unpack)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import Data.ByteString.Lazy.UTF8 (toString)
+import Control.Exception.Base (bracket)
+import Control.Exception (evaluate)
 
 fnRegistrations = "registrations.txt"
 fnRegDeletions  = "registrations.del.txt"
@@ -25,27 +27,40 @@ saveRegistration r = do
 
 _saveRegistration :: Registration -> IO ()
 _saveRegistration r = do
-    hReg <- openFile fnRegistrations AppendMode
-    hPutStrLn hReg $ show r
-    hClose hReg
+    bracket
+        (openFile fnRegistrations AppendMode)
+        (hClose)
+        (\hReg -> hPutStrLn hReg $ show r)
 
 _deleteRegistration :: Registration -> IO ()
 _deleteRegistration r = do
-    hReg <- openFile fnRegDeletions AppendMode
-    hPutStrLn hReg $ show r
-    hClose hReg
+    bracket
+        (openFile fnRegDeletions AppendMode)
+        (hClose)
+        (\hReg -> hPutStrLn hReg $ show r)
 
 registrations :: IO [Registration]
-registrations = do
-    hReg <- openFile fnRegistrations ReadMode
-    cReg <- hGetContents hReg
-    return $ map (read :: String -> Registration) $ lines cReg
+registrations = bracket
+        (openFile fnRegistrations ReadMode)
+        (hClose)
+        (\hReg -> do
+            cReg <- hGetContents hReg
+            let ret = map (read :: String -> Registration) $ lines cReg
+            evaluate $ length ret -- TODO: hack until we know how to do better
+            return ret
+        )
 
 deletions :: IO [Registration]
 deletions = do
-    hReg <- openFile fnRegDeletions ReadMode
-    cReg <- hGetContents hReg
-    return $ map (read :: String -> Registration) $ lines cReg
+    bracket
+        (openFile fnRegDeletions ReadMode)
+        (hClose)
+        (\hReg -> do
+            cReg <- hGetContents hReg
+            let ret = map (read :: String -> Registration) $ lines cReg
+            evaluate $ length ret -- TODO: hack until we know how to do better
+            return ret
+        )
 
 bookedTimes :: IO TimeCount
 bookedTimes = do
