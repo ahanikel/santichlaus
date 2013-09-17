@@ -12,7 +12,7 @@ $(document).ready(function(){
   $('.invalidMessage').addClass('show');
 
   var switchTo = {
-    currentPage : 0,
+    currentPage : 1,
     pages : [
       function() {
         switchTo.currentPage = 0;
@@ -25,7 +25,7 @@ $(document).ready(function(){
       function() {
         switchTo.currentPage = 1;
         validateAll();
-        $('#prev').show();
+        $('#prev').hide();
         $('#next').show();
         $('#send').hide();
         $('div.page').hide();
@@ -92,7 +92,9 @@ $(document).ready(function(){
       var tmp = [];
       $(this).children('td').each(function() {
         var key = $(this).attr('class');
-        tmp.push(key + "=" + "\"" + $(this).text() + "\"");
+        tmp.push(key + "=" + "\"" +
+            $(this).text().replace(/\\/g, "\\\\").replace(/'/g, "\\\'").replace(/"/g, "\\\"") +
+            "\"");
       });
       ret.push("{" + tmp.join(",") + "}");
     });
@@ -114,7 +116,7 @@ $(document).ready(function(){
               html.push('<td class="');
               html.push(childkeys[j]);
               html.push('">');
-              html.push(child[childkeys[j]]);
+              html.push(htmlEncode(child[childkeys[j]]));
               html.push('</td>');
             }
             html.push('</tr>');
@@ -143,7 +145,7 @@ $(document).ready(function(){
         }
       }
       if ($('#zeit').val() != json["zeit"]) {
-        $('#zeit').append("<option>" + json["zeit"] + "</option>");
+        $('#zeit').append("<option>" + htmlEncode(json["zeit"]) + "</option>");
         $('#zeit').val(json["zeit"]);
       }
       switchTo.pageNo(1);
@@ -221,6 +223,7 @@ $(document).ready(function(){
     $('#details-children').removeAttr('modify');
     $('.add, #del, #send').attr('disabled', 'disabled');
     $('#kindname').val("Bitte Name des Kindes eingeben");
+    $('#list-children')[0].scrollIntoView(true);
   });
 
   $('#del').click(function(e) {
@@ -307,7 +310,6 @@ $(document).ready(function(){
     $('.add, #list-children').removeAttr('disabled');
     $('#del').attr('disabled', 'disabled');
     validateAll();
-    $('#list-children')[0].scrollIntoView(true);
   });
 
   $('.cancelbutton').click(function(e) {

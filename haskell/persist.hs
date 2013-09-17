@@ -26,11 +26,11 @@ saveRegistration r = do
 
 _saveRegistration :: Registration -> IO ()
 _saveRegistration r = do
-        appendFile fnRegistrations (show r)
+        appendFile fnRegistrations (show r ++ "\n")
 
 _deleteRegistration :: Registration -> IO ()
 _deleteRegistration r = do
-        appendFile fnRegDeletions (show r)
+        appendFile fnRegDeletions (show r ++ "\n")
 
 registrations :: IO [Registration]
 registrations = do
