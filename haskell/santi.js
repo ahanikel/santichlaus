@@ -1,6 +1,10 @@
 
 $(document).ready(function(){
 
+  function htmlEncode(value) {
+    return $('<div/>').text(value).html();
+  }
+
   $('.editable').addClass('readonly');
   $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
   $('.editable input[type="radio"]').removeAttr('checked');
@@ -263,15 +267,15 @@ $(document).ready(function(){
     var modify = $('#details-children').attr('modify');
     var htmlCode = [
       '<tr class="lastInserted"><td class="childname">',
-      $('#kindname').val(),
+      htmlEncode($('#kindname').val()),
       '</td><td class="childage">',
-      $('#kindalter').val(),
+      htmlEncode($('#kindalter').val()),
       '</td><td class="childmw">',
       $('input[name="kindgeschlecht"]:checked').val(),
       '</td><td class="childpos">',
-      $('#zuloben').val(),
+      htmlEncode($('#zuloben').val()),
       '</td><td class="childneg">',
-      $('#zutadeln').val(),
+      htmlEncode($('#zutadeln').val()),
       '</td></tr>'
     ].join('');
 
