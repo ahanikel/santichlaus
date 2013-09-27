@@ -27,6 +27,7 @@
                     <td>
                         <label for=name>Name
                     <td>
+                        <input #uuid name=uuid type=text>
                         <input #name .validateSomething name=name type=text>
                     <td .invalidMessage>Bitte geben Sie Ihren Familiennamen an
                 <tr>

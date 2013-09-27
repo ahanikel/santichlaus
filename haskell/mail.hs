@@ -7,6 +7,7 @@ import Network.Mail.SMTP
 import Data.List (intercalate)
 import qualified Data.Text as T (Text,intercalate,unpack,append)
 import qualified Data.Text.Lazy as L (pack)
+import qualified Data.UUID as U
 
 registrationText :: Registration -> String
 registrationText r =
@@ -67,7 +68,7 @@ confirmationText r =
 	, "Come Back Glöbb Allschwil"
 	, ""
 	, "PS: Falls Sie Änderungen an Ihrer Anmeldung vornehmen möchten, verwenden Sie bitte diesen Link:"
-    	, "http://santichlaus.comebackgloebb.ch/edit/" ++ primaryKey r
+    	, "http://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
 	, ""
 	]
 

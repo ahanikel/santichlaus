@@ -8,9 +8,11 @@ import Data.List (intercalate)
 import Data.Aeson
 import Control.Applicative
 import Control.Monad
+import qualified Data.UUID as U
 
 data Registration = Registration
-        { name      :: Text
+        { uuid      :: U.UUID
+        , name      :: Text
         , vorname   :: Text
         , strasse   :: Text
         , ort       :: Text
@@ -22,8 +24,8 @@ data Registration = Registration
         }
     deriving (Show, Read)
 
-primaryKey :: Registration -> String
-primaryKey = unpack . email
+primaryKey :: Registration -> U.UUID
+primaryKey = uuid
 
 data Child = Child
         { childname :: Text
@@ -50,8 +52,16 @@ maxTimes = Map.fromList [ ("17:00", 5)
                  		, ("20:00", 5)
                  		]
 
+instance FromJSON U.UUID where
+    parseJSON (String v) = return $ case uuid' of
+                                                   Just u -> u
+                                                   Nothing -> U.nil
+                                      where uuid' = U.fromString $ unpack v
+    parseJSON _ = mzero
+
 instance FromJSON Registration where
     parseJSON (Object v) = Registration  <$>
+                           v .: "uuid" <*>
                            v .: "name" <*>
                            v .: "vorname" <*>
                            v .: "strasse" <*>
@@ -65,7 +75,8 @@ instance FromJSON Registration where
 
 instance ToJSON Registration where
     toJSON r = object
-        [ "name"     .= name r
+        [ "uuid"     .= U.toString (uuid r)
+        , "name"     .= name r
         , "vorname"  .= vorname r
         , "strasse"  .= strasse r
         , "ort"      .= ort r

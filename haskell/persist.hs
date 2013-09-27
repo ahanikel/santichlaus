@@ -1,6 +1,7 @@
 module Santi.Persist where
 
 import Santi.Types
+import Santi.Mail
 import System.IO (readFile, appendFile)
 import qualified Data.Map as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
 import Data.List (foldl')
@@ -11,18 +12,28 @@ import qualified Data.ByteString.Lazy as B
 import Data.ByteString.Lazy.UTF8 (toString)
 import Control.Exception.Base (bracket)
 import Control.Exception (evaluate)
+import qualified Data.UUID as U
+import Data.UUID.V4
 
 fnRegistrations = "registrations.txt"
 fnRegDeletions  = "registrations.del.txt"
 
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
-    oldReg <- getRegistration (primaryKey r)
+    reg <- if U.null (uuid r)
+              then do
+                  uuid' <- nextRandom
+                  return r { uuid = uuid' }
+              else return r
+    oldReg <- getRegistrationByEmail (email reg)
     case oldReg of
-        Nothing -> _saveRegistration r
+        Nothing -> do
+                       _saveRegistration reg
+                       sendRegistrationMails reg
         Just o  -> do
                        _deleteRegistration o
-                       _saveRegistration r
+                       _saveRegistration reg
+                       sendRegistrationMails reg
 
 _saveRegistration :: Registration -> IO ()
 _saveRegistration r = do
@@ -72,20 +83,27 @@ availableTimes = do
     let available = Map.differenceWith diffFn maxTimes booked
     return [ time | (time,_) <- Map.toList available]
 
-getRegistration :: String -> IO (Maybe Registration)
-getRegistration pk = do
+getRegistrationByEmail :: T.Text -> IO (Maybe Registration)
+getRegistrationByEmail pk = do
     rs <- registrations
-    let reg = filter (\r -> primaryKey r == pk) rs
+    let reg = filter (\r -> email r == pk) rs
     case reg of
         []     -> return Nothing
         [r]    -> return $ Just r
         (_:rs) -> return $ Just $ last rs
 
-getRegistrationAsJson :: T.Text -> IO String
+getRegistrationByUUID :: U.UUID -> IO (Maybe Registration)
+getRegistrationByUUID pk = do
+    rs <- registrations
+    let reg = filter (\r -> uuid r == pk) rs
+    case reg of
+        []     -> return Nothing
+        [r]    -> return $ Just r
+        (_:rs) -> return $ Just $ last rs
+
+getRegistrationAsJson :: U.UUID -> IO String
 getRegistrationAsJson id = do
-    let sId = T.unpack id
-    rs <-  registrations
-    reg <- getRegistration sId
+    reg <- getRegistrationByUUID id
     case reg of
         Nothing -> return $ "\"\""
         Just r  -> return $ toString $ encode r

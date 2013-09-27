@@ -1,7 +1,6 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, MultiParamTypeClasses, OverloadedStrings, TypeFamilies #-}
 
 import Santi.Types
-import Santi.Mail
 import Santi.Persist
 import Yesod
 import Yesod.Static
@@ -14,6 +13,7 @@ import Control.Monad.IO.Class (liftIO)
 import Data.String
 import Text.Hamlet
 import Text.Julius
+import Data.UUID as U
 
 staticFiles "static"
 
@@ -55,7 +55,10 @@ title = do
 getEditR :: Text -> Handler RepHtml
 getEditR tId = do
     defaultLayout $ do
-        sReg <- liftIO $ getRegistrationAsJson tId
+        let u = U.fromString $ unpack tId
+        sReg <- case u of
+                    Just uuid -> liftIO $ getRegistrationAsJson uuid
+                    Nothing   -> fail "No such registration"
         let reg = rawJS sReg
         let childkeys = rawJS ckeys
         year <- liftIO currentYear
@@ -77,6 +80,15 @@ getRootR = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
+uuidField :: Field sub master U.UUID
+uuidField = Field
+    { fieldParse   = \(v:vs) _ -> case (U.fromString $ unpack v) of
+                                      uuid@(Just _) -> return $ Right uuid
+                                      Nothing       -> return $ Left "Cannot recognize a UUID."
+    , fieldView    = undefined
+    , fieldEnctype = UrlEncoded
+    }
+
 childrenField :: Field sub master [Child]
 childrenField = Field
     { fieldParse = \values _ ->
@@ -89,7 +101,8 @@ childrenField = Field
 postRegR :: Handler RepHtml
 postRegR = do
         result <- runInputPost $ Registration
-            <$> ireq textField "name"
+            <$> ireq uuidField "uuid"
+            <*> ireq textField "name"
             <*> ireq textField "vorname"
             <*> ireq textField "strasse"
             <*> ireq textField "ort"
@@ -99,7 +112,6 @@ postRegR = do
             <*> iopt textField "remarks"
             <*> ireq childrenField "children[]"
         liftIO $ saveRegistration result
-        liftIO $ sendRegistrationMails result
         defaultLayout [whamlet|<p>#{show result}|]
 
 getFavR :: Handler ()

@@ -61,7 +61,7 @@ textarea {
 	width: 100%;
 }
 
-.childsex, .childpos, .childneg {
+.childsex, .childpos, .childneg, #uuid {
 	visibility: hidden;
 	display: none;
 }
