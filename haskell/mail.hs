@@ -15,6 +15,8 @@ registrationText r =
 	[ "Santichlaus-Anmeldung"
 	, "====================="
 	, ""
+    	, "http://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
+	, ""
 	, "Name:         " ++ T.unpack (name r)
 	, "Vorname:      " ++ T.unpack (vorname r)
 	, "Strasse / Nr: " ++ T.unpack (strasse r)
@@ -70,7 +72,44 @@ confirmationText r =
 	, "PS: Falls Sie Änderungen an Ihrer Anmeldung vornehmen möchten, verwenden Sie bitte diesen Link:"
     	, "http://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
 	, ""
-	]
+	, ""
+	, "Santichlaus-Anmeldung"
+	, "====================="
+	, ""
+	, "Name:         " ++ T.unpack (name r)
+	, "Vorname:      " ++ T.unpack (vorname r)
+	, "Strasse / Nr: " ++ T.unpack (strasse r)
+	, "PLZ / Ort:    " ++ T.unpack (ort r)
+	, "Telefon:      " ++ T.unpack (telefon r)
+	, "E-Mail:       " ++ T.unpack (email r)
+	, ""
+	, "Wir wünschen den Besuch des Santichlauses am 6. Dezember 2013 um"
+	, ""
+	, "        " ++ T.unpack (zeit r)
+	, ""
+	, "Uhr."
+	, ""
+	, "Bemerkungen:"
+	, case remarks r of
+		Just "\"\"" -> ""
+		Just rem -> T.unpack rem
+		Nothing -> ""
+	, ""
+	, ""
+	] ++ map stringify (children r)
+	where stringify c = intercalate "\r\n" $
+		[ "---------------------------------------"
+		, T.unpack (childname c) ++ " (" ++ T.unpack (childage c) ++ " Jahre, " ++ T.unpack (childmw c) ++ ")"
+		, "---------------------------------------"
+		, ""
+		, "Zu loben:"
+		, T.unpack $ childpos c
+		, ""
+		, "Zu tadeln:"
+		, T.unpack $ childneg c
+		, ""
+		, ""
+		]
 
 sendRegistrationMails :: Registration -> IO ()
 sendRegistrationMails r = do
