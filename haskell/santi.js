@@ -152,7 +152,7 @@ $(document).ready(function(){
       switchTo.pageNo(1);
     }
     else {
-      switchTo.pageNo(0);
+      switchTo.pageNo(1);
     }
   }
 

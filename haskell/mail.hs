@@ -73,8 +73,8 @@ confirmationText r =
     	, "http://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
 	, ""
 	, ""
-	, "Santichlaus-Anmeldung"
-	, "====================="
+	, "Bestätigung Santichlaus-Anmeldung"
+	, "=================================="
 	, ""
 	, "Name:         " ++ T.unpack (name r)
 	, "Vorname:      " ++ T.unpack (vorname r)
@@ -136,7 +136,7 @@ sendConfirmationMail r = do
 	let to		= [Address (Just sender) (email r)]
 	let cc		= []
 	let bcc		= []
-	let subject	= "Santichlaus-Anmeldung"
+	let subject	= "Bestätigung Santichlaus-Anmeldung"
 	let body	= plainTextPart $ L.pack $ confirmationText r
 	let mail	= simpleMail from to cc bcc subject [body]
         sendMail "localhost" mail
