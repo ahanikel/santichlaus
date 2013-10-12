@@ -35,7 +35,8 @@ instance RenderMessage Santi FormMessage where
 
 instance YesodJquery Santi
 
-myLayout :: GWidget s Santi () -> GHandler s Santi RepHtml
+--myLayout :: GWidget s Santi () -> GHandler s Santi RepHtml
+myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
     hamletToRepHtml $(hamletFile "layout.hamlet")
@@ -80,7 +81,7 @@ getRootR = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-uuidField :: Field sub master U.UUID
+uuidField :: Monad m => Field m U.UUID
 uuidField = Field
     { fieldParse   = \(v:vs) _ -> case (U.fromString $ unpack v) of
                                       uuid@(Just _) -> return $ Right uuid
@@ -89,7 +90,7 @@ uuidField = Field
     , fieldEnctype = UrlEncoded
     }
 
-childrenField :: Field sub master [Child]
+childrenField :: Monad m => Field m [Child]
 childrenField = Field
     { fieldParse = \values _ ->
         if values == [] then return $ Right Nothing
