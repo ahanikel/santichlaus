@@ -3,6 +3,7 @@ module Santi.Persist where
 import Santi.Types
 import Santi.Mail
 import System.IO (readFile, appendFile)
+import System.Directory (removeFile, doesDirectoryExist, doesFileExist, createDirectory)
 import qualified Data.Map as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
 import Data.List (foldl')
 import qualified Data.Text as T (Text, pack, unpack)
@@ -14,17 +15,25 @@ import Control.Exception.Base (bracket)
 import Control.Exception (evaluate)
 import qualified Data.UUID as U
 import Data.UUID.V4
+import Control.Exception (SomeException, catch)
+import Control.Monad (forM_)
 
+dnRegistrations = "registrations"
 fnRegistrations = "registrations.txt"
-fnRegDeletions  = "registrations.del.txt"
+fnTimes         = "times.txt"
+dnUuids         = "uuids"
 
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
-    reg <- if U.null (uuid r)
-              then do
-                  uuid' <- nextRandom
-                  return r { uuid = uuid' }
-              else return r
+    reg' <- if U.null (uuid r)
+            then do
+                uuid' <- nextRandom
+                return r { uuid = uuid' }
+            else return r
+    let reg = case (remarks reg') of
+              Just r | r == (T.pack "")     -> reg' { remarks = Nothing }
+                     | r == (T.pack "\"\"") -> reg' { remarks = Nothing }
+              _                             -> reg'
     oldReg <- getRegistrationByEmail (email reg)
     case oldReg of
         Nothing -> do
@@ -35,36 +44,58 @@ saveRegistration r = do
                        _saveRegistration reg
                        sendRegistrationMails reg
 
+_filename :: String -> String
+_filename = map tr
+    where
+        tr c = case c of
+                   '/' -> '_'
+                   _   -> c
+
+_updateRegIndex :: Registration -> IO ()
+_updateRegIndex r = do
+        writeFile (dnRegistrations ++ "/" ++ _filename (T.unpack $ email r)) (show r ++ "\n")
+        writeFile (dnUuids ++ "/" ++ _filename (show $ uuid r)) (_filename (T.unpack $ email r))
+
+_removeFromRegIndex :: Registration -> IO ()
+_removeFromRegIndex r = do
+        removeFile (dnRegistrations ++ "/" ++ _filename (T.unpack $ email r))
+        removeFile (dnUuids ++ "/" ++ _filename (show $ uuid r))
+
+_addToTimeIndex :: String -> IO ()
+_addToTimeIndex sTime = do
+        appendFile fnTimes $ "+" ++ sTime ++ "\n"
+
+_removeFromTimeIndex :: String -> IO ()
+_removeFromTimeIndex sTime = do
+        appendFile fnTimes $ "-" ++ sTime ++ "\n"
+
 _saveRegistration :: Registration -> IO ()
 _saveRegistration r = do
-        appendFile fnRegistrations (show r ++ "\n")
+        appendFile fnRegistrations $ "+" ++ show r ++ "\n"
+        _addToTimeIndex $ T.unpack $ zeit r
+        _updateRegIndex r
 
 _deleteRegistration :: Registration -> IO ()
 _deleteRegistration r = do
-        appendFile fnRegDeletions (show r ++ "\n")
+        appendFile fnRegistrations $ "-" ++ show r ++ "\n"
+        _removeFromTimeIndex $ T.unpack $ zeit r
+        _removeFromRegIndex r
 
-registrations :: IO [Registration]
-registrations = do
-        cReg <- readFile fnRegistrations
-        return $ map (read :: String -> Registration) $ lines cReg
-
-deletions :: IO [Registration]
-deletions = do
-        cReg <- readFile fnRegDeletions
-        return $ map (read :: String -> Registration) $ lines cReg
+_times :: IO [String]
+_times = do
+    ls <- readFile fnTimes
+    return $ lines ls
 
 bookedTimes :: IO TimeCount
 bookedTimes = do
-    regs <- registrations
-    dels <- deletions
-    let madd = foldl' addTime Map.empty $ regs
-    return $ foldl' subTime madd $ dels
-    where insert f m reg =
-            let time = T.unpack $ zeit reg
-                count = Map.findWithDefault 0 time m
-            in  Map.insert time (f count) m
-          addTime = insert (+ 1)
-          subTime = insert $ \i -> i - 1
+    times <- _times
+    return $ foldl' addTime Map.empty times
+    where addTime m line = case op of
+                               '+' -> Map.insert time (count + 1) m
+                               '-' -> Map.insert time (count - 1) m
+                               _   -> m
+                           where (op:time) = line
+                                 count = Map.findWithDefault 0 time m
 
 isTimeAvailable :: String -> IO Bool
 isTimeAvailable t = do
@@ -83,27 +114,55 @@ availableTimes = do
     let available = Map.differenceWith diffFn maxTimes booked
     return [ time | (time,_) <- Map.toList available]
 
+_getRegistrationByEmail :: String -> IO (Maybe Registration)
+_getRegistrationByEmail pk = do
+    let fn = dnRegistrations ++ "/" ++ _filename pk
+    let ret = do
+        sReg <- readFile fn
+        let r = read sReg
+        return $ Just r
+    ret `catch` ((\_ -> return Nothing) :: (SomeException -> IO (Maybe Registration)))
+
 getRegistrationByEmail :: T.Text -> IO (Maybe Registration)
-getRegistrationByEmail pk = do
-    rs <- registrations
-    let reg = filter (\r -> email r == pk) rs
-    case reg of
-        []     -> return Nothing
-        [r]    -> return $ Just r
-        (_:rs) -> return $ Just $ last rs
+getRegistrationByEmail = _getRegistrationByEmail . T.unpack
 
 getRegistrationByUUID :: U.UUID -> IO (Maybe Registration)
-getRegistrationByUUID pk = do
-    rs <- registrations
-    let reg = filter (\r -> uuid r == pk) rs
-    case reg of
-        []     -> return Nothing
-        [r]    -> return $ Just r
-        (_:rs) -> return $ Just $ last rs
+getRegistrationByUUID u = do
+    let fn = dnUuids ++ "/" ++ _filename (show u)
+    sReg <- readFile fn
+    _getRegistrationByEmail $ head $ lines sReg
 
 getRegistrationAsJson :: U.UUID -> IO String
 getRegistrationAsJson id = do
     reg <- getRegistrationByUUID id
-    case reg of
-        Nothing -> return $ "\"\""
-        Just r  -> return $ toString $ encode r
+    return $ toString $ encode reg
+
+ensureRegistrationIndex :: IO ()
+ensureRegistrationIndex = do
+    mustNotRebuild <- doesDirectoryExist dnRegistrations
+    if mustNotRebuild
+    then return ()
+    else do
+        createDirectory dnRegistrations
+        createDirectory dnUuids
+        logs <- readFile fnRegistrations
+        forM_ (lines logs) $ \(op:sReg) -> do
+            let r = read sReg
+            case op of
+                '+' -> _updateRegIndex r
+                '-' -> _removeFromRegIndex r
+                _   -> return ()
+
+ensureTimesIndex :: IO ()
+ensureTimesIndex = do
+    mustNotRebuild <- doesFileExist fnTimes
+    if mustNotRebuild
+    then return ()
+    else do
+        logs <- readFile fnRegistrations
+        forM_ (lines logs) $ \(op:sReg) -> do
+            let r = read sReg
+            case op of
+                '+' -> _addToTimeIndex $ T.unpack $ zeit r
+                '-' -> _removeFromTimeIndex $ T.unpack $ zeit r
+                _   -> return ()

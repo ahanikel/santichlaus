@@ -44,19 +44,19 @@ type TimeCount = Map.Map String Int
 
 maxTimes :: TimeCount
 maxTimes = Map.fromList [ ("17:00", 5)
-                 		, ("17:30", 5)
-                 		, ("18:00", 5)
-                 		, ("18:30", 5)
-                 		, ("19:00", 5)
-                 		, ("19:30", 5)
-                 		, ("20:00", 5)
-                 		]
+                        , ("17:30", 5)
+                        , ("18:00", 5)
+                        , ("18:30", 5)
+                        , ("19:00", 5)
+                        , ("19:30", 5)
+                        , ("20:00", 5)
+                        ]
 
 instance FromJSON U.UUID where
     parseJSON (String v) = return $ case uuid' of
-                                                   Just u -> u
-                                                   Nothing -> U.nil
-                                      where uuid' = U.fromString $ unpack v
+                                        Just u -> u
+                                        Nothing -> U.nil
+                           where uuid' = U.fromString $ unpack v
     parseJSON _ = mzero
 
 instance FromJSON Registration where
@@ -86,9 +86,9 @@ instance ToJSON Registration where
         , "remarks"  .= rem
         , "children" .= children r
         ]
-		where rem = case remarks r of
-			Just t -> t
-			Nothing -> ""
+        where rem = case remarks r of
+                        Just t -> t
+                        Nothing -> ""
 
 instance FromJSON Child where
     parseJSON (Object v) = Child <$>

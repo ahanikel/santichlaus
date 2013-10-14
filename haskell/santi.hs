@@ -120,6 +120,8 @@ getFavR = sendFile "image/png" "static/santi-favicon.png"
 
 main :: IO ()
 main = do
+    ensureRegistrationIndex
+    ensureTimesIndex
     static@(Static settings) <- static "static"
     warpDebug 80 $ Santi static
 
