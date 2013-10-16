@@ -35,11 +35,11 @@ instance RenderMessage Santi FormMessage where
 
 instance YesodJquery Santi
 
---myLayout :: GWidget s Santi () -> GHandler s Santi RepHtml
+--myLayout :: GWidget s Santi () -> GHandler s Santi Html
 myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
-    hamletToRepHtml $(hamletFile "layout.hamlet")
+    giveUrlRenderer $(hamletFile "layout.hamlet")
 
 currentYear :: IO String
 currentYear = do
@@ -53,7 +53,7 @@ title = do
     y <- currentYear
     return $ "Santichlaus-Anmeldung " ++ y
 
-getEditR :: Text -> Handler RepHtml
+getEditR :: Text -> Handler Html
 getEditR tId = do
     defaultLayout $ do
         let u = U.fromString $ unpack tId
@@ -69,7 +69,7 @@ getEditR tId = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-getRootR :: Handler RepHtml
+getRootR :: Handler Html
 getRootR = do
     defaultLayout $ do
         let reg = toJSON ("" :: String)
@@ -99,7 +99,7 @@ childrenField = Field
     , fieldEnctype = UrlEncoded
     }
 
-postRegR :: Handler RepHtml
+postRegR :: Handler Html
 postRegR = do
         result <- runInputPost $ Registration
             <$> ireq uuidField "uuid"
