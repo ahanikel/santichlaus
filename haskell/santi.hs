@@ -123,6 +123,6 @@ main = do
     ensureRegistrationIndex
     ensureTimesIndex
     static@(Static settings) <- static "static"
-    warpDebug 80 $ Santi static
+    warp 80 $ Santi static
 
 -- vim:ts=4:sw=4:ai:et
