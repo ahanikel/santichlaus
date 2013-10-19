@@ -163,6 +163,7 @@ $(document).ready(function(){
     });
     if (!ret['remarks'])
       ret['remarks'] = "\"\"";
+    ret['email'] = ret['email'].replace(/ /g, "");
     ret['children'] = getChildrenHS();
     ret['_charset_'] = 'utf-8';
     return ret;

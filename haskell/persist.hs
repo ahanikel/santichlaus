@@ -21,7 +21,7 @@ import Control.Monad (forM_)
 dnRegistrations = "registrations"
 fnRegistrations = "registrations.txt"
 fnTimes         = "times.txt"
-dnUuids         = "uuids"
+dnEmails        = "emails"
 
 saveRegistration :: Registration -> IO ()
 saveRegistration r = do
@@ -34,7 +34,7 @@ saveRegistration r = do
               Just r | r == (T.pack "")     -> reg' { remarks = Nothing }
                      | r == (T.pack "\"\"") -> reg' { remarks = Nothing }
               _                             -> reg'
-    oldReg <- getRegistrationByEmail (email reg)
+    oldReg <- _getRegistrationByEmail (T.unpack $ email reg)
     case oldReg of
         Nothing -> do
                        _saveRegistration reg
@@ -53,13 +53,12 @@ _filename = map tr
 
 _updateRegIndex :: Registration -> IO ()
 _updateRegIndex r = do
-        writeFile (dnRegistrations ++ "/" ++ _filename (T.unpack $ email r)) (show r ++ "\n")
-        writeFile (dnUuids ++ "/" ++ _filename (show $ uuid r)) (_filename (T.unpack $ email r))
+        writeFile (dnRegistrations ++ "/" ++ _filename (show $ uuid r)) (show r ++ "\n")
+        writeFile (dnEmails ++ "/" ++ _filename (T.unpack $ email r)) (_filename (show $ uuid r))
 
 _removeFromRegIndex :: Registration -> IO ()
 _removeFromRegIndex r = do
-        removeFile (dnRegistrations ++ "/" ++ _filename (T.unpack $ email r))
-        removeFile (dnUuids ++ "/" ++ _filename (show $ uuid r))
+        removeFile (dnEmails ++ "/" ++ _filename (T.unpack $ email r))
 
 _addToTimeIndex :: String -> IO ()
 _addToTimeIndex sTime = do
@@ -114,8 +113,8 @@ availableTimes = do
     let available = Map.differenceWith diffFn maxTimes booked
     return [ time | (time,_) <- Map.toList available]
 
-_getRegistrationByEmail :: String -> IO (Maybe Registration)
-_getRegistrationByEmail pk = do
+_getRegistrationByUUID :: String -> IO (Maybe Registration)
+_getRegistrationByUUID pk = do
     let fn = dnRegistrations ++ "/" ++ _filename pk
     let ret = do
         sReg <- readFile fn
@@ -123,14 +122,16 @@ _getRegistrationByEmail pk = do
         return $ Just r
     ret `catch` ((\_ -> return Nothing) :: (SomeException -> IO (Maybe Registration)))
 
-getRegistrationByEmail :: T.Text -> IO (Maybe Registration)
-getRegistrationByEmail = _getRegistrationByEmail . T.unpack
-
 getRegistrationByUUID :: U.UUID -> IO (Maybe Registration)
-getRegistrationByUUID u = do
-    let fn = dnUuids ++ "/" ++ _filename (show u)
-    sReg <- readFile fn
-    _getRegistrationByEmail $ head $ lines sReg
+getRegistrationByUUID = _getRegistrationByUUID . show
+
+_getRegistrationByEmail :: String -> IO (Maybe Registration)
+_getRegistrationByEmail e = do
+    let fn = dnEmails ++ "/" ++ _filename e
+    let ret = do
+        sReg <- readFile fn
+        _getRegistrationByUUID $ head $ lines sReg
+    ret `catch` ((\_ -> return Nothing) :: (SomeException -> IO (Maybe Registration)))
 
 getRegistrationAsJson :: U.UUID -> IO String
 getRegistrationAsJson id = do
@@ -144,7 +145,7 @@ ensureRegistrationIndex = do
     then return ()
     else do
         createDirectory dnRegistrations
-        createDirectory dnUuids
+        createDirectory dnEmails
         logs <- readFile fnRegistrations
         forM_ (lines logs) $ \(op:sReg) -> do
             let r = read sReg
