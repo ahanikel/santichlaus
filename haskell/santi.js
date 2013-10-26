@@ -226,6 +226,7 @@ $(document).ready(function(){
     $('.add, #del, #send').attr('disabled', 'disabled');
     $('#kindname').val("Bitte Name des Kindes eingeben");
     $('#list-children')[0].scrollIntoView(true);
+    $('#kindname').focus().select();
   });
 
   $('#del').click(function(e) {
