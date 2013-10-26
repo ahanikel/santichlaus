@@ -6,7 +6,7 @@ html {
     text-align: justify;
 }
 
-#prev, #next {
+.prev, .next {
   font-size: xx-large;
 }
 

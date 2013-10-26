@@ -16,8 +16,8 @@ $(document).ready(function(){
     pages : [
       function() {
         switchTo.currentPage = 0;
-        $('#prev').hide();
-        $('#next').show();
+        $('.prev').hide();
+        $('.next').show();
         $('#send').hide();
         $('div.page').hide();
         $('div.page#intro').show();
@@ -25,16 +25,16 @@ $(document).ready(function(){
       function() {
         switchTo.currentPage = 1;
         validateAll();
-        $('#prev').hide();
-        $('#next').show();
+        $('.prev').hide();
+        $('.next').show();
         $('#send').hide();
         $('div.page').hide();
         $('div.page#form').show();
       },
       function() {
         switchTo.currentPage = 2;
-        $('#prev').show();
-        $('#next').hide();
+        $('.prev').show();
+        $('.next').hide();
         $('#send').show();
         $('div.page').hide();
         $('div.page#table').show();
@@ -50,26 +50,26 @@ $(document).ready(function(){
       switchTo.pages[++switchTo.currentPage % switchTo.pages.length]();
     },
     success : function() {
-      $('#prev').hide();
-      $('#next').hide();
+      $('.prev').hide();
+      $('.next').hide();
       $('#send').hide();
       $('div.page').hide();
       $('div.page#success').show();
     },
     error : function() {
-      $('#prev').show();
-      $('#next').hide();
+      $('.prev').show();
+      $('.next').hide();
       $('#send').hide();
       $('div.page').hide();
       $('div.page#error').show();
     }
   };
 
-  $("#next").click(function(event){
+  $(".next").click(function(event){
     event.preventDefault();
     switchTo.next();
   });
-  $("#prev").click(function(event){
+  $(".prev").click(function(event){
     event.preventDefault();
     switchTo.prev();
   });
@@ -172,12 +172,12 @@ $(document).ready(function(){
   function validateAll() {
     if (switchTo.currentPage == 1) {
       if ($('.page:eq(1) .invalidMessage.show').length > 0) {
-        $('#prev').attr('disabled', 'disabled');
-        $('#next').attr('disabled', 'disabled');
+        $('.prev').attr('disabled', 'disabled');
+        $('.next').attr('disabled', 'disabled');
       }
       else {
-        $('#prev').removeAttr('disabled');
-        $('#next').removeAttr('disabled');
+        $('.prev').removeAttr('disabled');
+        $('.next').removeAttr('disabled');
       }
     }
     if ($('.page .invalidMessage.show').length > 0 || $('#list-children tbody tr').length == 0)

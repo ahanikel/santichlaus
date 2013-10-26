@@ -1,7 +1,7 @@
 <div .content .clear-block>
-    <div #buttons .twobuttons>
-        <button #prev type=button> ← zurück 
-        <button #next type=button> ➝ weiter 
+    <div #topbuttons .twobuttons>
+        <button .prev type=button> ← zurück 
+        <button .next type=button> ➝ weiter 
     <div #intro .page>
         <h1>Dr Santichlaus chunnt!
         <p><b>Liebe Eltern,</b>
@@ -179,3 +179,6 @@
         <p style="margin-top: 5ex;">Beim Registrieren Ihrer Anmeldung ist leider ein Fehler aufgetreten. Bitte versuchen Sie es nochmals, oder melden Sie sich direkt via E-Mail an <a href="mailto:santichlaus@comebackgloebb.ch">santichlaus@comebackgloebb.ch</a>. Vielen Dank und sorry für die Umstände!
         <p><b>Das OK Santichlaus-Aktion</b>
         <p><b>Come Back Glöbb Allschwil</b>
+    <div #bottombuttons .twobuttons>
+        <button .prev type=button> ← zurück 
+        <button .next type=button> ➝ weiter 
