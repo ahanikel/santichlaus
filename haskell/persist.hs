@@ -1,22 +1,28 @@
-module Santi.Persist where
+module Santi.Persist ( saveRegistration
+                     , getRegistrationAsJson
+                     , availableTimes
+                     , ensureRegistrationIndex
+                     , ensureTimesIndex
+                     ) where
 
-import Santi.Types
-import Santi.Mail
-import System.IO (readFile, appendFile)
-import System.Directory (removeFile, doesDirectoryExist, doesFileExist, createDirectory)
-import qualified Data.Map as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
-import Data.List (foldl')
-import qualified Data.Text as T (Text, pack, unpack)
-import qualified Data.Text.Lazy as L (Text, pack, unpack)
-import Data.Aeson
-import qualified Data.ByteString.Lazy as B
-import Data.ByteString.Lazy.UTF8 (toString)
-import Control.Exception.Base (bracket)
-import Control.Exception (evaluate)
-import qualified Data.UUID as U
-import Data.UUID.V4
-import Control.Exception (SomeException, catch)
-import Control.Monad (forM_)
+import           Santi.Types
+import           Santi.Mail
+import           System.IO                         (readFile, appendFile)
+import           System.Directory                  (removeFile, doesDirectoryExist, doesFileExist, createDirectory)
+import qualified Data.Map                   as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
+import           Data.List                         (foldl')
+import qualified Data.Text                  as T   (Text, pack, unpack)
+import qualified Data.Text.Lazy             as L   (Text, pack, unpack)
+import           Data.Aeson
+import qualified Data.ByteString.Lazy       as B
+import           Data.ByteString.Lazy.UTF8         (toString)
+import           Control.Exception.Base            (bracket)
+import           Control.Exception                 (evaluate)
+import qualified Data.UUID                  as U
+import           Data.UUID.V4
+import           Control.Exception                 (SomeException, catch)
+import           Control.Monad                     (forM_)
+import           Prelude hiding (catch)
 
 dnRegistrations = "registrations"
 fnRegistrations = "registrations.txt"
