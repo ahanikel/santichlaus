@@ -1,0 +1,18 @@
+<table>
+    <tr>
+        <th>Name
+        <th>Strasse
+        <th>Ort
+        <th>Zeit
+        <th>#Kinder
+    $forall registration <- registrations
+        $maybe reg <- registration
+            <tr>
+                <td>#{name reg}
+                <td>#{strasse reg}
+                <td>#{ort reg}
+                <td>#{zeit reg}
+                <td>#{length $ children reg}
+        $nothing
+            <tr>
+                <td>There is a stale e-mail address in the index. Please check the log.

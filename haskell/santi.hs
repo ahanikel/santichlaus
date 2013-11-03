@@ -27,7 +27,7 @@ mkYesod "Santi" [parseRoutes|
 /            RootR   GET
 /edit/#Text  EditR   GET
 /favicon.ico FavR    GET
-/reg         RegR    POST
+/reg         RegR    GET POST
 /static      StaticR Static getStatic
 |]
 
@@ -103,6 +103,11 @@ childrenField = Field
     , fieldEnctype = UrlEncoded
     }
 
+getRegR :: Handler Html
+getRegR = defaultLayout $ do
+    registrations <- liftIO getRegistrations
+    $(whamletFile "registrations.hamlet")
+
 postRegR :: Handler Html
 postRegR = do
         result <- runInputPost $ Registration
@@ -129,6 +134,6 @@ main = do
     ensureTimesIndex
     sem <- newMVar True
     static@(Static settings) <- static "static"
-    warp 80 $ Santi static sem
+    warp 8080 $ Santi static sem
 
 -- vim:ts=4:sw=4:ai:et

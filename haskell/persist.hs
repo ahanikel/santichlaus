@@ -4,12 +4,13 @@ module Santi.Persist ( saveRegistration
                      , bookedTimes
                      , ensureRegistrationIndex
                      , ensureTimesIndex
+                     , getRegistrations
                      ) where
 
 import           Santi.Types
 import           Santi.Mail
 import           System.IO                         (readFile, appendFile)
-import           System.Directory                  (removeFile, doesDirectoryExist, doesFileExist, createDirectory)
+import           System.Directory                  (removeFile, doesDirectoryExist, doesFileExist, createDirectory, getDirectoryContents)
 import qualified Data.Map                   as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
 import           Data.List                         (foldl')
 import qualified Data.Text                  as T   (Text, pack, unpack)
@@ -149,6 +150,12 @@ getRegistrationAsJson :: U.UUID -> IO String
 getRegistrationAsJson id = do
     reg <- getRegistrationByUUID id
     return $ toString $ encode reg
+
+getRegistrations :: IO [Maybe Registration]
+getRegistrations = do
+    files <- getDirectoryContents dnEmails
+    let emails = filter (\p -> p /= "." && p /= "..") files
+    mapM _getRegistrationByEmail emails
 
 ensureRegistrationIndex :: IO ()
 ensureRegistrationIndex = do
