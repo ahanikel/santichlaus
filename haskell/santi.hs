@@ -14,10 +14,14 @@ import Data.String
 import Text.Hamlet
 import Text.Julius
 import Data.UUID as U
+import Control.Concurrent (MVar, newMVar, takeMVar, putMVar)
+import Control.Exception (bracket)
 
 staticFiles "static"
 
-data Santi = Santi { getStatic :: Static }
+data Santi = Santi { getStatic :: Static
+                   , getSem :: MVar Bool
+                   }
 
 mkYesod "Santi" [parseRoutes|
 /            RootR   GET
@@ -112,7 +116,8 @@ postRegR = do
             <*> ireq textField "zeit"
             <*> iopt textField "remarks"
             <*> ireq childrenField "children[]"
-        liftIO $ saveRegistration result
+        sem <- getSem <$> getYesod
+        liftIO $ saveRegistration result sem
         defaultLayout [whamlet|<p>#{show result}|]
 
 getFavR :: Handler ()
@@ -122,7 +127,8 @@ main :: IO ()
 main = do
     ensureRegistrationIndex
     ensureTimesIndex
+    sem <- newMVar True
     static@(Static settings) <- static "static"
-    warp 80 $ Santi static
+    warp 80 $ Santi static sem
 
 -- vim:ts=4:sw=4:ai:et

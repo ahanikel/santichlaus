@@ -16,12 +16,11 @@ import qualified Data.Text.Lazy             as L   (Text, pack, unpack)
 import           Data.Aeson
 import qualified Data.ByteString.Lazy       as B
 import           Data.ByteString.Lazy.UTF8         (toString)
-import           Control.Exception.Base            (bracket)
-import           Control.Exception                 (evaluate)
 import qualified Data.UUID                  as U
 import           Data.UUID.V4
-import           Control.Exception                 (SomeException, catch)
+import           Control.Exception                 (bracket, SomeException, catch)
 import           Control.Monad                     (forM_)
+import           Control.Concurrent                (MVar, takeMVar, putMVar)
 import           Prelude hiding (catch)
 
 dnRegistrations = "registrations"
@@ -29,8 +28,8 @@ fnRegistrations = "registrations.txt"
 fnTimes         = "times.txt"
 dnEmails        = "emails"
 
-saveRegistration :: Registration -> IO ()
-saveRegistration r = do
+saveRegistration :: Registration -> MVar Bool -> IO ()
+saveRegistration r sem = do
     reg' <- if U.null (uuid r)
             then do
                 uuid' <- nextRandom
@@ -43,11 +42,11 @@ saveRegistration r = do
     oldReg <- _getRegistrationByEmail (T.unpack $ email reg)
     case oldReg of
         Nothing -> do
-                       _saveRegistration reg
+                       _saveRegistration reg sem
                        sendRegistrationMails reg
         Just o  -> do
-                       _deleteRegistration o
-                       _saveRegistration reg
+                       _deleteRegistration o sem
+                       _saveRegistration reg sem
                        sendRegistrationMails reg
 
 _filename :: String -> String
@@ -74,16 +73,22 @@ _removeFromTimeIndex :: String -> IO ()
 _removeFromTimeIndex sTime = do
         appendFile fnTimes $ "-" ++ sTime ++ "\n"
 
-_saveRegistration :: Registration -> IO ()
-_saveRegistration r = do
-        appendFile fnRegistrations $ "+" ++ show r ++ "\n"
-        _addToTimeIndex $ T.unpack $ zeit r
+_saveRegistration :: Registration -> MVar Bool -> IO ()
+_saveRegistration r sem = do
+        bracket (takeMVar sem)
+                (\_ -> putMVar sem True)
+                (\_ -> do
+                    appendFile fnRegistrations $ "+" ++ show r ++ "\n"
+                    _addToTimeIndex $ T.unpack $ zeit r)
         _updateRegIndex r
 
-_deleteRegistration :: Registration -> IO ()
-_deleteRegistration r = do
-        appendFile fnRegistrations $ "-" ++ show r ++ "\n"
-        _removeFromTimeIndex $ T.unpack $ zeit r
+_deleteRegistration :: Registration -> MVar Bool -> IO ()
+_deleteRegistration r sem = do
+        bracket (takeMVar sem)
+                (\_ -> putMVar sem True)
+                (\_ -> do
+                    appendFile fnRegistrations $ "-" ++ show r ++ "\n"
+                    _removeFromTimeIndex $ T.unpack $ zeit r)
         _removeFromRegIndex r
 
 _times :: IO [String]
