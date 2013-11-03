@@ -1,6 +1,7 @@
 module Santi.Persist ( saveRegistration
                      , getRegistrationAsJson
                      , availableTimes
+                     , bookedTimes
                      , ensureRegistrationIndex
                      , ensureTimesIndex
                      ) where
