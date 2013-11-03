@@ -4,7 +4,6 @@ import Santi.Types
 import Santi.Persist
 import Yesod
 import Yesod.Static
-import Yesod.Form.Jquery
 import Data.Time (Day, toGregorian)
 import Data.Time.Clock
 import Data.Text (Text,pack,unpack)
@@ -19,8 +18,8 @@ import Control.Exception (bracket)
 
 staticFiles "static"
 
-data Santi = Santi { getStatic :: Static
-                   , getSem :: MVar Bool
+data Santi = Santi { getStatic   :: Static
+                   , getSem      :: MVar Bool
                    }
 
 mkYesod "Santi" [parseRoutes|
@@ -28,21 +27,30 @@ mkYesod "Santi" [parseRoutes|
 /edit/#Text  EditR   GET
 /favicon.ico FavR    GET
 /reg         RegR    GET POST
-/static      StaticR Static getStatic
+/static      StaticR Static     getStatic
+/login       LoginR  GET POST
+/logout      LogoutR GET
 |]
 
 instance Yesod Santi where
+
     defaultLayout = myLayout
+
+    isAuthorized RegR False = do
+        authUser <- lookupSession "authUser"
+        case authUser of
+            Just "admin" -> return Authorized
+            Nothing      -> return $ Unauthorized ""
+
+    isAuthorized _   _     = return Authorized
 
 instance RenderMessage Santi FormMessage where
     renderMessage _ _ = defaultFormMessage
 
-instance YesodJquery Santi
-
---myLayout :: GWidget s Santi () -> GHandler s Santi Html
 myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
+    authUser <- lookupSession "authUser"
     giveUrlRenderer $(hamletFile "layout.hamlet")
 
 currentYear :: IO String
@@ -124,6 +132,33 @@ postRegR = do
         sem <- getSem <$> getYesod
         liftIO $ saveRegistration result sem
         defaultLayout [whamlet|<p>#{show result}|]
+
+getLoginR :: Handler Html
+getLoginR = defaultLayout [whamlet|
+<form method=post action=/login>
+    <table>
+        <tr>
+            <td>Username
+            <td><input #username name=username>
+        <tr>
+            <td>Password
+            <td><input #password name=password type=password>
+        <tr>
+            <td colspan=2><input type=submit name=Login value=Login>
+|]
+
+postLoginR :: Handler Html
+postLoginR = do
+    (user, pass) <- runInputPost $ (,) <$> ireq textField "username" <*> ireq textField "password"
+    if user == "admin" && pass == "admin"
+    then setSession "authUser" user
+    else deleteSession "authUser"
+    redirect RootR
+ 
+getLogoutR :: Handler Html
+getLogoutR = do
+    deleteSession "authUser"
+    redirect RootR
 
 getFavR :: Handler ()
 getFavR = sendFile "image/png" "static/santi-favicon.png"

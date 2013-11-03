@@ -45,11 +45,11 @@ saveRegistration r sem = do
     case oldReg of
         Nothing -> do
                        _saveRegistration reg sem
-                       sendRegistrationMails reg
+                       -- sendRegistrationMails reg
         Just o  -> do
                        _deleteRegistration o sem
                        _saveRegistration reg sem
-                       sendRegistrationMails reg
+                       -- sendRegistrationMails reg
 
 _filename :: String -> String
 _filename = map tr

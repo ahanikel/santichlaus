@@ -33,8 +33,13 @@ $doctype 5
                     <img src=@{StaticR santichlaus_png}>
                 <div #center>
                     <div #squeeze>
-                        <djv .right-corner>
+                        <div .right-corner>
                             <div .left-corner>
+                                $maybe u <- authUser
+                                    <p>You are logged in as #
+                                        <a href=@{LogoutR}>#{u}
+                                $nothing
+                                    <p>
                                 <div .clear-block>
                                     <div #node-393 .node>
                                         <div .content .clear-block>
