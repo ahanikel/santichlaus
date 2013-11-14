@@ -1,0 +1,10 @@
+$doctype 5
+<html>
+    <head>
+        <title>#{pageTitle pc}
+        <meta charset=utf-8>
+        <link rel=stylesheet type=text/css media=all href=@{StaticR printlayout_css}>
+        ^{pageHead pc}
+    <body>
+        ^{pageBody pc}
+<!-- vim:set ts=4 sw=4 ai et: -->

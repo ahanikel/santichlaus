@@ -53,6 +53,12 @@ myLayout widget = do
     authUser <- lookupSession "authUser"
     giveUrlRenderer $(hamletFile "layout.hamlet")
 
+printLayout :: Widget -> Handler Html
+printLayout widget = do
+    pc <- widgetToPageContent widget
+    authUser <- lookupSession "authUser"
+    giveUrlRenderer $(hamletFile "printlayout.hamlet")
+
 currentYear :: IO String
 currentYear = do
     now <- getCurrentTime
@@ -112,7 +118,7 @@ childrenField = Field
     }
 
 getRegR :: Handler Html
-getRegR = defaultLayout $ do
+getRegR = printLayout $ do
     registrations <- liftIO getRegistrations
     $(whamletFile "registrations.hamlet")
 
