@@ -119,7 +119,7 @@ sendRegistrationMails r = do
 sendRegistrationMail :: Registration -> IO ()
 sendRegistrationMail r = do
 	let sender	= T.intercalate " " [(vorname r), (name r)]
-	let from	= Address (Just sender) (email r)
+	let from	= Address (Just sender) "santichlaus@comebackgloebb.ch"
 	let to		= [Address (Just "Santichlaus") "santichlaus@comebackgloebb.ch"]
 	let cc		= []
 	let bcc		= []
