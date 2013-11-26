@@ -32,16 +32,18 @@ dnEmails        = "emails"
 
 saveRegistration :: Registration -> MVar Bool -> IO ()
 saveRegistration r sem = do
-    reg' <- if U.null (uuid r)
-            then do
-                uuid' <- nextRandom
-                return r { uuid = uuid' }
-            else return r
+    (oldReg, reg') <- if U.null (uuid r)
+                      then do
+                          uuid' <- nextRandom
+                          let r' = r { uuid = uuid' }
+                          return (Nothing, r)
+                      else do
+                          oldReg <- getRegistrationByUUID $ uuid r
+                          return (oldReg, r)
     let reg = case (remarks reg') of
               Just r | r == (T.pack "")     -> reg' { remarks = Nothing }
                      | r == (T.pack "\"\"") -> reg' { remarks = Nothing }
               _                             -> reg'
-    oldReg <- _getRegistrationByEmail (T.unpack $ email reg)
     case oldReg of
         Nothing -> do
                        _saveRegistration reg sem
