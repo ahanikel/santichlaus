@@ -96,7 +96,7 @@ getRootR = do
         t <- liftIO title
         setTitle $ toHtml t
         times <- liftIO availableTimes
-        $(whamletFile "santi.hamlet")
+        $(whamletFile "santi.closed.hamlet")
         toWidget $(juliusFile "santi.js")
 
 uuidField :: Monad m => Field m U.UUID

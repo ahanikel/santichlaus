@@ -1,0 +1,23 @@
+<style>
+    #form h1 {
+        margin-bottom: 4ex;
+    }
+    #form > p {
+        margin-top: 4ex;
+    }
+<div .content .clear-block>
+    <div #topbuttons .twobuttons>
+    <div #form .page>
+        <h1 style="margin-bottom: 4ex;">Dr Santichlaus chunnt - Danke für Ihr Interesse!
+        <p>
+            <b>Liebe Eltern,
+        <p>Leider sind wir bereits ausgebucht, sodass wir keine neuen Anmeldungen mehr entgegen nehmen können. Versuchen Sie es doch bei
+            <a href="http://www.jubla-allschwil.ch/"> unseren Freunden von Jungwacht/Blauring Allschwil.
+            Vielen Dank für Ihr Interesse und Ihre Unterstützung. Wir freuen uns auf einen schönen Santichlaus-Abend!
+        <p>
+            <b>Das OK Santichlaus-Aktion
+        <p>
+            <b>Come Back Glöbb Allschwil
+    <div #bottombuttons .twobuttons>
+
+<!-- vim:set ts=4 sw=4 ai et: -->
