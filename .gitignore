@@ -1,8 +1,8 @@
 .DS_Store
 target
 nb-configuration.xml
-*.o
-*.hi
+*[_.]o
+*[_.]hi
 haskell/client_session_key.aes
 haskell/santi
 
