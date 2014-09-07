@@ -3,10 +3,11 @@ $doctype 5
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>#{pageTitle pc}
-        <link type="text/css" rel="stylesheet" media="all" href=@{StaticR defaults_css}>
-        <link type="text/css" rel="stylesheet" media="all" href=@{StaticR garland_css}>
-        <link type="text/css" rel="stylesheet" media="all" href=@{StaticR santi_css}>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+        <link type=text/css rel=stylesheet media=screen href=@{StaticR defaults_css}>
+        <link type=text/css rel=stylesheet media=screen href=@{StaticR garland_css}>
+        <link type=text/css rel=stylesheet media=screen href=@{StaticR santi_css}>
+        <link type=text/css rel=stylesheet media=print  href=@{StaticR printlayout_css}>
+        <script src=http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js>
         <script src=@{StaticR jquery_blockUI_js}>
         ^{pageHead pc}
     <body .sidebar-left>
@@ -19,20 +20,24 @@ $doctype 5
                             <a href="http://santichlaus.comebackgloebb.ch/">
                                 <img #logo src=@{StaticR garland_logo_png} alt="">
                     <ul .links .primary-links>
-                        <li .menu-122 .first>
-                            <a href="http://comebackgloebb.ch/content/node/5" title="Willkommen beim Come Back Glöbb Allschwil">Willkommen
-                        <li .menu-115 .active-trail>
-                            <a href="http://comebackgloebb.ch/content/node" title="Aktuelles rund um den Glöbb">Aktuelles
-                        <li .menu-123>
-                            <a href="http://comebackgloebb.ch/content/node/6" title="Projekte">Projekte
-                        <li .menu-124>
-                            <a href="http://comebackgloebb.ch/content/node/7" title="Mitglieder">Mitglieder
-                        <li .menu-170>
-                            <a href="http://comebackgloebb.ch/content/node/103" title="Archiv">Archiv
                         $maybe userid <- maid
+                            <li .menu-122 .first>
+                                <a href=@{RegR} title=Anmeldungen>Anmeldungen
+                            <li .menu-115 .active-trail>
+                                <a href=@{PrintRegR} title=Anmeldungen (Print)>Anmeldungen (Print)
                             <li .menu-170 .last>
                                 <a href=@{AuthR LogoutR} title="Logout">Logout #{userid}
                         $nothing
+                            <li .menu-122 .first>
+                                <a href="http://comebackgloebb.ch/content/node/5" title="Willkommen beim Come Back Glöbb Allschwil">Willkommen
+                            <li .menu-115 .active-trail>
+                                <a href="http://comebackgloebb.ch/content/node" title="Aktuelles rund um den Glöbb">Aktuelles
+                            <li .menu-123>
+                                <a href="http://comebackgloebb.ch/content/node/6" title="Projekte">Projekte
+                            <li .menu-124>
+                                <a href="http://comebackgloebb.ch/content/node/7" title="Mitglieder">Mitglieder
+                            <li .menu-170>
+                                <a href="http://comebackgloebb.ch/content/node/103" title="Archiv">Archiv
                             <li .menu-170 .last>
                                 <a href=@{AuthR LoginR} title="Login">Login
                 <div #sidebar-left .sidebar>
@@ -41,11 +46,6 @@ $doctype 5
                     <div #squeeze>
                         <div .right-corner>
                             <div .left-corner>
-                                $maybe u <- authUser
-                                    <p>You are logged in as #
-                                        <a href=@{LogoutR}>#{u}
-                                $nothing
-                                    <p>
                                 <div .clear-block>
                                     <div #node-393 .node>
                                         <div .content .clear-block>

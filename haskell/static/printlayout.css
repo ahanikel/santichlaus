@@ -1,3 +1,9 @@
+@page {
+    size: landscape;
+    orphans: 3;
+    widows: 3;
+}
+
 html {
     margin: 0;
     padding: 0;
@@ -6,9 +12,13 @@ html {
     text-align: justify;
 }
 
+#header-region, #header, #footer, #sidebar-left, img {
+    display: none;
+}
+
 .registration {
-    page-break-after: always;
     clear: both;
+    page-break-after: always;
 }
 
 .address {

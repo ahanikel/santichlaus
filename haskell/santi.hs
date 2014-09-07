@@ -2,6 +2,8 @@
 
 import Santi.Types
 import Santi.Persist
+import Santi.Privileges
+import Santi.Users
 import Yesod
 import Yesod.Static
 import Data.Time (Day, toGregorian)
@@ -31,6 +33,7 @@ mkYesod "Santi" [parseRoutes|
 /edit/#Text  EditR   GET
 /favicon.ico FavR    GET
 /reg         RegR    GET POST
+/print/reg   PrintRegR GET
 /static      StaticR Static getStatic
 /auth        AuthR   Auth   getAuth
 |]
@@ -43,8 +46,11 @@ instance Yesod Santi where
     isAuthorized RegR False = do
         authUser <- maybeAuthId
         case authUser of
-            Just "qah@bluewin.ch" -> return Authorized
-            Nothing      -> return $ Unauthorized ""
+            Just userName | userName `has` Read `On` Registrations
+                          -> return Authorized
+            _             -> return $ Unauthorized ""
+
+    isAuthorized PrintRegR False = isAuthorized RegR False
 
     isAuthorized _   _     = return Authorized
 
@@ -75,7 +81,7 @@ myLayout widget = do
 printLayout :: Widget -> Handler Html
 printLayout widget = do
     pc <- widgetToPageContent widget
-    authUser <- lookupSession "authUser"
+    maid <- maybeAuthId
     giveUrlRenderer $(hamletFile "printlayout.hamlet")
 
 currentYear :: IO String
@@ -136,8 +142,13 @@ childrenField = Field
     , fieldEnctype = UrlEncoded
     }
 
+getPrintRegR :: Handler Html
+getPrintRegR = printLayout $ do
+    registrations <- liftIO getRegistrations
+    $(whamletFile "registrations.hamlet")
+
 getRegR :: Handler Html
-getRegR = printLayout $ do
+getRegR = defaultLayout $ do
     registrations <- liftIO getRegistrations
     $(whamletFile "registrations.hamlet")
 
