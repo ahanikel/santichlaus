@@ -15,11 +15,15 @@ import Text.Julius
 import Data.UUID as U
 import Control.Concurrent (MVar, newMVar, takeMVar, putMVar)
 import Control.Exception (bracket)
+import Yesod.Auth
+import Yesod.Auth.BrowserId
+import Network.HTTP.Conduit (Manager, conduitManagerSettings, newManager)
 
 staticFiles "static"
 
-data Santi = Santi { getStatic   :: Static
-                   , getSem      :: MVar Bool
+data Santi = Santi { getStatic :: Static
+                   , getSem :: MVar Bool
+                   , httpManager :: Manager
                    }
 
 mkYesod "Santi" [parseRoutes|
@@ -27,19 +31,19 @@ mkYesod "Santi" [parseRoutes|
 /edit/#Text  EditR   GET
 /favicon.ico FavR    GET
 /reg         RegR    GET POST
-/static      StaticR Static     getStatic
-/login       LoginR  GET POST
-/logout      LogoutR GET
+/static      StaticR Static getStatic
+/auth        AuthR   Auth   getAuth
 |]
 
 instance Yesod Santi where
 
     defaultLayout = myLayout
+    approot = ApprootStatic "http://santichlaus.comebackgloebb.ch"
 
     isAuthorized RegR False = do
-        authUser <- lookupSession "authUser"
+        authUser <- maybeAuthId
         case authUser of
-            Just "admin" -> return Authorized
+            Just "qah@bluewin.ch" -> return Authorized
             Nothing      -> return $ Unauthorized ""
 
     isAuthorized _   _     = return Authorized
@@ -47,10 +51,25 @@ instance Yesod Santi where
 instance RenderMessage Santi FormMessage where
     renderMessage _ _ = defaultFormMessage
 
+instance YesodAuth Santi where
+    type AuthId Santi = Text
+    getAuthId = return . Just . credsIdent
+
+    loginDest  _ = RootR
+    logoutDest _ = RootR
+
+    authPlugins _ =
+        [ authBrowserId def
+        ]
+
+    authHttpManager = httpManager
+
+    maybeAuthId = lookupSession "_ID"
+
 myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
-    authUser <- lookupSession "authUser"
+    maid <- maybeAuthId
     giveUrlRenderer $(hamletFile "layout.hamlet")
 
 printLayout :: Widget -> Handler Html
@@ -139,33 +158,6 @@ postRegR = do
         liftIO $ saveRegistration result sem
         defaultLayout [whamlet|<p>#{show result}|]
 
-getLoginR :: Handler Html
-getLoginR = defaultLayout [whamlet|
-<form method=post action=/login>
-    <table>
-        <tr>
-            <td>Username
-            <td><input #username name=username>
-        <tr>
-            <td>Password
-            <td><input #password name=password type=password>
-        <tr>
-            <td colspan=2><input type=submit name=Login value=Login>
-|]
-
-postLoginR :: Handler Html
-postLoginR = do
-    (user, pass) <- runInputPost $ (,) <$> ireq textField "username" <*> ireq textField "password"
-    if user == "admin" && pass == "admin"
-    then setSession "authUser" user
-    else deleteSession "authUser"
-    redirect RootR
- 
-getLogoutR :: Handler Html
-getLogoutR = do
-    deleteSession "authUser"
-    redirect RootR
-
 getFavR :: Handler ()
 getFavR = sendFile "image/png" "static/santi-favicon.png"
 
@@ -175,6 +167,7 @@ main = do
     ensureTimesIndex
     sem <- newMVar True
     static@(Static settings) <- static "static"
-    warp 8080 $ Santi static sem
+    manager <- newManager conduitManagerSettings
+    warp 80 $ Santi static sem manager
 
 -- vim:ts=4:sw=4:ai:et
