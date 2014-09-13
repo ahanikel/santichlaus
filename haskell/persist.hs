@@ -2,6 +2,8 @@ module Santi.Persist ( saveRegistration
                      , getRegistrationAsJson
                      , availableTimes
                      , bookedTimes
+                     , blockedTimes
+                     , ensureFilesPresent
                      , ensureRegistrationIndex
                      , ensureTimesIndex
                      , getRegistrations
@@ -9,7 +11,7 @@ module Santi.Persist ( saveRegistration
 
 import           Santi.Types
 import           Santi.Mail
-import           System.IO                         (readFile, appendFile)
+import           System.IO                         (readFile, appendFile, openFile, IOMode(..), hClose)
 import           System.Directory                  (removeFile, doesDirectoryExist, doesFileExist, createDirectory, getDirectoryContents)
 import qualified Data.Map                   as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
 import           Data.List                         (foldl')
@@ -21,7 +23,7 @@ import           Data.ByteString.Lazy.UTF8         (toString)
 import qualified Data.UUID                  as U
 import           Data.UUID.V4
 import           Control.Exception                 (bracket, SomeException, catch)
-import           Control.Monad                     (forM_)
+import           Control.Monad                     (forM_, mapM_, when, unless)
 import           Control.Concurrent                (MVar, takeMVar, putMVar)
 import           Prelude hiding (catch)
 
@@ -29,6 +31,7 @@ dnRegistrations = "registrations"
 fnRegistrations = "registrations.txt"
 fnTimes         = "times.txt"
 dnEmails        = "emails"
+fnBlocked       = "blocked.txt"
 
 saveRegistration :: Registration -> MVar Bool -> IO ()
 saveRegistration r sem = do
@@ -95,14 +98,9 @@ _deleteRegistration r sem = do
                     _removeFromTimeIndex $ T.unpack $ zeit r)
         _removeFromRegIndex r
 
-_times :: IO [String]
-_times = do
-    ls <- readFile fnTimes
-    return $ lines ls
-
-bookedTimes :: IO TimeCount
-bookedTimes = do
-    times <- _times
+_countTimes :: FilePath -> IO TimeCount
+_countTimes filename = do
+    times <- fmap lines $ readFile filename
     return $ foldl' addTime Map.empty times
     where addTime m line = case op of
                                '+' -> Map.insert time (count + 1) m
@@ -111,22 +109,52 @@ bookedTimes = do
                            where (op:time) = line
                                  count = Map.findWithDefault 0 time m
 
+blockTime :: String -> MVar Bool -> IO ()
+blockTime t sem = do
+    bracket (takeMVar sem)
+            (\_ -> putMVar sem True)
+            (\_ -> blockTime' t)
+    where blockTime' t = do
+              isBlocked <- isTimeBlocked t
+              unless isBlocked $ appendFile fnBlocked $ "+" ++ t ++ "\n"
+
+unblockTime :: String -> MVar Bool -> IO ()
+unblockTime t sem = do
+    bracket (takeMVar sem)
+            (\_ -> putMVar sem True)
+            (\_ -> unblockTime' t)
+    where unblockTime' t = do
+              isBlocked <- isTimeBlocked t
+              when isBlocked $ appendFile fnBlocked $ "-" ++ t ++ "\n"
+
+bookedTimes = _countTimes fnTimes
+
+blockedTimes = _countTimes fnBlocked
+
+isTimeBlocked :: String -> IO Bool
+isTimeBlocked t = do
+    blocked <- blockedTimes
+    return $ Map.findWithDefault 0 t blocked > 0
+
 isTimeAvailable :: String -> IO Bool
 isTimeAvailable t = do
     let max = Map.findWithDefault 0 t maxTimes
     booked <- bookedTimes
     let current = Map.findWithDefault 0 t booked
-    return $ (max - current) > 0
+    isBlocked <- isTimeBlocked t
+    return $ not isBlocked && (max - current) > 0
 
 availableTimes :: IO [String]
 availableTimes = do
     booked <- bookedTimes
+    blocked <- blockedTimes
     let diffFn a b =
           if diff <= 0 then Nothing
           else Just a 
           where diff = a - b
     let available = Map.differenceWith diffFn maxTimes booked
-    return [ time | (time,_) <- Map.toList available]
+    let isBlocked t = Map.findWithDefault 0 t blocked > 0
+    return $ filter (not . isBlocked) [ time | (time,_) <- Map.toList available]
 
 _getRegistrationByUUID :: String -> IO (Maybe Registration)
 _getRegistrationByUUID pk = do
@@ -158,6 +186,14 @@ getRegistrations = do
     files <- getDirectoryContents dnEmails
     let emails = filter (\p -> p /= "." && p /= "..") files
     mapM _getRegistrationByEmail emails
+
+ensureFilesPresent :: IO ()
+ensureFilesPresent = do
+    mapM_ checkAndCreate [fnRegistrations, fnBlocked]
+    where checkAndCreate file = do
+            exists <- doesFileExist file
+            unless exists $ openFile file WriteMode >>= hClose
+
 
 ensureRegistrationIndex :: IO ()
 ensureRegistrationIndex = do
