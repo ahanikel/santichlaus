@@ -20,6 +20,11 @@ import Control.Exception (bracket)
 import Yesod.Auth
 import Yesod.Auth.BrowserId
 import Network.HTTP.Conduit (Manager, conduitManagerSettings, newManager)
+import Data.Aeson (encode)
+import Network.HTTP.Types (status200, status400)
+import Network.Wai (responseLBS)
+import Text.Blaze.Html (preEscapedToMarkup)
+
 
 staticFiles "static"
 
@@ -34,6 +39,7 @@ mkYesod "Santi" [parseRoutes|
 /favicon.ico FavR    GET
 /reg         RegR    GET POST
 /print/reg   PrintRegR GET
+/reg.json    RegJsonR GET
 /static      StaticR Static getStatic
 /auth        AuthR   Auth   getAuth
 |]
@@ -51,6 +57,7 @@ instance Yesod Santi where
             _             -> return $ Unauthorized ""
 
     isAuthorized PrintRegR False = isAuthorized RegR False
+    isAuthorized RegJsonR False  = isAuthorized RegR False
 
     isAuthorized _   _     = return Authorized
 
@@ -76,13 +83,13 @@ myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
     maid <- maybeAuthId
-    giveUrlRenderer $(hamletFile "layout.hamlet")
+    withUrlRenderer $(hamletFile "layout.hamlet")
 
 printLayout :: Widget -> Handler Html
 printLayout widget = do
     pc <- widgetToPageContent widget
     maid <- maybeAuthId
-    giveUrlRenderer $(hamletFile "printlayout.hamlet")
+    withUrlRenderer $(hamletFile "printlayout.hamlet")
 
 currentYear :: IO String
 currentYear = do
@@ -96,9 +103,29 @@ title = do
     y <- currentYear
     return $ "Santichlaus-Anmeldung " ++ y
 
+withJQuery :: Widget -> Widget
+withJQuery widget = do
+    toWidgetHead [hamlet|
+                    <script src=//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js>
+                    <script src=@{StaticR jquery_blockUI_js}>
+                 |]
+    widget
+
+withAngularController :: String -> Widget -> Widget
+withAngularController controller widget = do
+    [whamlet|
+        <div ng-app=santiApp>
+            <div ng-controller=#{controller}>
+                ^{widget}
+    |]
+    toWidgetHead [hamlet|
+        <script src=//ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js>
+        <script src=@{StaticR controllers_js}>
+    |]
+
 getEditR :: Text -> Handler Html
 getEditR tId = do
-    defaultLayout $ do
+    defaultLayout $ withJQuery $ do
         let u = U.fromString $ unpack tId
         sReg <- case u of
                     Just uuid -> liftIO $ getRegistrationAsJson uuid
@@ -114,7 +141,7 @@ getEditR tId = do
 
 getRootR :: Handler Html
 getRootR = do
-    defaultLayout $ do
+    defaultLayout $ withJQuery $ do
         let reg = toJSON ("" :: String)
         let childkeys = rawJS ckeys
         year <- liftIO currentYear
@@ -147,10 +174,27 @@ getPrintRegR = printLayout $ do
     registrations <- liftIO getRegistrations
     $(whamletFile "registrations.hamlet")
 
-getRegR :: Handler Html
-getRegR = defaultLayout $ do
+getRegJsonR :: Handler ()
+getRegJsonR = do
     registrations <- liftIO getRegistrations
-    $(whamletFile "registrations.hamlet")
+    sendWaiResponse $ responseLBS
+        status200
+        [("Content-Type", "application/json")]
+        $ encode registrations
+
+getRegR :: Handler Html
+getRegR = defaultLayout $ withAngularController "RegistrationsController" $ do
+    [whamlet|
+        <table>
+            <tr>
+                <th ng-repeat="col in ['zeit', 'name', 'vorname', 'strasse', 'ort']">{{col}}
+            <tr ng-repeat="reg in registrations">
+                <td>{{reg.zeit}}
+                <td>{{reg.name}}
+                <td>{{reg.vorname}}
+                <td>{{reg.strasse}}
+                <td>{{reg.ort}}
+    |]
 
 postRegR :: Handler Html
 postRegR = do
@@ -174,6 +218,7 @@ getFavR = sendFile "image/png" "static/santi-favicon.png"
 
 main :: IO ()
 main = do
+    ensureFilesPresent
     ensureRegistrationIndex
     ensureTimesIndex
     sem <- newMVar True
