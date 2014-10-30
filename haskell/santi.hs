@@ -83,13 +83,13 @@ myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
     maid <- maybeAuthId
-    withUrlRenderer $(hamletFile "layout.hamlet")
+    giveUrlRenderer $(hamletFile "layout.hamlet")
 
 printLayout :: Widget -> Handler Html
 printLayout widget = do
     pc <- widgetToPageContent widget
     maid <- maybeAuthId
-    withUrlRenderer $(hamletFile "printlayout.hamlet")
+    giveUrlRenderer $(hamletFile "printlayout.hamlet")
 
 currentYear :: IO String
 currentYear = do

@@ -39,7 +39,7 @@ saveRegistration r sem = do
                       then do
                           uuid' <- nextRandom
                           let r' = r { uuid = uuid' }
-                          return (Nothing, r)
+                          return (Nothing, r')
                       else do
                           oldReg <- getRegistrationByUUID $ uuid r
                           return (oldReg, r)
@@ -50,11 +50,11 @@ saveRegistration r sem = do
     case oldReg of
         Nothing -> do
                        _saveRegistration reg sem
-                       -- sendRegistrationMails reg
+                       sendRegistrationMails reg
         Just o  -> do
                        _deleteRegistration o sem
                        _saveRegistration reg sem
-                       -- sendRegistrationMails reg
+                       sendRegistrationMails reg
 
 _filename :: String -> String
 _filename = map tr
