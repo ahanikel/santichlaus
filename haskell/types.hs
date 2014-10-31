@@ -43,7 +43,7 @@ ckeys = "[\"childname\", \"childage\", \"childmw\", \"childpos\", \"childneg\"]"
 type TimeCount = Map.Map String Int
 
 maxTimes :: TimeCount
-maxTimes = Map.fromList [ ("16:30", 1)
+maxTimes = Map.fromList [ ("16:30", 2)
                         , ("17:00", 2)
                         , ("17:30", 5)
                         , ("18:00", 5)
