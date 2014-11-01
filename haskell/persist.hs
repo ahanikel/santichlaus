@@ -14,7 +14,8 @@ import           Santi.Mail
 import           System.IO                         (readFile, appendFile, openFile, IOMode(..), hClose)
 import           System.Directory                  (removeFile, doesDirectoryExist, doesFileExist, createDirectory, getDirectoryContents)
 import qualified Data.Map                   as Map (Map, insert, empty, findWithDefault, differenceWith, toList)
-import           Data.List                         (foldl')
+import           Data.List                         (foldl', sortBy)
+import           Data.Maybe                        (catMaybes)
 import qualified Data.Text                  as T   (Text, pack, unpack)
 import qualified Data.Text.Lazy             as L   (Text, pack, unpack)
 import           Data.Aeson
@@ -181,11 +182,14 @@ getRegistrationAsJson id = do
     reg <- getRegistrationByUUID id
     return $ toString $ encode reg
 
-getRegistrations :: IO [Maybe Registration]
+getRegistrations :: IO [Registration]
 getRegistrations = do
     files <- getDirectoryContents dnEmails
     let emails = filter (\p -> p /= "." && p /= "..") files
-    mapM _getRegistrationByEmail emails
+    maybeRegs <- mapM _getRegistrationByEmail emails
+    let regs = catMaybes maybeRegs
+    return $ sortBy comparingTimes regs
+    where comparingTimes a b = zeit a `compare` zeit b
 
 ensureFilesPresent :: IO ()
 ensureFilesPresent = do

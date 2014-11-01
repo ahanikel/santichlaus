@@ -1,29 +1,24 @@
-$forall mreg <- registrations
-    $maybe reg <- mreg
-        <section .registration>
-            <section .address>
-                <p>#{vorname reg} #{name reg}
-                <p>#{strasse reg}
-                <p>#{ort reg}
-                <p>#{telefon reg}
-                <p>#{email reg}
-            <section .zeit>
-                <p>#{zeit reg}
-            <section .children>
-                $forall child <- children reg
-                    <section .child>
-                        <p>#{childname child}
-                        <p>#{childage child}
-                        <p>#{childmw child}
-                        <section .childtext>
-                            <article .childpos>
-                                $forall line <- (lines $ unpack $ childpos child)
-                                    <p>#{line}
-                            <article .childneg>
-                                $forall line <- (lines $ unpack $ childneg child)
-                                    <p>#{line}
-    $nothing
-        <section .registration>
-            <p>There is something with the e-mail index on registrations. An e-mail
-               points to a non-existing registration uuid.
+$forall reg <- registrations
+    <section .registration>
+        <section .address>
+            <p>#{vorname reg} #{name reg}
+            <p>#{strasse reg}
+            <p>#{ort reg}
+            <p>#{telefon reg}
+            <p>#{email reg}
+        <section .zeit>
+            <p>#{zeit reg}
+        <section .children>
+            $forall child <- children reg
+                <section .child>
+                    <p>#{childname child}
+                    <p>#{childage child}
+                    <p>#{childmw child}
+                    <section .childtext>
+                        <article .childpos>
+                            $forall line <- (lines $ unpack $ childpos child)
+                                <p>#{line}
+                        <article .childneg>
+                            $forall line <- (lines $ unpack $ childneg child)
+                                <p>#{line}
 <!-- vim:set ts=4 sw=4 ai et: -->
