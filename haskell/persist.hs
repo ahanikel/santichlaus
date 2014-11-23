@@ -115,35 +115,27 @@ blockTime t sem = do
     bracket (takeMVar sem)
             (\_ -> putMVar sem True)
             (\_ -> blockTime' t)
-    where blockTime' t = do
-              isBlocked <- isTimeBlocked t
-              unless isBlocked $ appendFile fnBlocked $ "+" ++ t ++ "\n"
+    where blockTime' t = appendFile fnBlocked $ "+" ++ t ++ "\n"
 
 unblockTime :: String -> MVar Bool -> IO ()
 unblockTime t sem = do
     bracket (takeMVar sem)
             (\_ -> putMVar sem True)
             (\_ -> unblockTime' t)
-    where unblockTime' t = do
-              isBlocked <- isTimeBlocked t
-              when isBlocked $ appendFile fnBlocked $ "-" ++ t ++ "\n"
+    where unblockTime' t = appendFile fnBlocked $ "-" ++ t ++ "\n"
 
 bookedTimes = _countTimes fnTimes
 
 blockedTimes = _countTimes fnBlocked
 
-isTimeBlocked :: String -> IO Bool
-isTimeBlocked t = do
-    blocked <- blockedTimes
-    return $ Map.findWithDefault 0 t blocked > 0
-
 isTimeAvailable :: String -> IO Bool
 isTimeAvailable t = do
     let max = Map.findWithDefault 0 t maxTimes
     booked <- bookedTimes
-    let current = Map.findWithDefault 0 t booked
-    isBlocked <- isTimeBlocked t
-    return $ not isBlocked && (max - current) > 0
+    blocked <- blockedTimes
+    let currentlyBooked  = Map.findWithDefault 0 t booked
+    let currentlyBlocked = Map.findWithDefault 0 t blocked
+    return $ (max - currentlyBooked - currentlyBlocked) > 0
 
 availableTimes :: IO [String]
 availableTimes = do
@@ -153,9 +145,9 @@ availableTimes = do
           if diff <= 0 then Nothing
           else Just a 
           where diff = a - b
-    let available = Map.differenceWith diffFn maxTimes booked
-    let isBlocked t = Map.findWithDefault 0 t blocked > 0
-    return $ filter (not . isBlocked) [ time | (time,_) <- Map.toList available]
+    let available' = Map.differenceWith diffFn maxTimes booked
+    let available = Map.differenceWith diffFn available' blocked
+    return $ [ time | (time,_) <- Map.toList available]
 
 _getRegistrationByUUID :: String -> IO (Maybe Registration)
 _getRegistrationByUUID pk = do
