@@ -143,7 +143,7 @@ availableTimes = do
     blocked <- blockedTimes
     let diffFn a b =
           if diff <= 0 then Nothing
-          else Just a 
+          else Just diff
           where diff = a - b
     let available' = Map.differenceWith diffFn maxTimes booked
     let available = Map.differenceWith diffFn available' blocked
