@@ -35,6 +35,10 @@ html {
     width: 20%;
 }
 
+.remarks {
+    clear: both;
+}
+
 .children {
     clear: both;
 }

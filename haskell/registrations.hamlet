@@ -8,6 +8,9 @@ $forall reg <- registrations
             <p>#{email reg}
         <section .zeit>
             <p>#{zeit reg}
+        <section .remarks>
+            $maybe rem <- remarks reg
+                <p>#{rem}
         <section .children>
             $forall child <- children reg
                 <section .child>
