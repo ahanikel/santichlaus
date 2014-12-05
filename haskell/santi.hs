@@ -139,8 +139,10 @@ getEditR tId = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-getRootR :: Handler Html
-getRootR = do
+getRootR = getRootRClosed
+
+getRootROpen :: Handler Html
+getRootROpen = do
     defaultLayout $ withJQuery $ do
         let reg = toJSON ("" :: String)
         let childkeys = rawJS ckeys
@@ -150,6 +152,9 @@ getRootR = do
         times <- liftIO availableTimes
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
+
+getRootRClosed :: Handler Html
+getRootRClosed = defaultLayout $(whamletFile "santi.closed.hamlet")
 
 uuidField :: Monad m => Field m U.UUID
 uuidField = Field
