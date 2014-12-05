@@ -6,6 +6,12 @@ $forall reg <- registrations
             <p>#{ort reg}
             <p>#{telefon reg}
             <p>#{email reg}
+        <section .childdir>
+            $forall child <- children reg
+                <p>
+                    #{childname child},&nbsp;
+                    #{childage  child},&nbsp;
+                    #{childmw   child}
         <section .zeit>
             <p>#{zeit reg}
         <section .remarks>

@@ -25,7 +25,12 @@ html {
     font-size: 12pt;
     margin-bottom: 5ex;
     float: left;
-    width: 60%;
+    width: 40%;
+}
+
+.childdir {
+    float: left;
+    width: 20%;
 }
 
 .zeit {
@@ -53,6 +58,7 @@ html {
     padding-bottom: 50px;
     border-bottom: 1px solid black;
     clear: both;
+    page-break-inside: avoid;
 }
 
 .childpos {
