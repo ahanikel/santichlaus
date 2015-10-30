@@ -1,4 +1,6 @@
-{-# LANGUAGE QuasiQuotes, TemplateHaskell, MultiParamTypeClasses, OverloadedStrings, TypeFamilies #-}
+{-# LANGUAGE QuasiQuotes, TemplateHaskell, MultiParamTypeClasses, OverloadedStrings, TypeFamilies, ViewPatterns #-}
+
+module Santi (main) where
 
 import Santi.Types
 import Santi.Persist

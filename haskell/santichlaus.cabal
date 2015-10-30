@@ -1,0 +1,55 @@
+name:                santichlaus
+version:             0.1.0.0
+synopsis:            santichlaus.comebackgloebb.ch
+description:         santichlaus web site
+homepage:            http://github.com/ahanikel/santichlaus
+license:             BSD3
+--license-file:        LICENSE
+author:              Axel Hanikel
+maintainer:          ahanikel@gmail.com
+copyright:           2015 Axel Hanikel
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src/main/haskell
+  exposed-modules:     Santi
+                     , Santi.Types
+                     , Santi.Persist
+                     , Santi.Privileges
+                     , Santi.Mail
+                     , Santi.Users
+  build-depends:       base >= 4.7 && < 5
+                     , time
+                     , transformers
+                     , containers
+                     , yesod
+                     , text
+                     , shakespeare
+                     , yesod-auth
+                     , http-conduit
+                     , aeson
+                     , wai
+                     , http-types
+                     , blaze-html
+                     , uuid
+                     , smtp-mail
+                     , directory
+                     , bytestring
+                     , utf8-string
+                     , yesod-static
+  default-language:    Haskell2010
+
+executable santi
+  hs-source-dirs:      src/app/haskell
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , santichlaus
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/ahanikel/santichlaus

@@ -152,10 +152,9 @@ availableTimes = do
 _getRegistrationByUUID :: String -> IO (Maybe Registration)
 _getRegistrationByUUID pk = do
     let fn = dnRegistrations ++ "/" ++ _filename pk
-    let ret = do
-        sReg <- readFile fn
-        let r = read sReg
-        return $ Just r
+    let ret = do sReg <- readFile fn
+                 let r = read sReg
+                 return $ Just r
     ret `catch` ((\_ -> return Nothing) :: (SomeException -> IO (Maybe Registration)))
 
 getRegistrationByUUID :: U.UUID -> IO (Maybe Registration)
@@ -164,9 +163,8 @@ getRegistrationByUUID = _getRegistrationByUUID . show
 _getRegistrationByEmail :: String -> IO (Maybe Registration)
 _getRegistrationByEmail e = do
     let fn = dnEmails ++ "/" ++ _filename e
-    let ret = do
-        sReg <- readFile fn
-        _getRegistrationByUUID $ head $ lines sReg
+    let ret = do sReg <- readFile fn
+                 _getRegistrationByUUID $ head $ lines sReg
     ret `catch` ((\_ -> return Nothing) :: (SomeException -> IO (Maybe Registration)))
 
 getRegistrationAsJson :: U.UUID -> IO String
