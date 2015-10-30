@@ -141,7 +141,7 @@ getEditR tId = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-getRootR = getRootRClosed
+getRootR = getRootROpen
 
 getRootROpen :: Handler Html
 getRootROpen = do
@@ -231,6 +231,6 @@ main = do
     sem <- newMVar True
     static@(Static settings) <- static "static"
     manager <- newManager conduitManagerSettings
-    warp 80 $ Santi static sem manager
+    warp 8080 $ Santi static sem manager
 
 -- vim:ts=4:sw=4:ai:et

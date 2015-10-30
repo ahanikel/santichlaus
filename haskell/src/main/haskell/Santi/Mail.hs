@@ -24,7 +24,7 @@ registrationText r =
 	, "Telefon:      " ++ T.unpack (telefon r)
 	, "E-Mail:       " ++ T.unpack (email r)
 	, ""
-	, "Wir wünschen den Besuch des Santichlauses am 6. Dezember 2014 um"
+	, "Wir wünschen den Besuch des Santichlauses am 6. Dezember 2015 um"
 	, ""
 	, "        " ++ T.unpack (zeit r)
 	, ""
@@ -83,7 +83,7 @@ confirmationText r =
 	, "Telefon:      " ++ T.unpack (telefon r)
 	, "E-Mail:       " ++ T.unpack (email r)
 	, ""
-	, "Wir wünschen den Besuch des Santichlauses am 6. Dezember 2014 um"
+	, "Wir wünschen den Besuch des Santichlauses am 6. Dezember 2015 um"
 	, ""
 	, "        " ++ T.unpack (zeit r)
 	, ""
