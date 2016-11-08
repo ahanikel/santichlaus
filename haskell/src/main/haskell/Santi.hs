@@ -141,7 +141,7 @@ getEditR tId = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-getRootR = getRootRClosed
+getRootR = getRootROpen
 
 getRootROpen :: Handler Html
 getRootROpen = do

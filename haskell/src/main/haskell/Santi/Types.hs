@@ -45,12 +45,12 @@ type TimeCount = Map.Map String Int
 maxTimes :: TimeCount
 maxTimes = Map.fromList [ ("16:00", 2)
                         , ("16:30", 2)
-                        , ("17:00", 5)
-                        , ("17:30", 5)
-                        , ("18:00", 5)
-                        , ("18:30", 5)
-                        , ("19:00", 5)
-                        , ("19:30", 5)
+                        , ("17:00", 3)
+                        , ("17:30", 3)
+                        , ("18:00", 3)
+                        , ("18:30", 3)
+                        , ("19:00", 3)
+                        , ("19:30", 3)
                         ]
 
 instance FromJSON U.UUID where
