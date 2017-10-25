@@ -43,14 +43,14 @@ ckeys = "[\"childname\", \"childage\", \"childmw\", \"childpos\", \"childneg\"]"
 type TimeCount = Map.Map String Int
 
 maxTimes :: TimeCount
-maxTimes = Map.fromList [ ("16:00", 2)
-                        , ("16:30", 2)
-                        , ("17:00", 3)
-                        , ("17:30", 3)
-                        , ("18:00", 3)
-                        , ("18:30", 3)
-                        , ("19:00", 3)
-                        , ("19:30", 3)
+maxTimes = Map.fromList [ ("16:00", 1)
+                        , ("16:30", 1)
+                        , ("17:00", 4)
+                        , ("17:30", 4)
+                        , ("18:00", 4)
+                        , ("18:30", 4)
+                        , ("19:00", 4)
+                        , ("19:30", 4)
                         ]
 
 instance FromJSON U.UUID where
