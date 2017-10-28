@@ -26,16 +26,6 @@ $doctype 5
                             <li .menu-170 .last>
                                 <a href=@{AuthR LogoutR} title="Logout">Logout #{userid}
                         $nothing
-                            <li .menu-122 .first>
-                                <a href="http://comebackgloebb.ch/content/node/5" title="Willkommen beim Come Back Glöbb Allschwil">Willkommen
-                            <li .menu-115 .active-trail>
-                                <a href="http://comebackgloebb.ch/content/node" title="Aktuelles rund um den Glöbb">Aktuelles
-                            <li .menu-123>
-                                <a href="http://comebackgloebb.ch/content/node/6" title="Projekte">Projekte
-                            <li .menu-124>
-                                <a href="http://comebackgloebb.ch/content/node/7" title="Mitglieder">Mitglieder
-                            <li .menu-170>
-                                <a href="http://comebackgloebb.ch/content/node/103" title="Archiv">Archiv
                             <li .menu-170 .last>
                                 <a href=@{AuthR LoginR} title="Login">Login
                 <div #sidebar-left .sidebar>
