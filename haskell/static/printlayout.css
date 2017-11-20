@@ -18,6 +18,10 @@ html {
 
 .registration {
     clear: both;
+}
+
+.break {
+    clear: both;
     page-break-after: always;
 }
 

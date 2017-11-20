@@ -11,8 +11,11 @@ import Yesod.Static
 import Data.Time (Day, toGregorian)
 import Data.Time.Clock
 import Data.Text (Text,pack,unpack)
+import qualified Data.Text.Encoding as TE
 import Control.Applicative ((<$>), (<*>))
 import Control.Monad.IO.Class (liftIO)
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BL
 import Data.String
 import Text.Hamlet
 import Text.Julius
@@ -20,11 +23,13 @@ import Data.UUID as U
 import Control.Concurrent (MVar, newMVar, takeMVar, putMVar)
 import Control.Exception (bracket)
 import Yesod.Auth
-import Yesod.Auth.BrowserId
-import Network.HTTP.Conduit (Manager, conduitManagerSettings, newManager)
+import Yesod.Auth.GoogleEmail2
+import Network.HTTP.Conduit (Manager, tlsManagerSettings, newManager)
 import Data.Aeson (encode)
-import Network.HTTP.Types (status200, status400)
-import Network.Wai (responseLBS)
+import Network.HTTP.Types (status200, status302, status400)
+import Network.Wai (isSecure, rawPathInfo, responseLBS)
+import Network.Wai.Handler.Warp (defaultSettings, setPort)
+import Network.Wai.Handler.WarpTLS (OnInsecure(..), onInsecure, runTLS, tlsSettings)
 import Text.Blaze.Html (preEscapedToMarkup)
 
 
@@ -33,6 +38,8 @@ staticFiles "static"
 data Santi = Santi { getStatic :: Static
                    , getSem :: MVar Bool
                    , httpManager :: Manager
+                   , clientId :: BS.ByteString
+                   , clientSecret :: BS.ByteString
                    }
 
 mkYesod "Santi" [parseRoutes|
@@ -49,7 +56,7 @@ mkYesod "Santi" [parseRoutes|
 instance Yesod Santi where
 
     defaultLayout = myLayout
-    approot = ApprootStatic "http://santichlaus.comebackgloebb.ch"
+    approot = ApprootStatic "https://santichlaus.comebackgloebb.ch"
 
     isAuthorized RegR False = do
         authUser <- maybeAuthId
@@ -73,8 +80,9 @@ instance YesodAuth Santi where
     loginDest  _ = RootR
     logoutDest _ = RootR
 
-    authPlugins _ =
-        [ authBrowserId def
+    authPlugins self =
+        [ authGoogleEmail (TE.decodeUtf8 $ clientId self)
+                          (TE.decodeUtf8 $ clientSecret self)
         ]
 
     authHttpManager = httpManager
@@ -228,9 +236,26 @@ main = do
     ensureFilesPresent
     ensureRegistrationIndex
     ensureTimesIndex
-    sem <- newMVar True
+    sem                      <- newMVar True
     static@(Static settings) <- static "static"
-    manager <- newManager conduitManagerSettings
-    warp 8080 $ Santi static sem manager
+    manager                  <- newManager tlsManagerSettings
+    let warpSettings          = setPort 8080 defaultSettings
+        warpTlsSettings       = (tlsSettings "server.crt" "server.key")
+                                { onInsecure = AllowInsecure }
+    clientId                 <- BS.readFile "google.clientId"
+    clientSecret             <- BS.readFile "google.clientSecret"
+    app                      <- toWaiApp $ Santi static sem manager clientId clientSecret
+    runTLS warpTlsSettings warpSettings (redirectHttp app)
+
+redirectHttp :: Application -> Application
+redirectHttp app req resp | isSecure req = app req resp
+redirectHttp _   req resp                = resp $ responseLBS status302
+                                           [ ("Location", BS.concat
+                                               [ "https://santichlaus.comebackgloebb.ch"
+                                               , rawPathInfo req
+                                               ]
+                                             )
+                                           ]
+                                           BL.empty
 
 -- vim:ts=4:sw=4:ai:et

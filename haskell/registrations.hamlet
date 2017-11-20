@@ -30,4 +30,5 @@ $forall reg <- registrations
                         <article .childneg>
                             $forall line <- (lines $ unpack $ childneg child)
                                 <p>#{line}
+    <div .break>
 <!-- vim:set ts=4 sw=4 ai et: -->
