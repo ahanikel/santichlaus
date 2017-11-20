@@ -93,7 +93,7 @@ myLayout :: Widget -> Handler Html
 myLayout widget = do
     pc <- widgetToPageContent widget
     maid <- maybeAuthId
-    giveUrlRenderer $(hamletFile "layout.hamlet")
+    withUrlRenderer $(hamletFile "layout.hamlet")
 
 printLayout :: Widget -> Handler Html
 printLayout widget = do
@@ -149,10 +149,8 @@ getEditR tId = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
-getRootR = getRootROpen
-
-getRootROpen :: Handler Html
-getRootROpen = do
+getRootR :: Handler Html
+getRootR = do
     defaultLayout $ withJQuery $ do
         let reg = toJSON ("" :: String)
         let childkeys = rawJS ckeys
@@ -160,11 +158,11 @@ getRootROpen = do
         t <- liftIO title
         setTitle $ toHtml t
         times <- liftIO availableTimes
-        $(whamletFile "santi.hamlet")
-        toWidget $(juliusFile "santi.js")
-
-getRootRClosed :: Handler Html
-getRootRClosed = defaultLayout $(whamletFile "santi.closed.hamlet")
+        if times /= [] then do
+          $(whamletFile "santi.hamlet")
+          toWidget $(juliusFile "santi.js")
+        else
+          $(whamletFile "santi.closed.hamlet")
 
 uuidField :: Monad m => Field m U.UUID
 uuidField = Field
