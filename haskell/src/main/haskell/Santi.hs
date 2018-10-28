@@ -99,7 +99,7 @@ printLayout :: Widget -> Handler Html
 printLayout widget = do
     pc <- widgetToPageContent widget
     maid <- maybeAuthId
-    giveUrlRenderer $(hamletFile "printlayout.hamlet")
+    withUrlRenderer $(hamletFile "printlayout.hamlet")
 
 currentYear :: IO String
 currentYear = do
