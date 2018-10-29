@@ -82,7 +82,7 @@ textarea {
 .add:disabled, #del:disabled {
   opacity: .5;
   -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* -ms-ugly-yuck-yuck-yuck */
-	filter: alpha(opacity=50);
+	/* filter: alpha(opacity=50); */
 }
 
 #list-children tbody tr:hover {
