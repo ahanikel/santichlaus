@@ -23,7 +23,9 @@ import Data.UUID as U
 import Control.Concurrent (MVar, newMVar, takeMVar, putMVar)
 import Control.Exception (bracket)
 import Yesod.Auth
-import Yesod.Auth.GoogleEmail2
+import Yesod.Auth.OAuth2 (getAccessToken, getUserResponseJSON)
+import Yesod.Auth.OAuth2.Prelude (AccessToken (..))
+import Yesod.Auth.OAuth2.Google
 import Network.HTTP.Conduit (Manager, tlsManagerSettings, newManager)
 import Data.Aeson (encode)
 import Network.HTTP.Types (status200, status302, status400)
@@ -74,18 +76,27 @@ instance RenderMessage Santi FormMessage where
     renderMessage _ _ = defaultFormMessage
 
 instance YesodAuth Santi where
-    type AuthId Santi = Text
-    getAuthId = return . Just . credsIdent
+    type AuthId Santi  = Text
 
-    loginDest  _ = RootR
-    logoutDest _ = RootR
+    authenticate creds = do
+      $logInfo $ "Plugin: " <> credsPlugin creds
+      case credsPlugin creds of
+        "google" -> do
+          let Just (AccessToken token) = getAccessToken creds
+          $logInfo "Got access token"
+          setSession "_GOOGLE_ACCESS_TOKEN" token
+          case getUserResponseJSON creds :: Either String GoogleUser of
+            Right user -> return $ Authenticated $ credsIdent creds
+            Left  err  -> return $ ServerError   $ pack err
 
-    authPlugins self =
-        [ authGoogleEmail (TE.decodeUtf8 $ clientId self)
-                          (TE.decodeUtf8 $ clientSecret self)
-        ]
+    loginDest  _       = RootR
+    logoutDest _       = RootR
 
-    authHttpManager = httpManager
+    authPlugins self   =
+      [ oauth2GoogleScoped ["email", "profile"]
+                           (TE.decodeUtf8 $ clientId self)
+                           (TE.decodeUtf8 $ clientSecret self)
+      ]
 
     maybeAuthId = lookupSession "_ID"
 

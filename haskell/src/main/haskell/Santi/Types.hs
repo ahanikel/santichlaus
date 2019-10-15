@@ -50,12 +50,9 @@ maxTimes = Map.fromList [ ("17:30", 4)
                         , ("19:30", 4)
                         ]
 
-instance FromJSON U.UUID where
-    parseJSON (String v) = return $ case uuid' of
-                                        Just u -> u
-                                        Nothing -> U.nil
-                           where uuid' = U.fromString $ unpack v
-    parseJSON _ = mzero
+data GoogleUser = GoogleUser { guName  :: Text
+                             , guEmail :: Text
+                             }
 
 instance FromJSON Registration where
     parseJSON (Object v) = Registration  <$>
@@ -106,3 +103,6 @@ instance ToJSON Child where
         , "childneg"  .= childneg c
         ]
 
+instance FromJSON GoogleUser where
+    parseJSON (Object v) = GoogleUser <$> v .: "name" <*> v .: "email"
+    parseJSON _          = mzero
