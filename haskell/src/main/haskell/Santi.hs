@@ -13,6 +13,7 @@ import Data.Time.Clock
 import Data.Text (Text,pack,unpack)
 import qualified Data.Text.Encoding as TE
 import Control.Applicative ((<$>), (<*>))
+import Control.Monad (guard)
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
@@ -21,7 +22,7 @@ import Text.Hamlet
 import Text.Julius
 import Data.UUID as U
 import Control.Concurrent (MVar, newMVar, takeMVar, putMVar)
-import Control.Exception (bracket)
+import Control.Exception (bracket, tryJust)
 import Yesod.Auth
 import Yesod.Auth.OAuth2 (getAccessToken, getUserResponseJSON)
 import Yesod.Auth.OAuth2.Prelude (AccessToken (..))
@@ -33,6 +34,8 @@ import Network.Wai (isSecure, rawPathInfo, responseLBS)
 import Network.Wai.Handler.Warp (defaultSettings, setPort)
 import Network.Wai.Handler.WarpTLS (OnInsecure(..), onInsecure, runTLS, tlsSettings)
 import Text.Blaze.Html (preEscapedToMarkup)
+import System.IO.Error (isDoesNotExistError)
+import System.Environment (getEnv)
 
 
 staticFiles "static"
@@ -42,6 +45,7 @@ data Santi = Santi { getStatic :: Static
                    , httpManager :: Manager
                    , clientId :: BS.ByteString
                    , clientSecret :: BS.ByteString
+                   , appRoot :: Text
                    }
 
 mkYesod "Santi" [parseRoutes|
@@ -58,7 +62,8 @@ mkYesod "Santi" [parseRoutes|
 instance Yesod Santi where
 
     defaultLayout = myLayout
-    approot = ApprootStatic "https://santichlaus.comebackgloebb.ch"
+
+    approot       = ApprootMaster appRoot
 
     isAuthorized RegR False = do
         authUser <- maybeAuthId
@@ -253,18 +258,20 @@ main = do
                                 { onInsecure = AllowInsecure }
     clientId                 <- BS.readFile "google.clientId"
     clientSecret             <- BS.readFile "google.clientSecret"
-    app                      <- toWaiApp $ Santi static sem manager clientId clientSecret
-    runTLS warpTlsSettings warpSettings (redirectHttp app)
+    approot'                 <- tryJust (guard . isDoesNotExistError) (getEnv "APPROOT")
+    let approot               = either (const "https://santichlaus.comebackgloebb.ch") pack approot'
+    app                      <- toWaiApp $ Santi static sem manager clientId clientSecret approot
+    runTLS warpTlsSettings warpSettings (redirectHttp (TE.encodeUtf8 approot) app)
 
-redirectHttp :: Application -> Application
-redirectHttp app req resp | isSecure req = app req resp
-redirectHttp _   req resp                = resp $ responseLBS status302
-                                           [ ("Location", BS.concat
-                                               [ "https://santichlaus.comebackgloebb.ch"
-                                               , rawPathInfo req
-                                               ]
-                                             )
-                                           ]
-                                           BL.empty
+redirectHttp :: BS.ByteString -> Application -> Application
+redirectHttp _       app req resp | isSecure req = app req resp
+redirectHttp appRoot _   req resp                = resp $ responseLBS status302
+                                                   [ ("Location", BS.concat
+                                                       [ appRoot
+                                                       , rawPathInfo req
+                                                       ]
+                                                     )
+                                                   ]
+                                                   BL.empty
 
 -- vim:ts=4:sw=4:ai:et

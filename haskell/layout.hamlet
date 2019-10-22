@@ -15,7 +15,7 @@ $doctype 5
                 <div #header>
                     <div #logo-floater>
                         <h1>
-                            <a href="http://santichlaus.comebackgloebb.ch/">
+                            <a href=@{RootR}>
                                 <img #logo src=@{StaticR garland_logo_png} alt="">
                     <ul .links .primary-links>
                         $maybe userid <- maid
