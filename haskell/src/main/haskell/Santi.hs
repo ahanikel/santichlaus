@@ -86,7 +86,7 @@ instance YesodAuth Santi where
           $logInfo "Got access token"
           setSession "_GOOGLE_ACCESS_TOKEN" token
           case getUserResponseJSON creds :: Either String GoogleUser of
-            Right user -> return $ Authenticated $ credsIdent creds
+            Right user -> return $ Authenticated $ guEmail user
             Left  err  -> return $ ServerError   $ pack err
 
     loginDest  _       = RootR
