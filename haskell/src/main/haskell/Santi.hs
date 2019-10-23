@@ -31,7 +31,7 @@ import Network.HTTP.Conduit (Manager, tlsManagerSettings, newManager)
 import Data.Aeson (encode)
 import Network.HTTP.Types (status200, status302, status400)
 import Network.Wai (isSecure, rawPathInfo, responseLBS)
-import Network.Wai.Handler.Warp (defaultSettings, setPort)
+import Network.Wai.Handler.Warp (defaultSettings, setPort, setHTTP2Disabled)
 import Network.Wai.Handler.WarpTLS (OnInsecure(..), onInsecure, runTLS, tlsSettings)
 import Text.Blaze.Html (preEscapedToMarkup)
 import System.IO.Error (isDoesNotExistError)
@@ -253,7 +253,7 @@ main = do
     sem                      <- newMVar True
     static@(Static settings) <- static "static"
     manager                  <- newManager tlsManagerSettings
-    let warpSettings          = setPort 8080 defaultSettings
+    let warpSettings          = setPort 8080 $ setHTTP2Disabled defaultSettings
         warpTlsSettings       = (tlsSettings "server.crt" "server.key")
                                 { onInsecure = AllowInsecure }
     clientId                 <- BS.readFile "google.clientId"
