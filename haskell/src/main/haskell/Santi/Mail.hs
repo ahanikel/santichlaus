@@ -126,7 +126,7 @@ sendRegistrationMail r = do
 	let subject	= T.append "Santichlaus-Anmeldung von " sender
 	let body	= plainTextPart $ L.pack $ registrationText r
 	let mail	= simpleMail from to cc bcc subject [body]
-        sendMail "localhost" mail
+        sendMail "comebackgloebb.ch" mail
 
 sendConfirmationMail :: Registration -> IO ()
 sendConfirmationMail r = do
@@ -139,5 +139,5 @@ sendConfirmationMail r = do
 	let subject	= "Bestätigung Santichlaus-Anmeldung"
 	let body	= plainTextPart $ L.pack $ confirmationText r
 	let mail	= simpleMail from to cc bcc subject [body]
-        sendMail "localhost" mail
+        sendMail "comebackgloebb.ch" mail
 	
