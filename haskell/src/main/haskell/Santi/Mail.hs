@@ -15,7 +15,7 @@ registrationText r =
 	[ "Santichlaus-Anmeldung"
 	, "====================="
 	, ""
-    	, "http://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
+    	, "https://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
 	, ""
 	, "Name:         " ++ T.unpack (name r)
 	, "Vorname:      " ++ T.unpack (vorname r)
@@ -70,7 +70,7 @@ confirmationText r =
 	, "Come Back Glöbb Allschwil"
 	, ""
 	, "PS: Falls Sie Änderungen an Ihrer Anmeldung vornehmen möchten, verwenden Sie bitte diesen Link:"
-    	, "http://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
+    	, "https://santichlaus.comebackgloebb.ch/edit/" ++ (U.toString $ primaryKey r)
 	, ""
 	, ""
 	, "Bestätigung Santichlaus-Anmeldung"
