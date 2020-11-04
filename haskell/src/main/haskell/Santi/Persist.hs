@@ -211,6 +211,7 @@ ensureTimesIndex = do
     if mustNotRebuild
     then return ()
     else do
+        appendFile fnTimes ""
         logs <- readFile fnRegistrations
         forM_ (lines logs) $ \(op:sReg) -> do
             let r = read sReg
