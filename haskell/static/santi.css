@@ -53,7 +53,7 @@ input {
 	width: 400px;
 }
 
-input[type="radio"] {
+input[type="radio",type="checkbox"] {
 	width: 10px;
 }
 
@@ -156,4 +156,21 @@ button {
 
 #soldout h1 {
   margin-bottom: 4ex;
+}
+
+#conditions { font-size: 12pt !important; }
+
+#conditions fieldset {
+    padding: 30px;
+    padding-top: 60px;
+}
+
+#conditions input {
+    width: 10px !important;
+}
+
+#conditions li {
+    list-style-type: disc;
+    margin: 0.15em 0 0.15em 1em;
+    padding: 0 0 0.2em 0;
 }

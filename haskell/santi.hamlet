@@ -166,12 +166,33 @@
                                                                 <img src=@{StaticR list_add_png} alt="Kind erfassen">Kind erfassen
                                                         <td>
                                                         <td style="text-align: right;">
-                                                            <button #send .submitbutton .alignright type=button disabled=disabled>Anmeldung abschicken
+                                                            <button .next type=button> ➝ weiter 
+    <div #conditions .page>
+        <fieldset>
+            <legend>Einverständniserklärung
+            <p>Aufgrund der besonderen Situation während der Corona-Pandemie nehme ich die folgenden Bedingungen zur Kenntnis und erkläre mein Einverständnis:
+            <ul>
+                <li>Der Chlausbesuch findet draussen statt (Wald, Gartensitzplatz, gedeckter Vorplatz). Die „Säckli“ werden z.B. im Briefkasten, in der Garage, im Velounterstand, etc. deponiert (keine Einsehbarkeit für die wartenden Kinder). Im Wald wird die Übergabe mit dem Chlaus kurz vor dem Besuch telefonisch vereinbart.
+                <li>Nach dem Abschicken der Anmeldung können die Anzahl der Kinder, die E-Mail-Adresse und die Uhrzeit nicht mehr geändert werden ("zu loben / zu tadeln und andere Dinge aber schon").
+                <li>Die Chläuse und Schmutzli tragen Handschuhe.
+                <li>Der Stab und das Buch werden nach jedem Besuch desinfiziert.
+                <li>Es ist wichtig, dass Sie uns benachrichtigen, falls in Ihrer Familie nach dem Besuch des Chlaus ein Ansteckungsfall aufgetreten ist (Nachvollziehbarkeit).
+            <table>
+                <tr>
+                    <td>
+                        <input type=checkbox id=confirmed name=confirmed value=true>
+                    <td>
+                        <label for=confirmed>Ich habe die Corona-Richtlinien gelesen und erkläre mich damit einverstanden.
+                <tr>
+                    <td>
+                    <td>
+                        <button #send .submitbutton .alignright type=button disabled=disabled>Anmeldung abschicken
+                    <td>
     <div #success .page>
         <h1>Vielen Dank für Ihre Anmeldung!
         <p style="font-size: larger; margin-top: 5ex; font-weight: bold;">Dr Santichlaus und dr Schmutzli werden um <span id='timeconfirm'></span> Uhr bei Ihrer Familie vorbeikommen.
         <p>Bitte haben Sie Verständnis: der Santichlaus kann Verspätung haben, wenn sein Esel plötzlich bockt, bzw. wenn es (hoffentlich nur ganz kleine) Verzögerungen gibt. Falls der gewünschte Zeitpunkt für den Chlaus-Besuch nicht mehr frei ist, werden wir Sie rechtzeitig per Mail informieren. Bitte informieren auch Sie uns rechtzeitig über Änderungen Ihrerseits. Bitte vergessen Sie nicht, die Gaben für die Kinder am angegebenen Ort rechtzeitig zu hinterlegen.
-        <p>Wir freuen uns jetzt schon auf eine fröhliche Stimmung in Ihrer guten Stube und auf viele grosse Kinderaugen... Für weitere Fragen stehen wir gerne zur Verfügung: <a href="mailto:santichlaus@comebackgloebb.ch">santichlaus@comebackgloebb.ch</a>.
+        <p>Wir freuen uns jetzt schon auf eine fröhliche Stimmung und auf viele grosse Kinderaugen... Für weitere Fragen stehen wir gerne zur Verfügung: <a href="mailto:santichlaus@comebackgloebb.ch">santichlaus@comebackgloebb.ch</a>.
         <p>Das OK Santichlaus-Aktion
         <p>Come Back Glöbb Allschwil
     <div #error .page>
