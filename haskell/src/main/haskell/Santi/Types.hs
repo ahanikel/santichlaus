@@ -9,6 +9,7 @@ import Data.Aeson
 import Control.Applicative
 import Control.Monad
 import qualified Data.UUID as U
+import Data.Time.Clock
 
 data Registration = Registration
         { uuid      :: U.UUID
@@ -108,3 +109,38 @@ instance ToJSON Child where
 instance FromJSON GoogleUser where
     parseJSON (Object v) = GoogleUser <$> v .: "name" <*> v .: "email"
     parseJSON _          = mzero
+
+--
+-- Time management (WIP)
+--
+
+type Tours = [Tour]
+
+data Tour = Tour
+  { tourId    :: Int
+  , tourChlaus    :: Text
+  , tourSchmutzli :: Text
+  , tourSlots     :: TimeSlot
+  }
+
+type TimeSlots = [TimeSlot]
+
+data TimeSlot =
+  ReservedTimeSlot
+  { tsTourId     :: Int
+  , tsStart      :: UTCTime
+  , tsEnd        :: UTCTime
+  }
+  | FreeTimeSlot
+  { tsTourId     :: Int
+  , tsStart      :: UTCTime
+  , tsEnd        :: UTCTime
+  }
+
+minute = secondsToDiffTime 60
+
+timePerChild = 10 * minute
+timeToTravel = 10 * minute
+
+findTimeSlot :: TimeSlots -> NominalDiffTime -> TimeSlots
+findTimeSlot = undefined
