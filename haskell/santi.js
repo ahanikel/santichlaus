@@ -109,8 +109,9 @@ $(document).ready(function(){
     return ret;
   }
 
-  function areWeEditing() {
-    return $('#uuid').val() != "00000000-0000-0000-0000-000000000000";
+  function isUserEditing() {
+      return $('#uuid').val() != "00000000-0000-0000-0000-000000000000"
+          && !window.location.pathname.startsWith("/admin");
   }
 
   function initInput() {
@@ -168,7 +169,7 @@ $(document).ready(function(){
     else {
       switchTo.pageNo(1);
     }
-    if (areWeEditing()) {
+    if (isUserEditing()) {
       $('#zeit, #email, .add, #del').attr('disabled', 'disabled');
     }
   }
@@ -209,7 +210,7 @@ $(document).ready(function(){
     if ($('.page .invalidMessage.show').length > 0 || $('#list-children tbody tr').length == 0 || !$('#confirmed').attr('checked'))
       $('#send').attr("disabled", "disabled");
     else {
-      if (areWeEditing()) {
+      if (isUserEditing()) {
         if ($('#list-children tbody tr').length != $.santi.children.length) {
           $('#send').attr("disabled", "disabled");
         }
@@ -301,7 +302,7 @@ $(document).ready(function(){
       $('.editable').removeClass('readonly');
       $('.editable input, .editable textarea').removeAttr('readonly');
       $('.add, #send, #list-children, .prev, .next').attr('disabled', 'disabled');
-      if (!areWeEditing()) {
+      if (!isUserEditing()) {
         $('#del').removeAttr('disabled');
       }
   }
@@ -348,7 +349,7 @@ $(document).ready(function(){
     $('.editable input[type!="radio"], .editable textarea').attr('readonly', 'readonly').val('');
     $('.editable input[type="radio"]').removeAttr('checked');
     $('#details-children').removeAttr('modify');
-    if (!areWeEditing()) {
+    if (!isUserEditing()) {
       $('.add').removeAttr('disabled');
     }
     $('#list-children, .prev').removeAttr('disabled');

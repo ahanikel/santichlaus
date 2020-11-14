@@ -85,7 +85,7 @@ textarea {
 	/* filter: alpha(opacity=50); */
 }
 
-#list-children tbody tr:hover {
+#list-children tbody tr:hover, .regtable tbody tr:hover {
 	background-color: yellow;
 	cursor: pointer;
 }

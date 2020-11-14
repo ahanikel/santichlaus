@@ -51,6 +51,7 @@ data Santi = Santi { getStatic :: Static
 mkYesod "Santi" [parseRoutes|
 /            RootR   GET
 /edit/#Text  EditR   GET
+/admin/edit/#Text  AdminEditR   GET
 /favicon.ico FavR    GET
 /reg         RegR    GET POST
 /print/reg   PrintRegR GET
@@ -74,6 +75,7 @@ instance Yesod Santi where
 
     isAuthorized PrintRegR False = isAuthorized RegR False
     isAuthorized RegJsonR False  = isAuthorized RegR False
+    isAuthorized (AdminEditR _) False = isAuthorized RegR False
 
     isAuthorized _   _     = return Authorized
 
@@ -165,6 +167,8 @@ getEditR tId = do
         $(whamletFile "santi.hamlet")
         toWidget $(juliusFile "santi.js")
 
+getAdminEditR = getEditR
+
 getRootR :: Handler Html
 getRootR = do
     defaultLayout $ withJQuery $ do
@@ -212,17 +216,25 @@ getRegJsonR = do
         $ encode registrations
 
 getRegR :: Handler Html
-getRegR = defaultLayout $ withAngularController "RegistrationsController" $ do
+getRegR = defaultLayout $ do
+    registrations <- liftIO getRegistrations
     [whamlet|
-        <table>
+        <table .regtable>
+          <thead>
             <tr>
-                <th ng-repeat="col in ['zeit', 'name', 'vorname', 'strasse', 'ort']">{{col}}
-            <tr ng-repeat="reg in registrations">
-                <td>{{reg.zeit}}
-                <td>{{reg.name}}
-                <td>{{reg.vorname}}
-                <td>{{reg.strasse}}
-                <td>{{reg.ort}}
+                <th>Zeit
+                <th>Name
+                <th>Vorname
+                <th>Strasse
+                <th>Ort
+          <tbody>
+            $forall reg <- registrations
+                <tr onclick="window.location.href = '@{AdminEditR $ pack $ show $ uuid reg}';">
+                    <td>#{zeit reg}
+                    <td>#{name reg}
+                    <td>#{vorname reg}
+                    <td>#{strasse reg}
+                    <td>#{ort reg}
     |]
 
 postRegR :: Handler Html
