@@ -53,7 +53,7 @@
                         <label for=telefon>Telefon
                     <td>
                         <input #telefon .validateSomething name=telefon type=text>
-                    <td .invalidMessage>Bitte geben Sie für Rückfragen Ihre Telefonnummer an
+                    <td .invalidMessage>Bitte geben Sie für Rückfragen Ihre Telefonnummer an, unter der Sie vor dem Besuch erreichbar sind (dieses Jahr besonders wichtig!)
                 <tr>
                     <td>
                         <label for=email>E-Mail
@@ -174,7 +174,7 @@
             <ul>
                 <li>Der Chlausbesuch findet draussen statt (Wald, Gartensitzplatz, gedeckter Vorplatz). Die „Säckli“ werden z.B. im Briefkasten, in der Garage, im Velounterstand, etc. deponiert (keine Einsehbarkeit für die wartenden Kinder). Im Wald wird die Übergabe mit dem Chlaus kurz vor dem Besuch telefonisch vereinbart.
                 <li>Nach dem Abschicken der Anmeldung können die Anzahl der Kinder, die E-Mail-Adresse und die Uhrzeit nicht mehr geändert werden ("zu loben / zu tadeln und andere Dinge aber schon").
-                <li>Die Chläuse und Schmutzli tragen Handschuhe.
+                <li>Die Chläuse und Schmutzli tragen Handschuhe. Auf die vom BAG vorgeschriebene Distanz wird geachtet und wird wenn nötig eingefordert.
                 <li>Der Stab und das Buch werden nach jedem Besuch desinfiziert.
                 <li>Es ist wichtig, dass Sie uns benachrichtigen, falls in Ihrer Familie nach dem Besuch des Chlaus ein Ansteckungsfall aufgetreten ist (Nachvollziehbarkeit).
             <table>
