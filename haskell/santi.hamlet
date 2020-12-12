@@ -76,7 +76,7 @@
                 <tr>
                     <td>
                         <label for=remarks>Bemerkungen
-                        <p>(z.B. «Wo findet der Santichlaus den Sack.»)
+                        <p>(z.B. wo Sie den Santichlaus draussen erwarten, oder «Wo findet der Santichlaus den Sack.»)
                     <td>
                         <textarea #remarks .validateAnything cols=30 rows=10>
     <div #table .page>
