@@ -157,7 +157,7 @@ getEditR tId = do
         let u = U.fromString $ unpack tId
         sReg <- case u of
                     Just uuid -> liftIO $ getRegistrationAsJson uuid
-                    Nothing   -> fail "No such registration"
+                    Nothing   -> error "No such registration"
         let reg = rawJS sReg
         let childkeys = rawJS ckeys
         year <- liftIO currentYear
